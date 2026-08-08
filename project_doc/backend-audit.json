@@ -1,0 +1,4530 @@
+{
+  "auditedAt": "2026-07-19",
+  "backend": {
+    "framework": "NestJS",
+    "port": 4000,
+    "database": "PostgreSQL 16",
+    "auth": "JWT + bcrypt",
+    "orm": "TypeORM",
+    "swagger": "http://localhost:4000/api/docs",
+    "notes": "Docker Compose (postgres :5433, backend :4000). synchronize=false. Sentry filter present."
+  },
+  "modules": [
+    {
+      "name": "health",
+      "purpose": "Liveness endpoint for orchestration and uptime checks",
+      "entities": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "purpose": "Service health probe",
+          "auth": "public",
+          "requestBody": [],
+          "responseKeys": [
+            "status"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No readiness probe distinct from liveness",
+        "No DB connectivity check exposed"
+      ]
+    },
+    {
+      "name": "auth",
+      "purpose": "Login, current user, password change and reset flows using JWT",
+      "entities": [
+        "User",
+        "PasswordReset"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/auth/login",
+          "purpose": "Exchange email/password for JWT",
+          "auth": "public",
+          "requestBody": [
+            "email",
+            "password"
+          ],
+          "responseKeys": [
+            "token",
+            "user"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/auth/me",
+          "purpose": "Return current authenticated user",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "email",
+            "role",
+            "companyId"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/change-password",
+          "purpose": "User changes own password",
+          "auth": "jwt",
+          "requestBody": [
+            "currentPassword",
+            "newPassword"
+          ],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/forgot-password",
+          "purpose": "Trigger reset email with token",
+          "auth": "public",
+          "requestBody": [
+            "email"
+          ],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": "Depends on Mail module"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/reset-password",
+          "purpose": "Consume reset token to set new password",
+          "auth": "public",
+          "requestBody": [
+            "token",
+            "newPassword"
+          ],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh",
+          "purpose": "Rotate refresh token, return new pair",
+          "auth": "public",
+          "requestBody": [
+            "refreshToken"
+          ],
+          "responseKeys": [
+            "accessToken",
+            "refreshToken",
+            "expiresIn"
+          ],
+          "status": "DONE",
+          "notes": "Access token 15m, refresh 30d"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/logout",
+          "purpose": "Blocklist current jti, revoke refresh",
+          "auth": "jwt",
+          "requestBody": [
+            "refreshToken?"
+          ],
+          "responseKeys": [],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No refresh token flow",
+        "No 2FA/MFA",
+        "No account lockout on brute force",
+        "No SSO/OIDC"
+      ]
+    },
+    {
+      "name": "users",
+      "purpose": "User CRUD, invitations, profile self-service",
+      "entities": [
+        "User"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/users/invite",
+          "purpose": "Invite user by email with role",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [
+            "email",
+            "firstName",
+            "lastName",
+            "role",
+            "companyId"
+          ],
+          "responseKeys": [
+            "id",
+            "email"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/users",
+          "purpose": "List users scoped by role",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/users/me",
+          "purpose": "Get own profile",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "email"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/users/me",
+          "purpose": "Update own profile",
+          "auth": "jwt",
+          "requestBody": [
+            "firstName",
+            "lastName",
+            "locale",
+            "curp"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/users/{id}",
+          "purpose": "Get user by id",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "email"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/users/{id}",
+          "purpose": "Admin update user",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [
+            "firstName",
+            "lastName",
+            "role",
+            "isActive"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/users/{id}",
+          "purpose": "Deactivate user (soft delete)",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No bulk import (CSV/XLSX) endpoint for employee onboarding",
+        "No Vendedor/Capacitador role values accepted",
+        "No user search/filter query params documented"
+      ]
+    },
+    {
+      "name": "companies",
+      "purpose": "Client and subcontractor company registry",
+      "entities": [
+        "Company"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/companies",
+          "purpose": "Create client or subcontractor company",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT",
+          "requestBody": [
+            "legalName",
+            "rfc",
+            "type",
+            "parentCompanyId"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/companies",
+          "purpose": "List companies",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/companies/{id}",
+          "purpose": "Get company detail",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "legalName"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/companies/{id}",
+          "purpose": "Update company",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT",
+          "requestBody": [
+            "legalName",
+            "contactEmail",
+            "address"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/companies/{id}",
+          "purpose": "Deactivate company",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/companies/{id}/subcontractors",
+          "purpose": "List subcontractors of a client",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No branch/location sub-entity",
+        "No company logo upload tied here"
+      ]
+    },
+    {
+      "name": "courses",
+      "purpose": "Course catalog and module content management",
+      "entities": [
+        "Course",
+        "CourseModule"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/courses",
+          "purpose": "Public catalog (published only)",
+          "auth": "public",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/courses",
+          "purpose": "Create course",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [
+            "slug",
+            "titleEs",
+            "nomReference",
+            "priceMxn"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/courses/slug/{slug}",
+          "purpose": "Public course detail by slug",
+          "auth": "public",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "titleEs"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/courses/admin/all",
+          "purpose": "Admin catalog incl. unpublished",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/courses/{id}",
+          "purpose": "Get course by id",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/courses/{id}",
+          "purpose": "Update course fields",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [
+            "titleEs",
+            "priceMxn",
+            "isPublished"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/courses/{id}",
+          "purpose": "Delete course",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/courses/{id}/modules",
+          "purpose": "List modules of course",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PUT",
+          "path": "/api/courses/{id}/modules",
+          "purpose": "Upsert full module list",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [
+            "modules"
+          ],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No SCORM/xAPI support",
+        "No course versioning or drafts",
+        "No categories/tags on courses",
+        "No Capacitador (instructor) assignment"
+      ]
+    },
+    {
+      "name": "enrollments",
+      "purpose": "Enroll learners, track module completions, video watch, recertification",
+      "entities": [
+        "Enrollment",
+        "ModuleCompletion",
+        "VideoWatch"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/enrollments",
+          "purpose": "Self-enroll in a course",
+          "auth": "jwt",
+          "requestBody": [
+            "courseId"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": "Auto-creates recert row if user already had a completed enrollment. 409 if active enrollment exists."
+        },
+        {
+          "method": "POST",
+          "path": "/api/enrollments/assign",
+          "purpose": "Bulk assign course to users",
+          "auth": "role:CLIENT_ADMIN|CLIENT|PRINCIPAL_ADMIN",
+          "requestBody": [
+            "courseId",
+            "userIds"
+          ],
+          "responseKeys": [
+            "count"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/enrollments",
+          "purpose": "List enrollments (scoped)",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/enrollments/me",
+          "purpose": "List my enrollments",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/enrollments/{id}/progress",
+          "purpose": "Update overall progress percent",
+          "auth": "jwt",
+          "requestBody": [
+            "progressPct"
+          ],
+          "responseKeys": [
+            "id",
+            "progressPct"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/enrollments/{id}",
+          "purpose": "Cancel enrollment",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/enrollments/{id}/recertify",
+          "purpose": "Kick off recertification cycle",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "PARTIAL",
+          "notes": "Business rules for NOM expiry windows not verified"
+        },
+        {
+          "method": "GET",
+          "path": "/api/enrollments/{id}/completions",
+          "purpose": "List completed modules",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/enrollments/{id}/modules/{moduleId}/complete",
+          "purpose": "Mark module complete",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/enrollments/{id}/modules/{moduleId}/watch",
+          "purpose": "Get video watch state",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "seconds",
+            "completed"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/enrollments/{id}/modules/{moduleId}/watch",
+          "purpose": "Report video watch progress",
+          "auth": "jwt",
+          "requestBody": [
+            "seconds"
+          ],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/enrollments/bulk",
+          "purpose": "Bulk enroll many users in a course",
+          "auth": "role:principal_admin or client_admin",
+          "requestBody": [
+            "course_id",
+            "user_ids"
+          ],
+          "responseKeys": [
+            "enrolled",
+            "skipped",
+            "enrollmentIds"
+          ],
+          "status": "DONE",
+          "notes": "Idempotent"
+        }
+      ],
+      "gaps": [
+        "No enrollment expiration cron verified",
+        "No pre-requisite chain between courses",
+        "No offline/mobile sync"
+      ]
+    },
+    {
+      "name": "quizzes",
+      "purpose": "Quiz definition per course, learner attempts, scoring",
+      "entities": [
+        "Quiz",
+        "QuizAttempt"
+      ],
+      "endpoints": [
+        {
+          "method": "PUT",
+          "path": "/api/quizzes",
+          "purpose": "Upsert quiz for a course",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [
+            "courseId",
+            "titleEs",
+            "passingScore",
+            "questions"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/quizzes/admin/by-course/{courseId}",
+          "purpose": "Admin view of quiz with answers",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "questions"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/quizzes/by-course/{courseId}",
+          "purpose": "Learner view of quiz (no answer keys)",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "questions"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/quizzes/{id}/attempts",
+          "purpose": "Submit quiz attempt",
+          "auth": "jwt",
+          "requestBody": [
+            "answers"
+          ],
+          "responseKeys": [
+            "score",
+            "passed"
+          ],
+          "status": "PARTIAL",
+          "notes": "Max attempts enforcement / retake cooldown to be validated"
+        }
+      ],
+      "gaps": [
+        "No question bank / randomization",
+        "No timed exams",
+        "No proctoring hooks",
+        "No per-question analytics"
+      ]
+    },
+    {
+      "name": "certificates",
+      "purpose": "DC-3 style certificate issuance, PDF, revocation, public verify",
+      "entities": [
+        "Certificate"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/certificates/lookup/{code}",
+          "purpose": "Public verify by code",
+          "auth": "public",
+          "requestBody": [],
+          "responseKeys": [
+            "holder",
+            "courseTitle",
+            "issuedAt",
+            "status"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/certificates/lookup/{code}/pdf",
+          "purpose": "Public PDF download by code",
+          "auth": "public",
+          "requestBody": [],
+          "responseKeys": [
+            "binary"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/certificates/me",
+          "purpose": "List my certificates",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/certificates/admin/all",
+          "purpose": "Admin list of certificates",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/certificates/admin/issue",
+          "purpose": "Manually issue a certificate",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [
+            "userId",
+            "courseId",
+            "dc3Folio"
+          ],
+          "responseKeys": [
+            "id",
+            "code"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/certificates/{id}/revoke",
+          "purpose": "Revoke a certificate",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [
+            "reason"
+          ],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/certificates/{id}/pdf",
+          "purpose": "Authenticated PDF fetch",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "binary"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/certificates/{id}/email",
+          "purpose": "Email certificate to holder",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/certificates/:id",
+          "purpose": "Admin update folio or expiry",
+          "auth": "role:principal_admin",
+          "requestBody": [
+            "folio?",
+            "expiryDate?"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": "Audit-logged"
+        },
+        {
+          "method": "POST",
+          "path": "/api/certificates/:folio/email",
+          "purpose": "Send DC-3 PDF by email",
+          "auth": "owner_or_admin",
+          "requestBody": [
+            "to"
+          ],
+          "responseKeys": [
+            "ok",
+            "delivered",
+            "sentTo"
+          ],
+          "status": "DONE",
+          "notes": "Falls back gracefully when mail not configured"
+        }
+      ],
+      "gaps": [
+        "No QR code verification flow documented",
+        "No STPS DC-3 template compliance test",
+        "No digital signature (SAT) on PDFs"
+      ]
+    },
+    {
+      "name": "payments",
+      "purpose": "Course checkout, invoices, PDFs",
+      "entities": [
+        "Payment",
+        "Invoice"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/payments/checkout",
+          "purpose": "Create checkout / payment intent",
+          "auth": "jwt",
+          "requestBody": [
+            "items"
+          ],
+          "responseKeys": [
+            "url",
+            "providerRef"
+          ],
+          "status": "PARTIAL",
+          "notes": "Provider webhook not exposed in swagger"
+        },
+        {
+          "method": "GET",
+          "path": "/api/payments/me",
+          "purpose": "List my payments",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/payments/me/invoices",
+          "purpose": "List my invoices",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/payments/invoices/{id}/pdf",
+          "purpose": "Invoice PDF download",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "binary"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/webhook",
+          "purpose": "Public webhook to flip payment status",
+          "auth": "hmac-sha256 signature",
+          "requestBody": [
+            "provider_ref",
+            "status",
+            "amount",
+            "currency"
+          ],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": "Uses x-webhook-signature header + WEBHOOK_SECRET env"
+        },
+        {
+          "method": "POST",
+          "path": "/api/payments/:id/simulate-webhook",
+          "purpose": "Admin simulates a webhook event",
+          "auth": "role:principal_admin",
+          "requestBody": [
+            "status"
+          ],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": "Testing helper"
+        }
+      ],
+      "gaps": [
+        "No CFDI/SAT integration endpoint exposed",
+        "No refund endpoint",
+        "No provider webhook handler visible",
+        "No Vendedor commission tracking"
+      ]
+    },
+    {
+      "name": "uploads",
+      "purpose": "Generic file upload and streaming",
+      "entities": [
+        "Upload"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/uploads",
+          "purpose": "Upload file (multipart)",
+          "auth": "jwt",
+          "requestBody": [
+            "file"
+          ],
+          "responseKeys": [
+            "id",
+            "url"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/uploads/{id}",
+          "purpose": "Serve/stream uploaded file",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "binary"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No virus scan pipeline",
+        "No S3/CDN offload documented",
+        "No signed URL expiry"
+      ]
+    },
+    {
+      "name": "analytics",
+      "purpose": "Aggregated stats and CSV/PDF exports",
+      "entities": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/analytics/overview",
+          "purpose": "Top KPIs (users, courses, certs)",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "users",
+            "courses",
+            "certificates"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/analytics/courses",
+          "purpose": "Per-course completion metrics",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/analytics/learners",
+          "purpose": "Per-learner progress metrics",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/analytics/courses.csv",
+          "purpose": "CSV export of course stats",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "csv"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/analytics/learners.csv",
+          "purpose": "CSV export of learner stats",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "csv"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/analytics/report.pdf",
+          "purpose": "PDF compliance report",
+          "auth": "role:PRINCIPAL_ADMIN|CLIENT_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "binary"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/analytics/overview.csv",
+          "purpose": "CSV export of overview KPIs",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [],
+          "status": "DONE",
+          "notes": "Content-Type text/csv"
+        }
+      ],
+      "gaps": [
+        "No date-range filter params documented",
+        "No per-company drilldown for Client role",
+        "No Vendedor sales dashboard"
+      ]
+    },
+    {
+      "name": "library",
+      "purpose": "Books, manuals, documents. Free downloads and paid items. Search + filter + category + industry.",
+      "entities": [
+        "LibraryItem"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/library/documents",
+          "purpose": "Public list with filters",
+          "auth": "public",
+          "requestBody": [
+            "category?",
+            "industry?",
+            "search?"
+          ],
+          "responseKeys": [
+            "id",
+            "title",
+            "fileType",
+            "isFree",
+            "price"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/library/documents/:id",
+          "purpose": "Public detail",
+          "auth": "public",
+          "requestBody": [],
+          "responseKeys": [
+            "*"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/library/documents",
+          "purpose": "Create document",
+          "auth": "role:principal_admin",
+          "requestBody": [
+            "title",
+            "fileType",
+            "fileUrl"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/library/documents/:id",
+          "purpose": "Update document",
+          "auth": "role:principal_admin",
+          "requestBody": [
+            "*"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/library/documents/:id",
+          "purpose": "Soft delete (unpublish)",
+          "auth": "role:principal_admin",
+          "requestBody": [],
+          "responseKeys": [],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/library/documents/:id/download",
+          "purpose": "Record download and return file url",
+          "auth": "optional-jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "file_url"
+          ],
+          "status": "DONE",
+          "notes": "Paid items return 402 unless purchased"
+        },
+        {
+          "method": "POST",
+          "path": "/api/library/documents/:id/purchase",
+          "purpose": "Buy a paid document",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "purchased_at"
+          ],
+          "status": "DONE",
+          "notes": "Stub payment, no real charge"
+        },
+        {
+          "method": "GET",
+          "path": "/api/library/purchases/me",
+          "purpose": "List my purchases",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "document_id",
+            "purchased_at"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/library/stats",
+          "purpose": "Admin stats",
+          "auth": "role:principal_admin",
+          "requestBody": [],
+          "responseKeys": [
+            "total_documents",
+            "total_downloads",
+            "total_purchases",
+            "revenue_total"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "name": "notifications",
+      "purpose": "In-app notification inbox",
+      "entities": [
+        "Notification"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/notifications",
+          "purpose": "List notifications (unread filter)",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/notifications/unread-count",
+          "purpose": "Unread badge count",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "count"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/notifications/{id}/read",
+          "purpose": "Mark notification read",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/notifications/read-all",
+          "purpose": "Mark all read",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "ok"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/notifications/:id/read",
+          "purpose": "Mark one notification read",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/notifications/read-all",
+          "purpose": "Mark all current-user notifications read",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "count"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No push/websocket delivery documented",
+        "No preferences per channel"
+      ]
+    },
+    {
+      "name": "support",
+      "purpose": "Support ticketing between clients and admins",
+      "entities": [
+        "SupportTicket"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/support/tickets",
+          "purpose": "Create support ticket",
+          "auth": "jwt",
+          "requestBody": [
+            "subject",
+            "message",
+            "priority"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/support/tickets",
+          "purpose": "List all tickets (admin)",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/support/tickets/me",
+          "purpose": "List my tickets",
+          "auth": "jwt",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/support/tickets/{id}",
+          "purpose": "Update ticket status/response",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [
+            "status",
+            "response"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No threaded conversation endpoint",
+        "No attachments on tickets",
+        "No SLA tracking"
+      ]
+    },
+    {
+      "name": "audit",
+      "purpose": "Read-only access to audit log",
+      "entities": [
+        "AuditLog"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/audit",
+          "purpose": "List audit events with filters",
+          "auth": "role:PRINCIPAL_ADMIN",
+          "requestBody": [],
+          "responseKeys": [
+            "items"
+          ],
+          "status": "DONE",
+          "notes": "Query: entityType, entityId, actorId, limit"
+        }
+      ],
+      "gaps": [
+        "No CSV export",
+        "No retention policy documented",
+        "No tamper-evident hashing"
+      ]
+    },
+    {
+      "name": "mail",
+      "purpose": "Transactional email sender used by other modules",
+      "entities": [],
+      "endpoints": [],
+      "gaps": [
+        "No admin endpoint to inspect/resend email queue",
+        "No template management endpoint"
+      ]
+    },
+    {
+      "name": "sales",
+      "purpose": "Vendedor pipeline: leads, deals, commissions, quotas.",
+      "entities": [
+        "VendorProfile",
+        "SalesLead",
+        "SalesDeal",
+        "Commission"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/sales/leads",
+          "purpose": "List leads scoped by role",
+          "auth": "role:vendedor|principal_admin",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "company_name",
+            "status",
+            "expected_amount"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/sales/leads",
+          "purpose": "Create lead",
+          "auth": "role:vendedor|principal_admin",
+          "requestBody": [
+            "company_name",
+            "contact_name",
+            "expected_amount"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/sales/leads/:id",
+          "purpose": "Update lead status or notes",
+          "auth": "role:vendedor|principal_admin",
+          "requestBody": [
+            "status",
+            "notes"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/sales/leads/:id",
+          "purpose": "Delete lead",
+          "auth": "role:vendedor|principal_admin",
+          "requestBody": [],
+          "responseKeys": [],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/sales/deals",
+          "purpose": "List closed deals",
+          "auth": "role:vendedor|principal_admin",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "buyer_name",
+            "amount",
+            "commission_amount"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/sales/deals",
+          "purpose": "Close a deal, auto-calc commission",
+          "auth": "role:vendedor|principal_admin",
+          "requestBody": [
+            "buyer_name",
+            "package",
+            "amount"
+          ],
+          "responseKeys": [
+            "id",
+            "commission_amount"
+          ],
+          "status": "DONE",
+          "notes": "Applies commission_rule from vendor_profile"
+        },
+        {
+          "method": "GET",
+          "path": "/api/sales/commissions",
+          "purpose": "Commission ledger",
+          "auth": "role:vendedor|principal_admin",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "amount",
+            "status",
+            "period_month"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/sales/commissions/:id",
+          "purpose": "Approve or mark paid",
+          "auth": "role:principal_admin",
+          "requestBody": [
+            "status",
+            "paid_at"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/sales/vendor-profile/me",
+          "purpose": "Own profile",
+          "auth": "role:vendedor",
+          "requestBody": [],
+          "responseKeys": [
+            "user_id",
+            "commission_rule",
+            "quota_monthly"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/sales/vendor-profile/:userId",
+          "purpose": "Admin view profile",
+          "auth": "role:principal_admin",
+          "requestBody": [],
+          "responseKeys": [
+            "user_id",
+            "commission_rule"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/sales/vendor-profile/:userId",
+          "purpose": "Admin update rule",
+          "auth": "role:principal_admin",
+          "requestBody": [
+            "commission_rule",
+            "quota_monthly"
+          ],
+          "responseKeys": [
+            "user_id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/sales/commissions/preview",
+          "purpose": "Live-preview commission for a rule",
+          "auth": "jwt",
+          "requestBody": [
+            "rule",
+            "amount",
+            "package"
+          ],
+          "responseKeys": [
+            "pct",
+            "amount"
+          ],
+          "status": "DONE",
+          "notes": "Supports flat, package_tier, volume_tier, custom"
+        },
+        {
+          "method": "GET",
+          "path": "/api/sales/dashboard/summary",
+          "purpose": "Vendedor KPIs",
+          "auth": "role:vendedor|principal_admin",
+          "requestBody": [],
+          "responseKeys": [
+            "quota_mtd",
+            "sold_mtd",
+            "pipeline_value",
+            "active_leads",
+            "commission_pending",
+            "commission_paid_ytd"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No lead-to-deal automation. Deal creation is manual.",
+        "No commission approval workflow. Currently 1-step admin approve."
+      ]
+    },
+    {
+      "name": "training",
+      "purpose": "Capacitador presencial sessions + public agenda booking for demos, consulting, training.",
+      "entities": [
+        "TrainerProfile",
+        "TrainingSession",
+        "Appointment"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/agenda/available",
+          "purpose": "Public list of bookable vendedores or capacitadores with slots",
+          "auth": "public",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "name",
+            "role",
+            "specialties",
+            "slots"
+          ],
+          "status": "DONE",
+          "notes": "Query ?purpose=demo|consulting|training"
+        },
+        {
+          "method": "POST",
+          "path": "/api/agenda/appointments",
+          "purpose": "Public book an appointment",
+          "auth": "public",
+          "requestBody": [
+            "requester_kind",
+            "requester_email",
+            "purpose",
+            "scheduled_at",
+            "assigned_user_id"
+          ],
+          "responseKeys": [
+            "id",
+            "status"
+          ],
+          "status": "DONE",
+          "notes": "status=requested until confirmed"
+        },
+        {
+          "method": "GET",
+          "path": "/api/training/sessions",
+          "purpose": "List sessions",
+          "auth": "role:capacitador|principal_admin",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "title",
+            "scheduled_at",
+            "attendee_count",
+            "status"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/training/sessions",
+          "purpose": "Create session",
+          "auth": "role:capacitador|principal_admin",
+          "requestBody": [
+            "title",
+            "scheduled_at",
+            "duration_hours"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/training/sessions/:id",
+          "purpose": "Update status",
+          "auth": "role:capacitador|principal_admin",
+          "requestBody": [
+            "status",
+            "delivered_at"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/training/appointments",
+          "purpose": "List own appointments",
+          "auth": "role:vendedor|capacitador|principal_admin",
+          "requestBody": [],
+          "responseKeys": [
+            "id",
+            "scheduled_at",
+            "purpose",
+            "status"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/training/appointments/:id",
+          "purpose": "Confirm, cancel, or complete",
+          "auth": "role:vendedor|capacitador|principal_admin",
+          "requestBody": [
+            "status"
+          ],
+          "responseKeys": [
+            "id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/training/trainer-profile/me",
+          "purpose": "Own profile",
+          "auth": "role:capacitador",
+          "requestBody": [],
+          "responseKeys": [
+            "user_id",
+            "stps_registration",
+            "specialties"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/training/trainer-profile/:userId",
+          "purpose": "View profile",
+          "auth": "role:principal_admin|self",
+          "requestBody": [],
+          "responseKeys": [
+            "user_id",
+            "stps_registration"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/training/trainer-profile/:userId",
+          "purpose": "Update profile",
+          "auth": "role:principal_admin|self",
+          "requestBody": [
+            "bio",
+            "specialties",
+            "hourly_rate"
+          ],
+          "responseKeys": [
+            "user_id"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "GET",
+          "path": "/api/training/dashboard/summary",
+          "purpose": "Capacitador KPIs",
+          "auth": "role:capacitador|principal_admin",
+          "requestBody": [],
+          "responseKeys": [
+            "sessions_this_month",
+            "hours_delivered",
+            "upcoming_appointments",
+            "avg_attendees"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "No calendar sync with Google or Outlook.",
+        "No email confirmation sent on appointment request."
+      ]
+    },
+    {
+      "name": "cfdi",
+      "purpose": "CFDI/SAT invoicing abstraction. Stub provider for dev; swap-in Facturama or SW Sapien in 1 file when Ale picks.",
+      "entities": [
+        "Invoice (extended)"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/cfdi/invoices",
+          "purpose": "Stamp a CFDI for an existing invoice",
+          "auth": "role:principal_admin or invoice owner",
+          "requestBody": [
+            "invoice_id"
+          ],
+          "responseKeys": [
+            "id",
+            "cfdi_uuid",
+            "cfdi_xml_url",
+            "cfdi_status"
+          ],
+          "status": "DONE",
+          "notes": "Stub provider returns fake UUID + xml url"
+        },
+        {
+          "method": "GET",
+          "path": "/api/cfdi/invoices/:id",
+          "purpose": "Return CFDI status for an invoice",
+          "auth": "role:principal_admin or invoice owner",
+          "requestBody": [],
+          "responseKeys": [
+            "cfdi_uuid",
+            "cfdi_status"
+          ],
+          "status": "DONE",
+          "notes": ""
+        },
+        {
+          "method": "POST",
+          "path": "/api/cfdi/invoices/:id/cancel",
+          "purpose": "Cancel a stamped CFDI",
+          "auth": "role:principal_admin",
+          "requestBody": [
+            "reason"
+          ],
+          "responseKeys": [
+            "cfdi_status",
+            "cfdi_canceled_at"
+          ],
+          "status": "DONE",
+          "notes": ""
+        }
+      ],
+      "gaps": [
+        "Facturama provider implementation waiting on Ale's provider pick"
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "name": "Role",
+      "table": "roles",
+      "fields": [
+        {
+          "name": "code",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "label_es",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "label_en",
+          "type": "text",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "referenced by users.role_code"
+      ],
+      "usedByRoles": [
+        "Principal Admin",
+        "Client",
+        "Client Admin",
+        "Subcontractor",
+        "Employee"
+      ]
+    },
+    {
+      "name": "Company",
+      "table": "companies",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "legal_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "rfc",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "type",
+          "type": "company_type(client|subcontractor)",
+          "nullable": false
+        },
+        {
+          "name": "parent_company_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "contact_email",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "contact_phone",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "address",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": false
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": false
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "hasMany User",
+        "hasMany Enrollment (payer)",
+        "hasMany Payment",
+        "selfRef parent_company_id"
+      ],
+      "usedByRoles": [
+        "Principal Admin",
+        "Client",
+        "Client Admin",
+        "Subcontractor"
+      ]
+    },
+    {
+      "name": "User",
+      "table": "users",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "password_hash",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "first_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "last_name",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "role_code",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "company_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "curp",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "locale",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": false
+        },
+        {
+          "name": "last_login_at",
+          "type": "timestamptz",
+          "nullable": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": false
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamptz",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo Company",
+        "hasMany Enrollment",
+        "hasMany Certificate",
+        "hasMany QuizAttempt",
+        "hasMany Payment"
+      ],
+      "usedByRoles": [
+        "Principal Admin",
+        "Client",
+        "Client Admin",
+        "Subcontractor",
+        "Employee"
+      ]
+    },
+    {
+      "name": "Course",
+      "table": "courses",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "title_es",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "title_en",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "description_es",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "description_en",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "nom_reference",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "price_mxn",
+          "type": "numeric(10,2)",
+          "nullable": false
+        },
+        {
+          "name": "duration_hours",
+          "type": "numeric(5,2)",
+          "nullable": true
+        },
+        {
+          "name": "is_published",
+          "type": "boolean",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "hasMany CourseModule",
+        "hasMany Quiz",
+        "hasMany Enrollment"
+      ],
+      "usedByRoles": [
+        "Principal Admin",
+        "all learners"
+      ]
+    },
+    {
+      "name": "CourseModule",
+      "table": "course_modules",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "course_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "position",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "title_es",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "title_en",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "content_url",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "duration_min",
+          "type": "int",
+          "nullable": true
+        }
+      ],
+      "relationships": [
+        "belongsTo Course",
+        "hasMany ModuleCompletion",
+        "hasMany VideoWatch"
+      ],
+      "usedByRoles": [
+        "Principal Admin",
+        "Employee"
+      ]
+    },
+    {
+      "name": "Quiz",
+      "table": "quizzes",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "course_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "title_es",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "passing_score",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "max_attempts",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "questions",
+          "type": "jsonb",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo Course",
+        "hasMany QuizAttempt"
+      ],
+      "usedByRoles": [
+        "Principal Admin",
+        "Employee"
+      ]
+    },
+    {
+      "name": "QuizAttempt",
+      "table": "quiz_attempts",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "quiz_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "score",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "passed",
+          "type": "boolean",
+          "nullable": false
+        },
+        {
+          "name": "answers",
+          "type": "jsonb",
+          "nullable": true
+        },
+        {
+          "name": "started_at",
+          "type": "timestamptz",
+          "nullable": false
+        },
+        {
+          "name": "submitted_at",
+          "type": "timestamptz",
+          "nullable": true
+        }
+      ],
+      "relationships": [
+        "belongsTo Quiz",
+        "belongsTo User"
+      ],
+      "usedByRoles": [
+        "Employee",
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "Enrollment",
+      "table": "enrollments",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "course_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "company_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "status",
+          "type": "enrollment_status",
+          "nullable": false
+        },
+        {
+          "name": "progress_pct",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "enrolled_at",
+          "type": "timestamptz",
+          "nullable": false
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamptz",
+          "nullable": true
+        }
+      ],
+      "relationships": [
+        "belongsTo User",
+        "belongsTo Course",
+        "belongsTo Company (payer)",
+        "hasOne Certificate",
+        "hasMany ModuleCompletion",
+        "hasMany VideoWatch"
+      ],
+      "usedByRoles": [
+        "Employee",
+        "Client",
+        "Client Admin",
+        "Subcontractor",
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "ModuleCompletion",
+      "table": "module_completions",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "enrollment_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "module_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamptz",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo Enrollment",
+        "belongsTo CourseModule"
+      ],
+      "usedByRoles": [
+        "Employee"
+      ]
+    },
+    {
+      "name": "VideoWatch",
+      "table": "video_watches",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "enrollment_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "module_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "seconds",
+          "type": "int",
+          "nullable": false
+        },
+        {
+          "name": "completed",
+          "type": "boolean",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo Enrollment",
+        "belongsTo CourseModule"
+      ],
+      "usedByRoles": [
+        "Employee"
+      ]
+    },
+    {
+      "name": "Certificate",
+      "table": "certificates",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "enrollment_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "course_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "code",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "issued_at",
+          "type": "timestamptz",
+          "nullable": false
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamptz",
+          "nullable": true
+        },
+        {
+          "name": "pdf_url",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "dc3_folio",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "revoked_at",
+          "type": "timestamptz",
+          "nullable": true
+        },
+        {
+          "name": "revoked_reason",
+          "type": "text",
+          "nullable": true
+        }
+      ],
+      "relationships": [
+        "belongsTo Enrollment",
+        "belongsTo User",
+        "belongsTo Course"
+      ],
+      "usedByRoles": [
+        "Employee",
+        "Principal Admin",
+        "Public Verifier"
+      ]
+    },
+    {
+      "name": "Payment",
+      "table": "payments",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "company_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "amount_mxn",
+          "type": "numeric(10,2)",
+          "nullable": false
+        },
+        {
+          "name": "currency",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "type": "payment_status",
+          "nullable": false
+        },
+        {
+          "name": "provider",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "provider_ref",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "items",
+          "type": "jsonb",
+          "nullable": false
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": false
+        },
+        {
+          "name": "paid_at",
+          "type": "timestamptz",
+          "nullable": true
+        }
+      ],
+      "relationships": [
+        "belongsTo Company",
+        "belongsTo User",
+        "hasOne Invoice"
+      ],
+      "usedByRoles": [
+        "Client",
+        "Client Admin",
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "Invoice",
+      "table": "invoices",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "payment_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "company_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "number",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "cfdi_uuid",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "cfdi_xml_url",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "pdf_url",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "subtotal_mxn",
+          "type": "numeric(10,2)",
+          "nullable": false
+        },
+        {
+          "name": "tax_mxn",
+          "type": "numeric(10,2)",
+          "nullable": false
+        },
+        {
+          "name": "total_mxn",
+          "type": "numeric(10,2)",
+          "nullable": false
+        },
+        {
+          "name": "issued_at",
+          "type": "timestamptz",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo Payment",
+        "belongsTo Company"
+      ],
+      "usedByRoles": [
+        "Client",
+        "Client Admin",
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "AuditLog",
+      "table": "audit_log",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "actor_email",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "actor_role",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "action",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "entity_type",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "entity_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb",
+          "nullable": true
+        },
+        {
+          "name": "ip",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "user_agent",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo User (actor)"
+      ],
+      "usedByRoles": [
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "PasswordReset",
+      "table": "password_resets",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "token",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamptz",
+          "nullable": false
+        },
+        {
+          "name": "used_at",
+          "type": "timestamptz",
+          "nullable": true
+        }
+      ],
+      "relationships": [
+        "belongsTo User"
+      ],
+      "usedByRoles": [
+        "all"
+      ]
+    },
+    {
+      "name": "LibraryItem",
+      "table": "library_items",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "category",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "tags",
+          "type": "text[]",
+          "nullable": true
+        },
+        {
+          "name": "file_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "visibility",
+          "type": "text",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo Upload"
+      ],
+      "usedByRoles": [
+        "all authenticated"
+      ]
+    },
+    {
+      "name": "Notification",
+      "table": "notifications",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "body",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "read_at",
+          "type": "timestamptz",
+          "nullable": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo User"
+      ],
+      "usedByRoles": [
+        "all authenticated"
+      ]
+    },
+    {
+      "name": "SupportTicket",
+      "table": "support_tickets",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "subject",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "message",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "priority",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "response",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo User"
+      ],
+      "usedByRoles": [
+        "all authenticated"
+      ]
+    },
+    {
+      "name": "Upload",
+      "table": "uploads",
+      "fields": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": true
+        },
+        {
+          "name": "filename",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "mime",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "size",
+          "type": "int",
+          "nullable": true
+        },
+        {
+          "name": "path",
+          "type": "text",
+          "nullable": false
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": false
+        }
+      ],
+      "relationships": [
+        "belongsTo User"
+      ],
+      "usedByRoles": [
+        "all authenticated"
+      ]
+    },
+    {
+      "name": "VendorProfile",
+      "table": "vendor_profiles",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "user_id"
+        },
+        {
+          "name": "employee_id"
+        },
+        {
+          "name": "hire_date"
+        },
+        {
+          "name": "quota_monthly"
+        },
+        {
+          "name": "commission_rule"
+        }
+      ],
+      "relationships": [
+        "belongsTo User"
+      ],
+      "usedByRoles": [
+        "Vendedor",
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "TrainerProfile",
+      "table": "trainer_profiles",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "user_id"
+        },
+        {
+          "name": "stps_registration"
+        },
+        {
+          "name": "rfc"
+        },
+        {
+          "name": "hourly_rate"
+        },
+        {
+          "name": "specialties"
+        }
+      ],
+      "relationships": [
+        "belongsTo User"
+      ],
+      "usedByRoles": [
+        "Capacitador",
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "SalesLead",
+      "table": "sales_leads",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "vendedor_id"
+        },
+        {
+          "name": "company_name"
+        },
+        {
+          "name": "contact_name"
+        },
+        {
+          "name": "status"
+        },
+        {
+          "name": "expected_amount"
+        }
+      ],
+      "relationships": [
+        "belongsTo User (vendedor)"
+      ],
+      "usedByRoles": [
+        "Vendedor",
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "SalesDeal",
+      "table": "sales_deals",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "vendedor_id"
+        },
+        {
+          "name": "buyer_name"
+        },
+        {
+          "name": "package"
+        },
+        {
+          "name": "amount"
+        },
+        {
+          "name": "commission_amount"
+        }
+      ],
+      "relationships": [
+        "belongsTo User (vendedor)",
+        "belongsTo SalesLead"
+      ],
+      "usedByRoles": [
+        "Vendedor",
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "Commission",
+      "table": "commissions",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "vendedor_id"
+        },
+        {
+          "name": "deal_id"
+        },
+        {
+          "name": "amount"
+        },
+        {
+          "name": "status"
+        },
+        {
+          "name": "period_month"
+        }
+      ],
+      "relationships": [
+        "belongsTo SalesDeal",
+        "belongsTo User (vendedor)"
+      ],
+      "usedByRoles": [
+        "Vendedor",
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "Appointment",
+      "table": "appointments",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "requester_kind"
+        },
+        {
+          "name": "requester_email"
+        },
+        {
+          "name": "assigned_user_id"
+        },
+        {
+          "name": "purpose"
+        },
+        {
+          "name": "scheduled_at"
+        },
+        {
+          "name": "status"
+        }
+      ],
+      "relationships": [
+        "belongsTo User (assigned_to)"
+      ],
+      "usedByRoles": [
+        "Public",
+        "Vendedor",
+        "Capacitador",
+        "Principal Admin",
+        "Client Admin"
+      ]
+    },
+    {
+      "name": "TrainingSession",
+      "table": "training_sessions",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "capacitador_id"
+        },
+        {
+          "name": "client_company_id"
+        },
+        {
+          "name": "course_id"
+        },
+        {
+          "name": "title"
+        },
+        {
+          "name": "scheduled_at"
+        },
+        {
+          "name": "status"
+        }
+      ],
+      "relationships": [
+        "belongsTo User (capacitador)",
+        "belongsTo Company",
+        "belongsTo Course"
+      ],
+      "usedByRoles": [
+        "Capacitador",
+        "Principal Admin",
+        "Client Admin"
+      ]
+    },
+    {
+      "name": "RefreshToken",
+      "table": "refresh_tokens",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "user_id"
+        },
+        {
+          "name": "token_hash"
+        },
+        {
+          "name": "expires_at"
+        },
+        {
+          "name": "revoked_at"
+        }
+      ],
+      "relationships": [
+        "belongsTo User"
+      ],
+      "usedByRoles": [
+        "all authenticated"
+      ]
+    },
+    {
+      "name": "TokenBlocklist",
+      "table": "token_blocklist",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "jti"
+        },
+        {
+          "name": "expires_at"
+        }
+      ],
+      "relationships": [],
+      "usedByRoles": [
+        "system"
+      ]
+    },
+    {
+      "name": "PaymentWebhookEvent",
+      "table": "payment_webhook_events",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "provider_ref"
+        },
+        {
+          "name": "payload_json"
+        },
+        {
+          "name": "verified"
+        }
+      ],
+      "relationships": [
+        "belongsTo Payment"
+      ],
+      "usedByRoles": [
+        "Principal Admin"
+      ]
+    },
+    {
+      "name": "LibraryDocument",
+      "table": "library_documents",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "title"
+        },
+        {
+          "name": "category"
+        },
+        {
+          "name": "file_type"
+        },
+        {
+          "name": "is_free"
+        },
+        {
+          "name": "price"
+        }
+      ],
+      "relationships": [
+        "hasMany LibraryPurchase",
+        "hasMany LibraryDownload"
+      ],
+      "usedByRoles": [
+        "all"
+      ]
+    },
+    {
+      "name": "LibraryPurchase",
+      "table": "library_purchases",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "user_id"
+        },
+        {
+          "name": "document_id"
+        },
+        {
+          "name": "amount"
+        },
+        {
+          "name": "purchased_at"
+        }
+      ],
+      "relationships": [
+        "belongsTo User",
+        "belongsTo LibraryDocument"
+      ],
+      "usedByRoles": [
+        "all authenticated"
+      ]
+    },
+    {
+      "name": "LibraryDownload",
+      "table": "library_downloads",
+      "fields": [
+        {
+          "name": "id"
+        },
+        {
+          "name": "document_id"
+        },
+        {
+          "name": "user_id"
+        },
+        {
+          "name": "downloaded_at"
+        }
+      ],
+      "relationships": [
+        "belongsTo LibraryDocument"
+      ],
+      "usedByRoles": [
+        "system"
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "name": "Principal Admin",
+      "codename": "PRINCIPAL_ADMIN",
+      "isolation": "no isolation - can see all companies, users, courses, certificates",
+      "canAccess": [
+        "all endpoints",
+        "user CRUD",
+        "course CRUD",
+        "certificate issue/revoke",
+        "analytics",
+        "audit log",
+        "support admin"
+      ]
+    },
+    {
+      "name": "Client",
+      "codename": "CLIENT",
+      "isolation": "scoped to own company and its subcontractors",
+      "canAccess": [
+        "own company",
+        "own subcontractors",
+        "assign courses to own employees",
+        "payments/invoices",
+        "analytics for own scope"
+      ]
+    },
+    {
+      "name": "Client Admin",
+      "codename": "CLIENT_ADMIN",
+      "isolation": "scoped to own client company only",
+      "canAccess": [
+        "manage employees within own company",
+        "invite users",
+        "bulk assign enrollments",
+        "analytics for own company"
+      ]
+    },
+    {
+      "name": "Subcontractor",
+      "codename": "SUBCONTRACTOR",
+      "isolation": "scoped to subcontractor company under a parent client",
+      "canAccess": [
+        "manage own employees",
+        "view own enrollments and certificates",
+        "limited analytics"
+      ]
+    },
+    {
+      "name": "Employee",
+      "codename": "EMPLOYEE",
+      "isolation": "self only",
+      "canAccess": [
+        "own enrollments",
+        "own progress",
+        "own quizzes",
+        "own certificates",
+        "own profile",
+        "notifications",
+        "support"
+      ]
+    },
+    {
+      "name": "Vendedor",
+      "codename": "VENDEDOR",
+      "isolation": "Sees only own leads, deals, commissions. Principal Admin sees all.",
+      "canAccess": [
+        "/api/sales/*",
+        "/api/training/appointments (own)"
+      ],
+      "description": "PROCHECK sales rep. Owns lead pipeline, closes deals, earns commissions per configurable rule (flat / package / volume / custom). Books demos with clients."
+    },
+    {
+      "name": "Capacitador",
+      "codename": "CAPACITADOR",
+      "isolation": "Sees only own sessions and appointments. Principal Admin sees all.",
+      "canAccess": [
+        "/api/training/*",
+        "/api/agenda/appointments (own scope)"
+      ],
+      "description": "PROCHECK-registered STPS trainer. Delivers presencial sessions and demos. Publishes trainer profile with STPS registration + specialties."
+    },
+    {
+      "name": "Public Verifier",
+      "codename": "PUBLIC",
+      "isolation": "unauthenticated, code-based lookup only",
+      "canAccess": [
+        "GET /api/certificates/lookup/{code}",
+        "GET /api/certificates/lookup/{code}/pdf",
+        "GET /api/courses catalog",
+        "GET /api/courses/slug/{slug}"
+      ]
+    }
+  ],
+  "gaps": {
+    "critical": [],
+    "high": [
+      "Quiz max_attempts enforcement and retake cooldown not verified in submit endpoint.",
+      "Recertification cycle NOM-specific expiry windows (e.g. annual for NOM-030) not obviously modeled.",
+      "No DC-3 folio auto-generation vs manual entry rules documented.",
+      "No bulk user import (CSV/XLSX) endpoint - Client Admin onboarding hundreds of employees has no path.",
+      "No role-based analytics scoping for Client (per-company drilldown) documented.",
+      "No SCORM/xAPI ingestion for third-party course content.",
+      "No public course catalog filter by NOM reference or category."
+    ],
+    "medium": [
+      "DTO schemas empty in Swagger JSON (all DTOs show properties: {}) - @ApiProperty decorators missing so client can't auto-generate types.",
+      "No pagination params documented on list endpoints (users, companies, enrollments, certificates, audit).",
+      "No rate limiting visible (no throttler module in AppModule).",
+      "No refresh flow for uploaded file signed URLs.",
+      "Support tickets lack threaded replies and attachments.",
+      "Notifications have no push/websocket delivery channel.",
+      "No versioning on course content or quizzes.",
+      "Audit log has no export endpoint (only paginated GET)."
+    ],
+    "resolved": [
+      "2026-07-19 Vendedor role: schema, endpoints, guards, seed, dashboard shipped",
+      "2026-07-19 Capacitador role: schema, endpoints, guards, seed, dashboard shipped",
+      "2026-07-19 No CFDI/SAT invoicing integration exposed: invoices table has cfdi_uuid/cfdi_xml_url columns but no endpoints stamp or fetch them. Blocks Mexican tax compliance.",
+      "2026-07-19 No refresh token or session revocation flow: JWT is fire-and-forget with no rotation, which is a compliance risk for a regulated LMS.",
+      "2026-07-19 Sprint A: refresh tokens + logout blocklist + jti checks",
+      "2026-07-19 Sprint A: CFDI abstraction with stub provider",
+      "2026-07-19 Sprint A: payment webhook + HMAC verification",
+      "2026-07-19 Sprint B: two-step login (email then password)",
+      "2026-07-19 Sprint B: full account/profile page + change password",
+      "2026-07-19 Sprint B: send DC-3 by email + recertify + expiry column",
+      "2026-07-19 Sprint C: full library module (12 seeded docs)",
+      "2026-07-19 Sprint D: bulk course assignment UI",
+      "2026-07-19 Sprint D: admin certificate management UI",
+      "2026-07-19 Sprint D: CSV analytics export",
+      "2026-07-19 Sprint D: notifications inbox dropdown (63 seeded)",
+      "2026-07-19 Sprint D: cookie consent banner (LFPDPPP)",
+      "2026-07-19 Sprint C: Library module (schema, endpoints, seed, public + admin UI).",
+      "2026-07-19 Sprint D: bulk-assign, admin certificates, notifications inbox, cookie banner.",
+      "2026-07-19 Sprint F: change-password, users/me, certs email, recert enrollment, auto-enroll on paid.",
+      "2026-07-19 Sprint G: public course detail, course player, quiz taker."
+    ]
+  },
+  "useCases": [
+    {
+      "id": 1,
+      "role": "Principal Admin",
+      "useCase": "Onboard a new client company",
+      "trigger": "Sales contract signed",
+      "steps": [
+        "Login",
+        "Create company (type=client)",
+        "Invite client_admin user",
+        "Send welcome email"
+      ],
+      "endpoints": [
+        "POST /api/companies",
+        "POST /api/users/invite"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 2,
+      "role": "Principal Admin",
+      "useCase": "Create and publish a NOM course",
+      "trigger": "New NOM regulation or content ready",
+      "steps": [
+        "POST course",
+        "PUT modules",
+        "PUT quiz",
+        "PATCH isPublished=true"
+      ],
+      "endpoints": [
+        "POST /api/courses",
+        "PUT /api/courses/{id}/modules",
+        "PUT /api/quizzes",
+        "PATCH /api/courses/{id}"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 3,
+      "role": "Principal Admin",
+      "useCase": "Issue a certificate manually",
+      "trigger": "Offline course completion recorded",
+      "steps": [
+        "Login",
+        "Admin issue with userId courseId dc3Folio"
+      ],
+      "endpoints": [
+        "POST /api/certificates/admin/issue"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 4,
+      "role": "Principal Admin",
+      "useCase": "Revoke a certificate",
+      "trigger": "Fraud or invalidation",
+      "steps": [
+        "Find cert",
+        "POST revoke with reason"
+      ],
+      "endpoints": [
+        "POST /api/certificates/{id}/revoke"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 5,
+      "role": "Principal Admin",
+      "useCase": "View platform-wide KPIs",
+      "trigger": "Weekly review",
+      "steps": [
+        "GET overview",
+        "GET courses",
+        "GET learners"
+      ],
+      "endpoints": [
+        "GET /api/analytics/overview",
+        "GET /api/analytics/courses",
+        "GET /api/analytics/learners"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 6,
+      "role": "Principal Admin",
+      "useCase": "Export compliance report PDF",
+      "trigger": "STPS audit request",
+      "steps": [
+        "Login",
+        "GET analytics report PDF"
+      ],
+      "endpoints": [
+        "GET /api/analytics/report.pdf"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": "Date-range filter not documented"
+    },
+    {
+      "id": 7,
+      "role": "Principal Admin",
+      "useCase": "Investigate suspicious action via audit log",
+      "trigger": "Security incident",
+      "steps": [
+        "GET audit with actor filter"
+      ],
+      "endpoints": [
+        "GET /api/audit"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": "No CSV export"
+    },
+    {
+      "id": 8,
+      "role": "Principal Admin",
+      "useCase": "Respond to support tickets",
+      "trigger": "Client ticket raised",
+      "steps": [
+        "GET tickets",
+        "PATCH with response and status"
+      ],
+      "endpoints": [
+        "GET /api/support/tickets",
+        "PATCH /api/support/tickets/{id}"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": "No threaded replies"
+    },
+    {
+      "id": 9,
+      "role": "Principal Admin",
+      "useCase": "Deactivate an offboarded user",
+      "trigger": "HR request",
+      "steps": [
+        "DELETE user"
+      ],
+      "endpoints": [
+        "DELETE /api/users/{id}"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 10,
+      "role": "Principal Admin",
+      "useCase": "Upload company logo or DC-3 template asset",
+      "trigger": "Branding update",
+      "steps": [
+        "POST uploads"
+      ],
+      "endpoints": [
+        "POST /api/uploads"
+      ],
+      "priority": "LOW",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 11,
+      "role": "Principal Admin",
+      "useCase": "Manage document library items",
+      "trigger": "New STPS document",
+      "steps": [
+        "POST library",
+        "PATCH library"
+      ],
+      "endpoints": [
+        "POST /api/library",
+        "PATCH /api/library/{id}"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 12,
+      "role": "Client",
+      "useCase": "Register own company profile",
+      "trigger": "Post-signup",
+      "steps": [
+        "POST company",
+        "PATCH profile"
+      ],
+      "endpoints": [
+        "POST /api/companies",
+        "PATCH /api/companies/{id}"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 13,
+      "role": "Client",
+      "useCase": "Register a subcontractor company under my client",
+      "trigger": "New subcontractor engagement",
+      "steps": [
+        "POST company with type=subcontractor and parentCompanyId"
+      ],
+      "endpoints": [
+        "POST /api/companies"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 14,
+      "role": "Client",
+      "useCase": "View list of my subcontractors",
+      "trigger": "Compliance review",
+      "steps": [
+        "GET companies/{id}/subcontractors"
+      ],
+      "endpoints": [
+        "GET /api/companies/{id}/subcontractors"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 15,
+      "role": "Client",
+      "useCase": "Purchase courses (checkout)",
+      "trigger": "Employee training plan",
+      "steps": [
+        "POST checkout with items"
+      ],
+      "endpoints": [
+        "POST /api/payments/checkout"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "PARTIAL",
+      "gaps": "Provider webhook not exposed"
+    },
+    {
+      "id": 16,
+      "role": "Client",
+      "useCase": "Download tax invoice PDF",
+      "trigger": "Accounting cycle",
+      "steps": [
+        "GET invoices",
+        "GET invoice PDF"
+      ],
+      "endpoints": [
+        "GET /api/payments/me/invoices",
+        "GET /api/payments/invoices/{id}/pdf"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "PARTIAL",
+      "gaps": "CFDI stamping endpoint not visible"
+    },
+    {
+      "id": 17,
+      "role": "Client",
+      "useCase": "View compliance dashboard for my company",
+      "trigger": "Weekly review",
+      "steps": [
+        "GET overview",
+        "GET learners"
+      ],
+      "endpoints": [
+        "GET /api/analytics/overview",
+        "GET /api/analytics/learners"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "PARTIAL",
+      "gaps": "Per-company scoping not documented"
+    },
+    {
+      "id": 18,
+      "role": "Client",
+      "useCase": "Verify a subcontractor employee certificate",
+      "trigger": "Site access check",
+      "steps": [
+        "GET certificate lookup by code"
+      ],
+      "endpoints": [
+        "GET /api/certificates/lookup/{code}"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 19,
+      "role": "Client",
+      "useCase": "Raise a support ticket",
+      "trigger": "Issue encountered",
+      "steps": [
+        "POST support ticket"
+      ],
+      "endpoints": [
+        "POST /api/support/tickets"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 20,
+      "role": "Client",
+      "useCase": "Assign a course to my employees in bulk",
+      "trigger": "Compliance deadline",
+      "steps": [
+        "POST enrollments/assign with userIds"
+      ],
+      "endpoints": [
+        "POST /api/enrollments/assign"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 21,
+      "role": "Client Admin",
+      "useCase": "Invite employees to platform",
+      "trigger": "New hires",
+      "steps": [
+        "POST users/invite"
+      ],
+      "endpoints": [
+        "POST /api/users/invite"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": "No CSV bulk import"
+    },
+    {
+      "id": 22,
+      "role": "Client Admin",
+      "useCase": "Bulk assign NOM course to team",
+      "trigger": "Annual training cycle",
+      "steps": [
+        "POST enrollments/assign"
+      ],
+      "endpoints": [
+        "POST /api/enrollments/assign"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 23,
+      "role": "Client Admin",
+      "useCase": "Track team progress",
+      "trigger": "Monthly report",
+      "steps": [
+        "GET enrollments",
+        "GET analytics learners"
+      ],
+      "endpoints": [
+        "GET /api/enrollments",
+        "GET /api/analytics/learners"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "PARTIAL",
+      "gaps": "Scoping filter unclear"
+    },
+    {
+      "id": 24,
+      "role": "Client Admin",
+      "useCase": "Email a certificate to an employee",
+      "trigger": "Employee request",
+      "steps": [
+        "POST cert email"
+      ],
+      "endpoints": [
+        "POST /api/certificates/{id}/email"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 25,
+      "role": "Client Admin",
+      "useCase": "Deactivate an offboarded employee",
+      "trigger": "HR offboarding",
+      "steps": [
+        "DELETE user"
+      ],
+      "endpoints": [
+        "DELETE /api/users/{id}"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 26,
+      "role": "Client Admin",
+      "useCase": "Export learner CSV for internal reporting",
+      "trigger": "Board meeting",
+      "steps": [
+        "GET analytics learners CSV"
+      ],
+      "endpoints": [
+        "GET /api/analytics/learners.csv"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 27,
+      "role": "Client Admin",
+      "useCase": "Cancel an incorrect enrollment",
+      "trigger": "User error",
+      "steps": [
+        "DELETE enrollment"
+      ],
+      "endpoints": [
+        "DELETE /api/enrollments/{id}"
+      ],
+      "priority": "LOW",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 28,
+      "role": "Client Admin",
+      "useCase": "Reset an employee password",
+      "trigger": "Lockout",
+      "steps": [
+        "POST forgot-password on employee behalf"
+      ],
+      "endpoints": [
+        "POST /api/auth/forgot-password"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "PARTIAL",
+      "gaps": "No admin-triggered reset endpoint"
+    },
+    {
+      "id": 29,
+      "role": "Client Admin",
+      "useCase": "View unread notifications count",
+      "trigger": "Login",
+      "steps": [
+        "GET notifications unread-count"
+      ],
+      "endpoints": [
+        "GET /api/notifications/unread-count"
+      ],
+      "priority": "LOW",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 30,
+      "role": "Subcontractor",
+      "useCase": "Register own employees under subcontractor company",
+      "trigger": "Site access requirement",
+      "steps": [
+        "POST users/invite"
+      ],
+      "endpoints": [
+        "POST /api/users/invite"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 31,
+      "role": "Subcontractor",
+      "useCase": "Assign required NOM courses to own employees",
+      "trigger": "Client requirement",
+      "steps": [
+        "POST enrollments/assign"
+      ],
+      "endpoints": [
+        "POST /api/enrollments/assign"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 32,
+      "role": "Subcontractor",
+      "useCase": "Prove compliance to parent client",
+      "trigger": "Audit",
+      "steps": [
+        "GET certificates admin all scoped",
+        "Share codes"
+      ],
+      "endpoints": [
+        "GET /api/certificates/me",
+        "GET /api/certificates/lookup/{code}"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "PARTIAL",
+      "gaps": "Scoped list for subcontractor role unclear"
+    },
+    {
+      "id": 33,
+      "role": "Subcontractor",
+      "useCase": "Pay for course seats",
+      "trigger": "Own budget",
+      "steps": [
+        "POST checkout"
+      ],
+      "endpoints": [
+        "POST /api/payments/checkout"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "PARTIAL",
+      "gaps": "Provider webhook missing"
+    },
+    {
+      "id": 34,
+      "role": "Subcontractor",
+      "useCase": "View own team progress",
+      "trigger": "Weekly review",
+      "steps": [
+        "GET enrollments",
+        "GET analytics learners"
+      ],
+      "endpoints": [
+        "GET /api/enrollments",
+        "GET /api/analytics/learners"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "PARTIAL",
+      "gaps": "Analytics scoping to subcontractor not documented"
+    },
+    {
+      "id": 35,
+      "role": "Subcontractor",
+      "useCase": "Raise support ticket",
+      "trigger": "Issue",
+      "steps": [
+        "POST support"
+      ],
+      "endpoints": [
+        "POST /api/support/tickets"
+      ],
+      "priority": "LOW",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 36,
+      "role": "Employee",
+      "useCase": "Login with company credentials",
+      "trigger": "Assigned training",
+      "steps": [
+        "POST auth/login"
+      ],
+      "endpoints": [
+        "POST /api/auth/login"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 37,
+      "role": "Employee",
+      "useCase": "Update own profile with CURP",
+      "trigger": "First login",
+      "steps": [
+        "PATCH users/me with curp"
+      ],
+      "endpoints": [
+        "PATCH /api/users/me"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": "CURP validation format not confirmed"
+    },
+    {
+      "id": 38,
+      "role": "Employee",
+      "useCase": "Change password",
+      "trigger": "Security best practice",
+      "steps": [
+        "POST auth/change-password"
+      ],
+      "endpoints": [
+        "POST /api/auth/change-password"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 39,
+      "role": "Employee",
+      "useCase": "Recover forgotten password",
+      "trigger": "Cannot login",
+      "steps": [
+        "POST forgot-password",
+        "POST reset-password"
+      ],
+      "endpoints": [
+        "POST /api/auth/forgot-password",
+        "POST /api/auth/reset-password"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 40,
+      "role": "Employee",
+      "useCase": "Browse public course catalog",
+      "trigger": "Self-enrollment interest",
+      "steps": [
+        "GET courses",
+        "GET course by slug"
+      ],
+      "endpoints": [
+        "GET /api/courses",
+        "GET /api/courses/slug/{slug}"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 41,
+      "role": "Employee",
+      "useCase": "Self-enroll in an assigned NOM course",
+      "trigger": "Assigned by admin",
+      "steps": [
+        "POST enrollments"
+      ],
+      "endpoints": [
+        "POST /api/enrollments"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 42,
+      "role": "Employee",
+      "useCase": "Watch course videos and report progress",
+      "trigger": "Study session",
+      "steps": [
+        "GET module watch",
+        "PATCH watch seconds",
+        "POST module complete"
+      ],
+      "endpoints": [
+        "GET /api/enrollments/{id}/modules/{moduleId}/watch",
+        "PATCH /api/enrollments/{id}/modules/{moduleId}/watch",
+        "POST /api/enrollments/{id}/modules/{moduleId}/complete"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 43,
+      "role": "Employee",
+      "useCase": "Take end-of-course quiz",
+      "trigger": "All modules complete",
+      "steps": [
+        "GET quiz",
+        "POST attempt"
+      ],
+      "endpoints": [
+        "GET /api/quizzes/by-course/{courseId}",
+        "POST /api/quizzes/{id}/attempts"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 44,
+      "role": "Employee",
+      "useCase": "Download own DC-3 certificate PDF",
+      "trigger": "Post-passing",
+      "steps": [
+        "GET certificates/me",
+        "GET cert PDF"
+      ],
+      "endpoints": [
+        "GET /api/certificates/me",
+        "GET /api/certificates/{id}/pdf"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": "DC-3 template compliance not verified"
+    },
+    {
+      "id": 45,
+      "role": "Employee",
+      "useCase": "Request recertification when about to expire",
+      "trigger": "Expiry notification",
+      "steps": [
+        "POST enrollment recertify"
+      ],
+      "endpoints": [
+        "POST /api/enrollments/{id}/recertify"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "PARTIAL",
+      "gaps": "NOM-specific expiry windows not modeled"
+    },
+    {
+      "id": 46,
+      "role": "Employee",
+      "useCase": "View my enrolled courses and progress",
+      "trigger": "Dashboard load",
+      "steps": [
+        "GET enrollments/me"
+      ],
+      "endpoints": [
+        "GET /api/enrollments/me"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 47,
+      "role": "Employee",
+      "useCase": "Read in-app notifications",
+      "trigger": "Bell icon",
+      "steps": [
+        "GET notifications",
+        "POST read"
+      ],
+      "endpoints": [
+        "GET /api/notifications",
+        "POST /api/notifications/{id}/read"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 48,
+      "role": "Employee",
+      "useCase": "Search safety library for reference docs",
+      "trigger": "On-the-job question",
+      "steps": [
+        "GET library with q"
+      ],
+      "endpoints": [
+        "GET /api/library"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 49,
+      "role": "Employee",
+      "useCase": "Open a support ticket",
+      "trigger": "Access issue",
+      "steps": [
+        "POST support"
+      ],
+      "endpoints": [
+        "POST /api/support/tickets"
+      ],
+      "priority": "LOW",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 50,
+      "role": "Employee",
+      "useCase": "Cancel a wrong enrollment",
+      "trigger": "Wrong course",
+      "steps": [
+        "DELETE enrollment"
+      ],
+      "endpoints": [
+        "DELETE /api/enrollments/{id}"
+      ],
+      "priority": "LOW",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 51,
+      "role": "Employee",
+      "useCase": "View past module completions",
+      "trigger": "Progress review",
+      "steps": [
+        "GET completions"
+      ],
+      "endpoints": [
+        "GET /api/enrollments/{id}/completions"
+      ],
+      "priority": "LOW",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 52,
+      "role": "Public Verifier",
+      "useCase": "Verify a candidate certificate by code",
+      "trigger": "Hiring/site access check",
+      "steps": [
+        "GET cert lookup"
+      ],
+      "endpoints": [
+        "GET /api/certificates/lookup/{code}"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": "No QR flow documented"
+    },
+    {
+      "id": 53,
+      "role": "Public Verifier",
+      "useCase": "Download verified certificate PDF publicly",
+      "trigger": "Attach to file",
+      "steps": [
+        "GET cert PDF by code"
+      ],
+      "endpoints": [
+        "GET /api/certificates/lookup/{code}/pdf"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 54,
+      "role": "Public Verifier",
+      "useCase": "Browse public course catalog",
+      "trigger": "Marketing site",
+      "steps": [
+        "GET courses"
+      ],
+      "endpoints": [
+        "GET /api/courses"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 55,
+      "role": "Vendedor",
+      "useCase": "Login as sales rep",
+      "trigger": "Sales workflow",
+      "steps": [
+        "Would use POST auth/login"
+      ],
+      "endpoints": [
+        "POST /api/auth/login"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 56,
+      "role": "Vendedor",
+      "useCase": "Register a new lead/prospect client",
+      "trigger": "Sales call",
+      "steps": [
+        "Would need POST leads"
+      ],
+      "endpoints": [],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 57,
+      "role": "Vendedor",
+      "useCase": "Convert lead to paying client",
+      "trigger": "Contract signed",
+      "steps": [
+        "Would POST company + link vendedor"
+      ],
+      "endpoints": [
+        "POST /api/companies"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 58,
+      "role": "Vendedor",
+      "useCase": "View own sales pipeline",
+      "trigger": "Weekly review",
+      "steps": [
+        "Would GET sales/pipeline"
+      ],
+      "endpoints": [],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 59,
+      "role": "Vendedor",
+      "useCase": "Track commission on client payments",
+      "trigger": "Payment paid",
+      "steps": [
+        "Would GET commissions"
+      ],
+      "endpoints": [],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 60,
+      "role": "Vendedor",
+      "useCase": "Quote a course package to a prospect",
+      "trigger": "Sales conversation",
+      "steps": [
+        "Would POST quote"
+      ],
+      "endpoints": [],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 61,
+      "role": "Vendedor",
+      "useCase": "See analytics filtered by own clients",
+      "trigger": "Performance review",
+      "steps": [
+        "Would GET analytics scoped"
+      ],
+      "endpoints": [],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 62,
+      "role": "Capacitador",
+      "useCase": "Login as instructor",
+      "trigger": "Course delivery",
+      "steps": [
+        "Would use POST auth/login"
+      ],
+      "endpoints": [
+        "POST /api/auth/login"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 63,
+      "role": "Capacitador",
+      "useCase": "Author or edit a course",
+      "trigger": "Content assignment",
+      "steps": [
+        "Would PATCH courses",
+        "PUT modules"
+      ],
+      "endpoints": [
+        "PATCH /api/courses/{id}",
+        "PUT /api/courses/{id}/modules"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 64,
+      "role": "Capacitador",
+      "useCase": "Deliver a live session or cohort",
+      "trigger": "Scheduled class",
+      "steps": [
+        "Would POST sessions"
+      ],
+      "endpoints": [],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 65,
+      "role": "Capacitador",
+      "useCase": "Grade quiz attempts for open-ended questions",
+      "trigger": "Manual grading",
+      "steps": [
+        "Would PATCH attempt score"
+      ],
+      "endpoints": [],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 66,
+      "role": "Capacitador",
+      "useCase": "View learners assigned to my courses",
+      "trigger": "Progress check",
+      "steps": [
+        "Would GET learners scoped"
+      ],
+      "endpoints": [],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 67,
+      "role": "Capacitador",
+      "useCase": "Upload teaching material to library",
+      "trigger": "New content",
+      "steps": [
+        "Would POST uploads",
+        "POST library"
+      ],
+      "endpoints": [
+        "POST /api/uploads",
+        "POST /api/library"
+      ],
+      "priority": "MEDIUM",
+      "backendStatus": "DONE",
+      "gaps": ""
+    },
+    {
+      "id": 68,
+      "role": "Capacitador",
+      "useCase": "Issue completion certificate after live class",
+      "trigger": "Session completed",
+      "steps": [
+        "Would POST cert issue"
+      ],
+      "endpoints": [
+        "POST /api/certificates/admin/issue"
+      ],
+      "priority": "HIGH",
+      "backendStatus": "DONE",
+      "gaps": ""
+    }
+  ]
+}

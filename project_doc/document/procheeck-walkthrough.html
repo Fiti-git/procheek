@@ -1,0 +1,492 @@
+<title>PROCHEECK — Prototype Walkthrough</title>
+<style>
+  :root {
+    --ink: #0f172a;
+    --ink-2: #1e293b;
+    --amber: #f59e0b;
+    --amber-hover: #d97706;
+    --amber-text: #92400e;
+    --amber-bg: #fef3e2;
+    --bg: #fafaf9;
+    --card: #ffffff;
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+    --text: #1c1917;
+    --text-muted: #57534e;
+    --text-faint: #78716c;
+    --success: #15803d;
+    --success-bg: #dcfce7;
+    --info: #1d4ed8;
+    --info-bg: #dbeafe;
+    --danger: #b91c1c;
+    --danger-bg: #fef2f2;
+    --neutral-bg: #f1f0ee;
+    --mono: "SF Mono", "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.05);
+  }
+
+  :root[data-theme="dark"] {
+    --ink: #f1f5f9;
+    --ink-2: #e2e8f0;
+    --amber: #f59e0b;
+    --amber-hover: #fbbf24;
+    --amber-text: #fbbf24;
+    --amber-bg: #2a1e0a;
+    --bg: #131211;
+    --card: #1c1a19;
+    --border: #322f2d;
+    --border-strong: #46413e;
+    --text: #f2f0ee;
+    --text-muted: #b3aca6;
+    --text-faint: #8a8380;
+    --success: #4ade80;
+    --success-bg: #0f2a18;
+    --info: #60a5fa;
+    --info-bg: #0f1f38;
+    --danger: #f87171;
+    --danger-bg: #2e1414;
+    --neutral-bg: #242220;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #f1f5f9;
+      --ink-2: #e2e8f0;
+      --amber: #f59e0b;
+      --amber-hover: #fbbf24;
+      --amber-text: #fbbf24;
+      --amber-bg: #2a1e0a;
+      --bg: #131211;
+      --card: #1c1a19;
+      --border: #322f2d;
+      --border-strong: #46413e;
+      --text: #f2f0ee;
+      --text-muted: #b3aca6;
+      --text-faint: #8a8380;
+      --success: #4ade80;
+      --success-bg: #0f2a18;
+      --info: #60a5fa;
+      --info-bg: #0f1f38;
+      --danger: #f87171;
+      --danger-bg: #2e1414;
+      --neutral-bg: #242220;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  /* ---------- Header ---------- */
+  .masthead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 36px;
+  }
+  .wordmark {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+  }
+  h1 {
+    font-family: var(--sans);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-size: 34px;
+    line-height: 1.15;
+    color: var(--ink);
+    margin: 10px 0 8px;
+    text-wrap: balance;
+  }
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 46ch;
+  }
+  .stamp {
+    text-align: right;
+    font-size: 13px;
+    color: var(--text-faint);
+    white-space: nowrap;
+    padding-top: 4px;
+  }
+  .stamp strong { color: var(--text-muted); font-weight: 600; }
+
+  h2 {
+    font-family: var(--sans);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    font-size: 21px;
+    color: var(--ink);
+    margin: 0 0 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  h2 .n {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--amber-text);
+    background: var(--amber-bg);
+    border-radius: 5px;
+    padding: 2px 7px;
+  }
+  .section {
+    margin-bottom: 44px;
+  }
+  .section-intro {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin: 8px 0 18px;
+    max-width: 60ch;
+  }
+
+  p { margin: 0 0 12px; }
+  a { color: var(--amber-text); text-decoration: none; border-bottom: 1px solid currentColor; }
+  a:hover { color: var(--amber-hover); }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    background: var(--neutral-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+  }
+
+  /* ---------- Callout ---------- */
+  .callout {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--amber);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+  .callout ol {
+    margin: 10px 0 0;
+    padding-left: 20px;
+  }
+  .callout li { margin-bottom: 8px; }
+  .callout li:last-child { margin-bottom: 0; }
+  .url-slot {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--neutral-bg);
+    border: 1px dashed var(--border-strong);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text-faint);
+  }
+
+  /* ---------- Tables ---------- */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    background: var(--card);
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--neutral-bg); }
+  td.mono, .mono-cell { font-family: var(--mono); font-size: 13.5px; color: var(--text-muted); }
+  td.name { font-weight: 600; color: var(--ink); white-space: nowrap; }
+  td.company { color: var(--text-muted); font-size: 13.5px; }
+  td.route { font-family: var(--mono); font-size: 13.5px; color: var(--ink-2); white-space: nowrap; }
+  td.desc { color: var(--text-muted); }
+
+  /* ---------- Role chips ---------- */
+  .chip {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .chip-admin { background: var(--amber-bg); color: var(--amber-text); }
+  .chip-client { background: var(--info-bg); color: var(--info); }
+  .chip-sub { background: var(--neutral-bg); color: var(--text-muted); border: 1px solid var(--border-strong); }
+  .chip-emp { background: var(--neutral-bg); color: var(--text-muted); }
+  .chip-suspended { background: var(--danger-bg); color: var(--danger); }
+
+  .default-flag {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--success);
+    background: var(--success-bg);
+    padding: 2px 7px;
+    border-radius: 5px;
+    margin-left: 8px;
+  }
+
+  /* ---------- Site map groups ---------- */
+  .audience-group { margin-bottom: 22px; }
+  .audience-group:last-child { margin-bottom: 0; }
+  .audience-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .audience-label .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--amber);
+    flex-shrink: 0;
+  }
+
+  /* ---------- Limitations ---------- */
+  .limits {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .limit-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 13px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+  }
+  .limit-item .mark {
+    color: var(--danger);
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+    line-height: 1.5;
+  }
+
+  /* ---------- Footer ---------- */
+  .footer {
+    margin-top: 52px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+    color: var(--text-faint);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 560px) {
+    .masthead { flex-direction: column; }
+    .stamp { text-align: left; }
+    h1 { font-size: 27px; }
+    thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
+  }
+</style>
+
+<div class="page">
+
+  <div class="masthead">
+    <div>
+      <div class="wordmark">PROCHEECK</div>
+      <h1>Prototype walkthrough</h1>
+      <p class="subtitle">A map of everything that's built so far, and how to get around it.</p>
+    </div>
+    <div class="stamp">Phase 0 review<br><strong>For Ale</strong></div>
+  </div>
+
+  <div class="section">
+    <div class="callout">
+      <p><strong>Before you start:</strong> everything here runs on mock data held in the browser's memory. Nothing you create, edit, or delete is permanent — a refresh of the tab can reset it back to the starting fixtures. That's intentional for this stage (see "What's not real yet" below), not a bug.</p>
+      <ol>
+        <li>Open <span class="url-slot">‹ link goes here once we deploy ›</span> — until then, this is the same map for the local dev copy.</li>
+        <li>The site opens in <strong>Spanish</strong> by default (our confirmed primary market). Switch to English anytime with the <strong>ES / EN</strong> toggle, top right of every page.</li>
+        <li>To see a signed-in view, click <strong>Sign in</strong>, type any email and any password — this prototype doesn't check credentials yet, so both fields just need <em>something</em> in them.</li>
+        <li>Once inside, look for the dashed <strong>"Test role"</strong> button next to the language toggle. That's the real way to switch who you're looking at the platform as — not the login screen. Click it and pick from the 5 roles below; the whole app re-renders instantly as that person.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><span class="n">01</span>Demo accounts</h2>
+    <p class="section-intro">The "Test role" switcher jumps between one representative account per role. Their emails are shown here for reference — you don't need to type them anywhere; picking the role does the same thing instantly.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Role</th><th>Company</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Alejandra Ibarra Nuñez</td>
+            <td class="mono">ale@procheeck.com</td>
+            <td><span class="chip chip-admin">Principal Admin</span></td>
+            <td class="company">PROCHEECK (platform owner)</td>
+          </tr>
+          <tr>
+            <td class="name">Fernando Reyes Ortega</td>
+            <td class="mono">fernando.reyes@acmeconstructora.mx</td>
+            <td><span class="chip chip-client">Client</span></td>
+            <td class="company">Acme Constructora</td>
+          </tr>
+          <tr>
+            <td class="name">Paola Guzmán Treviño</td>
+            <td class="mono">paola.guzman@acmeconstructora.mx</td>
+            <td><span class="chip chip-client">Client Admin</span></td>
+            <td class="company">Acme Constructora</td>
+          </tr>
+          <tr>
+            <td class="name">Héctor Torres Villareal</td>
+            <td class="mono">hector.torres@subtorres.mx</td>
+            <td><span class="chip chip-sub">Subcontractor</span></td>
+            <td class="company">Acme Constructora (via Torres)</td>
+          </tr>
+          <tr>
+            <td class="name">Juan Pérez García</td>
+            <td class="mono">juan.perez@acmeconstructora.mx</td>
+            <td><span class="chip chip-emp">Employee</span></td>
+            <td class="company">Acme Constructora <span class="default-flag">default</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-intro" style="margin-top:10px; font-size: 13px;">15 more people exist across two other companies (Bravo Industrial, Delta Minería) to make the Team and Reports pages feel populated — including one intentionally-suspended account (Karla Vázquez Nuño) so that state has something to show too. Ask if you want the full roster.</p>
+  </div>
+
+  <div class="section">
+    <h2><span class="n">02</span>Full site map</h2>
+    <p class="section-intro">Everything below is reachable by clicking through the UI — nothing here needs a typed-in URL. It's listed for a fast overview of what exists.</p>
+
+    <div class="audience-group">
+      <div class="audience-label"><span class="dot"></span>Public site — no sign-in needed</div>
+      <div class="table-wrap">
+        <table>
+          <tbody>
+            <tr><td class="route">/</td><td class="desc">Homepage — hero, featured courses, consulting &amp; software teasers</td></tr>
+            <tr><td class="route">/courses</td><td class="desc">Full course catalog, filterable</td></tr>
+            <tr><td class="route">/courses/[course]</td><td class="desc">Course detail — syllabus, instructor, purchase card</td></tr>
+            <tr><td class="route">/consulting</td><td class="desc">Consulting services overview</td></tr>
+            <tr><td class="route">/consulting/on-site</td><td class="desc">On-site safety watch service page</td></tr>
+            <tr><td class="route">/consulting/training-development</td><td class="desc">Custom training development service page</td></tr>
+            <tr><td class="route">/software</td><td class="desc">Software overview + plan comparison</td></tr>
+            <tr><td class="route">/software/platform</td><td class="desc">Safety management platform service page</td></tr>
+            <tr><td class="route">/software/subscription</td><td class="desc">Online training subscription service page</td></tr>
+            <tr><td class="route">/cart → /checkout → /checkout/success</td><td class="desc">Full purchase flow, ending in an order confirmation</td></tr>
+            <tr><td class="route">/certificate-search</td><td class="desc">Public DC-3 certificate lookup by folio or CURP</td></tr>
+            <tr><td class="route">/login → /login/password</td><td class="desc">Two-step sign-in (see note above — not a real credential check yet)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="audience-group">
+      <div class="audience-label"><span class="dot"></span>Employee dashboard</div>
+      <div class="table-wrap">
+        <table>
+          <tbody>
+            <tr><td class="route">/dashboard</td><td class="desc">Home — progress, valid certs, upcoming expirations, recommended courses</td></tr>
+            <tr><td class="route">/dashboard/courses</td><td class="desc">"My courses" + browse available courses</td></tr>
+            <tr><td class="route">/dashboard/courses/[id]</td><td class="desc">Course player — video, modules, materials</td></tr>
+            <tr><td class="route">/dashboard/courses/[id]/quiz</td><td class="desc">Timed exam, graded on submit</td></tr>
+            <tr><td class="route">/dashboard/certificates</td><td class="desc">Earned certificates — view, download DC-3, email</td></tr>
+            <tr><td class="route">/dashboard/library</td><td class="desc">Reference manuals and documents</td></tr>
+            <tr><td class="route">/dashboard/account</td><td class="desc">Profile, security, preferences</td></tr>
+            <tr><td class="route">/dashboard/support</td><td class="desc">Contact info, live chat, support ticket form, FAQ</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="audience-group">
+      <div class="audience-label"><span class="dot"></span>Client / Client Admin / Subcontractor</div>
+      <div class="table-wrap">
+        <table>
+          <tbody>
+            <tr><td class="route">/dashboard/team</td><td class="desc">Their landing page — team roster, scoped to their own people</td></tr>
+            <tr><td class="route">/dashboard/reports</td><td class="desc">Compliance charts and activity for their organization</td></tr>
+            <tr><td class="route" style="color: var(--text-faint);">+ all 8 Employee pages above</td><td class="desc">Same pages, same components — every role can also take courses</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="audience-group">
+      <div class="audience-label"><span class="dot"></span>Principal Admin</div>
+      <div class="table-wrap">
+        <table>
+          <tbody>
+            <tr><td class="route">/admin/users</td><td class="desc">Every account on the platform — filter, suspend, reassign roles</td></tr>
+            <tr><td class="route">/admin/courses</td><td class="desc">Full course catalog management</td></tr>
+            <tr><td class="route">/admin/courses/[id]/edit</td><td class="desc">Course editor — info, content, exam, pricing, assignment</td></tr>
+            <tr><td class="route">/admin/certificates</td><td class="desc">Certificate templates + every certificate issued platform-wide</td></tr>
+            <tr><td class="route">/admin/library</td><td class="desc">Library documents, assignable per company</td></tr>
+            <tr><td class="route">/admin/reports</td><td class="desc">Platform-wide compliance reporting, with a company selector</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2><span class="n">03</span>What's not real yet</h2>
+    <p class="section-intro">So nothing here reads as a bug when it's actually a deliberate boundary of this stage:</p>
+    <div class="limits">
+      <div class="limit-item"><span class="mark">–</span>No real payments — checkout completes but nothing is charged</div>
+      <div class="limit-item"><span class="mark">–</span>No real invoicing or DC-3 folio issuance</div>
+      <div class="limit-item"><span class="mark">–</span>No real email delivery</div>
+      <div class="limit-item"><span class="mark">–</span>No data survives a hard refresh — it's all in-browser mock data</div>
+      <div class="limit-item"><span class="mark">–</span>Login accepts anything — the "Test role" switcher is the real controls</div>
+      <div class="limit-item"><span class="mark">–</span>No mobile app — this is a responsive site, not native</div>
+      <div class="limit-item"><span class="mark">–</span>No dark mode toggle exposed yet (it's built, just hidden)</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>PROCHEECK — Phase 0 prototype, built to spec against the approved build plan.</span>
+    <span>Questions on anything above? Just ask.</span>
+  </div>
+
+</div>
