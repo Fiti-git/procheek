@@ -40,3 +40,7 @@ vendor/
 
 # Claude local
 .claude/
+
+# Local credentials handoff (never commit)
+credentials.txt
+
