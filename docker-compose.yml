@@ -4,16 +4,16 @@ services:
     container_name: procheeck-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: procheeck
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-procheeck}
     ports:
       - "5433:5432"
     volumes:
       - procheeck_pgdata:/var/lib/postgresql/data
       - ./backend/src/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d procheeck"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-procheeck}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -29,16 +29,16 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      NODE_ENV: development
+      NODE_ENV: ${NODE_ENV:-production}
       PORT: 4000
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: procheeck
-      JWT_SECRET: dev-secret-change-me
-      JWT_EXPIRES_IN: 7d
-      APP_URL: http://localhost:3000
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-procheeck}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      APP_URL: ${APP_URL:-http://localhost:3000}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       MAIL_FROM: PROCHEECK <onboarding@resend.dev>
       SENTRY_DSN: ${SENTRY_DSN:-}
@@ -52,6 +52,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000/api}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
     image: procheeck-frontend:latest
     container_name: procheeck-frontend
     restart: unless-stopped
@@ -73,9 +76,9 @@ services:
         condition: service_healthy
     environment:
       PGHOST: postgres
-      PGUSER: postgres
-      PGPASSWORD: postgres
-      PGDATABASE: procheeck
+      PGUSER: ${DB_USER:-postgres}
+      PGPASSWORD: ${DB_PASSWORD:-postgres}
+      PGDATABASE: ${DB_NAME:-procheeck}
       BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
       BACKUP_CRON: ${BACKUP_CRON:-0 3 * * *}
     volumes:
