@@ -36,7 +36,7 @@ import { TrainingModule } from './modules/training/training.module';
         password: config.get<string>('DB_PASSWORD', 'postgres'),
         database: config.get<string>('DB_NAME', 'procheeck'),
         autoLoadEntities: true,
-        synchronize: false,
+        synchronize: config.get<string>('TYPEORM_SYNC', 'false') === 'true',
       }),
     }),
     HealthModule,
