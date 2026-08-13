@@ -44,7 +44,7 @@ services:
       SENTRY_DSN: ${SENTRY_DSN:-}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     ports:
-      - "4000:4000"
+      - "5000:4000"
     volumes:
       - procheeck_uploads:/app/uploads
 
@@ -62,7 +62,7 @@ services:
       NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
       SENTRY_DSN: ${SENTRY_DSN:-}
     ports:
-      - "3000:3000"
+      - "5173:3000"
 
   backup:
     image: postgres:16-alpine

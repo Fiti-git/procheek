@@ -6,14 +6,6 @@ import { Suspense, useState } from "react";
 import { Input, Label } from "@/components/ui/Input";
 import { login, type CurrentUser } from "@/lib/api";
 
-const DEMO_ACCOUNTS = [
-  { email: "ale.ibarra@procheck.mx", role: "Vendedor" },
-  { email: "mauricio.herrera@procheck.mx", role: "Vendedor" },
-  { email: "renata.solis@procheck.mx", role: "Vendedora" },
-  { email: "fernando.reyes@procheck.mx", role: "Capacitador" },
-  { email: "paola.guzman@procheck.mx", role: "Capacitadora" },
-];
-
 function redirectFor(role: CurrentUser["role"]): string {
   switch (role) {
     case "vendedor":
@@ -76,13 +68,6 @@ function LoginInner() {
   const changeEmail = () => {
     setStep(1);
     setPassword("");
-    setErr(null);
-  };
-
-  const useDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword("demo1234");
-    setStep(2);
     setErr(null);
   };
 
@@ -169,31 +154,6 @@ function LoginInner() {
         <Link href="/forgot-password" className="link-inline">
           ¿Olvidaste tu contraseña?
         </Link>
-      </div>
-
-      <div className="divider-hair my-8" />
-
-      <div className="rounded-lg bg-canvas-2 border border-line p-4">
-        <p className="text-xs uppercase tracking-widest text-ink-500 font-medium mb-2">
-          Cuentas de prueba
-        </p>
-        <p className="text-xs text-ink-500 mb-3">
-          Contraseña para todas: <span className="field-mono">demo1234</span>
-        </p>
-        <ul className="space-y-1.5">
-          {DEMO_ACCOUNTS.map((a) => (
-            <li key={a.email} className="flex items-center justify-between gap-2">
-              <span className="text-xs text-ink-700 field-mono">{a.email}</span>
-              <button
-                type="button"
-                onClick={() => useDemo(a.email)}
-                className="text-xs px-2 py-0.5 rounded border border-line hover:border-ink-300 text-ink-700"
-              >
-                {a.role}
-              </button>
-            </li>
-          ))}
-        </ul>
       </div>
 
       <p className="text-sm text-ink-700 mt-6">
