@@ -38,6 +38,7 @@ services:
       DB_NAME: ${DB_NAME:-procheeck}
       JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      TYPEORM_SYNC: ${TYPEORM_SYNC:-false}
       APP_URL: ${APP_URL:-http://localhost:3000}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       MAIL_FROM: PROCHEECK <onboarding@resend.dev>
