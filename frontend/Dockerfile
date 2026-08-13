@@ -14,7 +14,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=builder /app/package.json /app/package-lock.json* ./
 COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
+RUN mkdir -p ./public
 COPY --from=builder /app/next.config.mjs ./
 RUN npm install --omit=dev --no-audit --no-fund
 EXPOSE 3000
