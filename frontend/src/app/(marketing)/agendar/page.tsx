@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Monitor,
@@ -69,7 +69,7 @@ function formatSlot(iso: string) {
   });
 }
 
-export default function AgendarPage() {
+function AgendarInner() {
   const router = useRouter();
   const params = useSearchParams();
   const initial = (params.get("type") as Purpose) || "demo";
@@ -489,5 +489,13 @@ export default function AgendarPage() {
         )}
       </div>
     </section>
+  );
+}
+
+export default function AgendarPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <AgendarInner />
+    </Suspense>
   );
 }
