@@ -44,3 +44,8 @@ vendor/
 # Local credentials handoff (never commit)
 credentials.txt
 
+# Playwright MCP local artifacts
+.playwright-mcp/
+procheck-*.png
+
+
