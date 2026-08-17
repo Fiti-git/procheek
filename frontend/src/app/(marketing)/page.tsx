@@ -15,34 +15,62 @@ import {
   GraduationCap,
   RefreshCw,
   Play,
+  Calendar,
+  BarChart3,
+  Users,
+  ClipboardCheck,
+  TrendingUp,
 } from "lucide-react";
 import { IMG } from "@/lib/images";
 import { DC3Card } from "@/components/DC3Card";
 
 function ProductPreview() {
+  const checklist = [
+    "Capacitación al día",
+    "Equipos de protección",
+    "Señalización correcta",
+    "Procedimientos seguros",
+    "Documentación completa",
+    "Cumplimiento STPS",
+  ];
   return (
     <div className="relative">
-      <div
-        className="rounded-2xl overflow-hidden border border-line shadow-cardHover bg-ink-900 aspect-[4/5] sm:aspect-[4/3]"
-        style={{ transform: "perspective(1200px) rotateY(-2deg) rotateX(1deg)" }}
-      >
+      <div className="relative rounded-2xl overflow-hidden shadow-cardHover aspect-[4/5] sm:aspect-[4/3] bg-ink-900">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={IMG.heroMain}
-          alt="Trabajadores de construcción con equipo de protección personal en obra"
+          alt="Trabajador de construcción con casco y chaleco de seguridad usando una tableta en obra"
           className="h-full w-full object-cover"
         />
+        <div className="absolute inset-0 bg-gradient-to-l from-black/30 via-transparent to-transparent" />
       </div>
 
-      {/* Floating DC-3 mini certificate */}
-      <div className="absolute -bottom-6 -left-6 w-64 hidden sm:block">
-        <DC3Card
-          folio="PCH-2026-000101"
-          holder="JUAN PÉREZ GARCÍA"
-          courseCode="NOM-009"
-          courseName="TRABAJOS EN ALTURA"
-          validUntil="2027"
-        />
+      <div
+        className="absolute top-6 right-2 sm:-right-6 w-[240px] sm:w-[280px] bg-white rounded-2xl shadow-2xl border border-line p-5"
+        style={{ transform: "rotate(2deg)" }}
+      >
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-line">
+          <span className="font-display font-bold text-ink-900 tracking-tight">
+            CHECK LIST
+          </span>
+          <ClipboardCheck className="h-5 w-5 text-[#F97316]" />
+        </div>
+        <ul className="space-y-2.5">
+          {checklist.map((item) => (
+            <li key={item} className="flex items-center gap-2.5">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 shrink-0">
+                <Check className="h-3 w-3 text-white" strokeWidth={3} />
+              </span>
+              <span className="text-[13px] text-ink-800 font-medium">{item}</span>
+            </li>
+          ))}
+        </ul>
+        <div
+          className="absolute -bottom-3 -right-3 border-2 border-emerald-600 text-emerald-600 font-display font-bold text-sm tracking-widest px-3 py-1 rounded bg-white"
+          style={{ transform: "rotate(-10deg)" }}
+        >
+          APROBADO
+        </div>
       </div>
     </div>
   );
@@ -266,45 +294,74 @@ export default function HomePage() {
   return (
     <>
       {/* HERO */}
-      <section className="bg-canvas">
-        <div className="container-page py-16 md:py-24 grid md:grid-cols-12 gap-12 items-center">
-          <div className="md:col-span-6">
-            <p className="kicker mb-4">
-              Plataforma de cumplimiento STPS
+      <section className="relative bg-[#0F1E3D] text-white overflow-hidden">
+        <div className="container-page pt-16 pb-14 md:pt-20 md:pb-16 grid md:grid-cols-12 gap-12 md:gap-10 items-center">
+          <div className="md:col-span-6 order-2 md:order-1">
+            <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.18em] text-[#F97316] mb-5">
+              Plataforma de capacitación STPS
             </p>
-            <h1 className="font-display text-5xl md:text-6xl lg:text-[4.25rem] text-ink-900 leading-[1.05] tracking-tighter font-semibold">
-              La forma moderna de mantener a tu equipo certificado ante la STPS.
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] leading-[1.02] tracking-tighter font-bold">
+              <span className="block text-white">Capacita a tu equipo.</span>
+              <span className="block text-[#F97316]">Cumple con la STPS.</span>
             </h1>
-            <p className="mt-6 text-lg text-ink-700 leading-relaxed max-w-lg">
-              Cursos NOM, certificados DC-3 vigentes y control de vencimientos,
-              en una sola plataforma diseñada para constructoras, industriales
-              y sus subcontratistas.
+            <p className="mt-6 text-base md:text-lg text-white/75 leading-relaxed max-w-xl">
+              Plataforma todo en uno para la capacitación, certificación y
+              seguimiento de cumplimiento en seguridad y salud en el trabajo.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4 items-center">
-              <Link href="/agendar?type=demo" className="btn-primary">
-                Solicitar demo
-              </Link>
-              <Link href="/courses" className="btn-ghost">
+
+            <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { icon: GraduationCap, text: "Cursos en línea 100% actualizados con NOM-STPS" },
+                { icon: BadgeCheck, text: "Certificados DC-3 válidos ante la STPS" },
+                { icon: BarChart3, text: "Seguimiento y reportes de cumplimiento" },
+                { icon: Users, text: "Gestiona a todo tu equipo y subcontratistas" },
+              ].map(({ icon: Icon, text }) => (
+                <div key={text} className="flex flex-col gap-2.5">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#F97316]/60 text-[#F97316]">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <p className="text-[13px] leading-snug text-white/85">{text}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-9 flex flex-wrap gap-3 items-center">
+              <Link
+                href="/courses"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold text-sm px-5 py-3 transition-colors shadow-sm"
+              >
                 Ver cursos <ArrowRight className="h-4 w-4" />
               </Link>
-            </div>
-            <div className="mt-8 flex flex-wrap items-center gap-2">
-              {[
-                "STPS Registrado",
-                "DC-3 Verificado",
-                "LFPDPPP",
-                "Cursos NOM Vigentes",
-              ].map((b) => (
-                <span key={b} className="badge-compliance">
-                  <ShieldCheck className="h-3 w-3 text-coral-500" />
-                  {b}
-                </span>
-              ))}
+              <Link
+                href="/agendar"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/25 bg-white/5 hover:bg-white/10 text-white font-semibold text-sm px-5 py-3 transition-colors"
+              >
+                <Calendar className="h-4 w-4" />
+                Agenda una demo
+              </Link>
             </div>
           </div>
 
-          <div className="md:col-span-6">
+          <div className="md:col-span-6 order-1 md:order-2">
             <ProductPreview />
+          </div>
+        </div>
+
+        <div className="border-t border-white/10">
+          <div className="container-page py-6 grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { icon: ShieldCheck, label: "Menos riesgos" },
+              { icon: ClipboardCheck, label: "Cumple la ley" },
+              { icon: Users, label: "Equipos más seguros" },
+              { icon: TrendingUp, label: "Mejores resultados" },
+            ].map(({ icon: Icon, label }) => (
+              <div key={label} className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F97316]/15 text-[#F97316] shrink-0">
+                  <Icon className="h-4.5 w-4.5" />
+                </span>
+                <span className="text-sm font-semibold text-white/90">{label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>

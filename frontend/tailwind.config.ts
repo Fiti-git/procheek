@@ -29,6 +29,16 @@ const config: Config = {
           DEFAULT: "#E4E6EA",
           strong: "#C9CDD4",
         },
+        navy: {
+          DEFAULT: "#0F1E3D",
+          900: "#0F1E3D",
+          950: "#0A1628",
+        },
+        "procheck-orange": {
+          DEFAULT: "#F97316",
+          500: "#F97316",
+          600: "#EA580C",
+        },
         coral: {
           DEFAULT: "#FF6B35",
           50: "#FFF1EB",
@@ -72,7 +82,7 @@ const config: Config = {
     },
   },
   safelist: [
-    { pattern: /^(bg|text|border)-(ink|canvas|line|coral|success|warn|danger)/ },
+    { pattern: /^(bg|text|border)-(ink|canvas|line|coral|success|warn|danger|navy)/ },
   ],
   plugins: [],
 };
