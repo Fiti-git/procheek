@@ -47,5 +47,7 @@ credentials.txt
 # Playwright MCP local artifacts
 .playwright-mcp/
 procheck-*.png
+coursekit-*.png
+reference-*.png
 
 
