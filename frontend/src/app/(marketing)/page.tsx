@@ -275,7 +275,7 @@ export default function HomePage() {
             <div className="mt-9 flex flex-wrap gap-3 items-center">
               <Link
                 href="/courses"
-                className="inline-flex items-center gap-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold text-sm px-5 py-3 transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold text-sm px-5 py-3 shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
               >
                 Ver cursos <ArrowRight className="h-4 w-4" />
               </Link>
@@ -339,9 +339,9 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 3 · INTRO HEADING */}
-      <section className="bg-canvas py-20 md:py-24">
+      <section className="bg-canvas py-28 md:py-36">
         <div className="container-page max-w-4xl text-center">
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
+          <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
             Todo lo que tu empresa necesita para cumplir con la STPS
           </h2>
           <p className="mt-6 text-lg text-ink-700 leading-relaxed">
@@ -351,7 +351,7 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 4 · ALTERNATING FEATURE BLOCKS */}
-      <section className="bg-[#0F1E3D] text-white py-20 md:py-28">
+      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white py-28 md:py-36">
         <div className="container-page space-y-20 md:space-y-28">
           {featureBlocks.map((block) => (
             <div
@@ -359,17 +359,20 @@ export default function HomePage() {
               className="grid md:grid-cols-2 gap-10 md:gap-16 items-center"
             >
               <div className={block.imageLeft ? "md:order-1" : "md:order-2"}>
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 shadow-cardHover">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={block.image}
-                    alt={block.alt}
-                    className="h-full w-full object-cover"
-                  />
+                <div className="relative">
+                  <div aria-hidden className="absolute -inset-8 -z-10 rounded-[48px] bg-procheck-orange/20 blur-3xl" />
+                  <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 shadow-cardHover">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={block.image}
+                      alt={block.alt}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 </div>
               </div>
               <div className={block.imageLeft ? "md:order-2" : "md:order-1"}>
-                <h3 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tighter leading-tight">
+                <h3 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tighter leading-[1.05]">
                   {block.heading}
                 </h3>
                 <p className="mt-5 text-base md:text-lg text-white/75 leading-relaxed">
@@ -382,19 +385,22 @@ export default function HomePage() {
           {/* Block D · DC-3 with component */}
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="md:order-2">
-              <div className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm p-8 md:p-10 flex items-center justify-center">
-                <DC3Card
-                  folio="PCH-2026-000101"
-                  holder="José Antonio Ramírez"
-                  courseCode="NOM-009"
-                  courseName="Trabajos en altura"
-                  validUntil="14/05/2028"
-                  className="w-full max-w-sm"
-                />
+              <div className="relative">
+                <div aria-hidden className="absolute -inset-8 -z-10 rounded-[48px] bg-procheck-orange/20 blur-3xl" />
+                <div className="rounded-3xl bg-white/[0.03] backdrop-blur-sm border border-white/10 p-8 md:p-10 flex items-center justify-center">
+                  <DC3Card
+                    folio="PCH-2026-000101"
+                    holder="José Antonio Ramírez"
+                    courseCode="NOM-009"
+                    courseName="Trabajos en altura"
+                    validUntil="14/05/2028"
+                    className="w-full max-w-sm"
+                  />
+                </div>
               </div>
             </div>
             <div className="md:order-1">
-              <h3 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tighter leading-tight">
+              <h3 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tighter leading-[1.05]">
                 Certificados DC-3 emitidos automáticamente
               </h3>
               <p className="mt-5 text-base md:text-lg text-white/75 leading-relaxed">
@@ -406,9 +412,9 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 5 · GET STARTED CTA */}
-      <section className="bg-[#0F1E3D] text-white border-t border-white/10 py-20 md:py-24">
+      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white border-t border-white/10 py-28 md:py-36">
         <div className="container-page max-w-3xl text-center">
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tighter leading-[1.05]">
+          <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tighter leading-[1.05]">
             Empieza hoy mismo
           </h2>
           <p className="mt-5 text-lg text-white/75 leading-relaxed">
@@ -417,7 +423,7 @@ export default function HomePage() {
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <Link
               href="/courses"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold text-sm px-6 py-3 transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold text-sm px-6 py-3 shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
             >
               Ver planes <ArrowRight className="h-4 w-4" />
             </Link>
@@ -432,14 +438,14 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 6 · 2-COL FEATURE LIST */}
-      <section className="bg-canvas py-20 md:py-24">
+      <section className="bg-canvas py-28 md:py-36">
         <div className="container-page">
           <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
             <div>
               <CoursePlayerMock />
             </div>
             <div>
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-ink-900 tracking-tighter leading-tight">
+              <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
                 Cursos diseñados para llevarte del riesgo al cumplimiento
               </h2>
               <ul className="mt-8 space-y-6">
@@ -482,11 +488,11 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 7 · FEATURED TESTIMONIAL */}
-      <section className="bg-[#0F1E3D] text-white py-20 md:py-24">
+      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white py-28 md:py-36">
         <div className="container-page">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
             <div className="md:col-span-5">
-              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 shadow-cardHover">
+              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 shadow-cardHover">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={IMG.avatar1}
@@ -504,7 +510,8 @@ export default function HomePage() {
                   />
                 ))}
               </div>
-              <blockquote className="font-display text-2xl md:text-3xl lg:text-4xl font-medium tracking-tight leading-snug text-white">
+              <div className="text-6xl md:text-8xl text-procheck-orange font-display leading-none mb-4">“</div>
+              <blockquote className="text-2xl md:text-3xl font-display italic leading-relaxed text-white">
                 &ldquo;PROCHECK nos ahorró 40 horas al mes en administración de capacitaciones y certificados. Ahora las auditorías STPS son un trámite, no un dolor de cabeza.&rdquo;
               </blockquote>
               <div className="mt-8">
@@ -521,15 +528,15 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 8 · RATINGS */}
-      <section className="bg-canvas py-20 md:py-24">
+      <section className="bg-canvas py-28 md:py-36">
         <div className="container-page">
           <div className="max-w-2xl mx-auto text-center mb-14">
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-ink-900 tracking-tighter leading-tight">
+            <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
               A las empresas les encanta cumplir con PROCHECK
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white border border-line rounded-2xl shadow-card p-8 text-center">
+            <div className="bg-white border border-line rounded-3xl shadow-card p-8 text-center">
               <div className="flex justify-center gap-1 mb-4">
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star
@@ -544,7 +551,7 @@ export default function HomePage() {
               <p className="text-sm text-ink-500 mt-1">230+ reseñas</p>
             </div>
 
-            <div className="bg-white border border-line rounded-2xl shadow-card p-8 text-center flex flex-col items-center justify-center">
+            <div className="bg-white border border-line rounded-3xl shadow-card p-8 text-center flex flex-col items-center justify-center">
               <p className="font-display text-lg text-ink-800 tracking-tight leading-snug italic">
                 &ldquo;...La forma más práctica de capacitar en NOM-STPS.&rdquo;
               </p>
@@ -553,7 +560,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="bg-white border border-line rounded-2xl shadow-card p-8 text-center">
+            <div className="bg-white border border-line rounded-3xl shadow-card p-8 text-center">
               <div className="flex justify-center gap-1 mb-4">
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star
@@ -572,10 +579,10 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 9 · PRICING */}
-      <section className="bg-canvas-2 border-y border-line py-20 md:py-24">
+      <section className="bg-canvas-2 border-y border-line py-28 md:py-36">
         <div className="container-page">
           <div className="max-w-2xl mx-auto text-center mb-10">
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
+            <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
               Precios simples y transparentes
             </h2>
             <p className="mt-5 text-lg text-ink-700 leading-relaxed">
@@ -632,7 +639,7 @@ export default function HomePage() {
                   key={tier.name}
                   className={`relative rounded-2xl p-8 flex flex-col ${
                     tier.highlighted
-                      ? "bg-[#0F1E3D] text-white border-2 border-[#F97316] shadow-cardHover"
+                      ? "bg-[#0F1E3D] text-white border-2 border-[#F97316] shadow-orangeGlowXl md:-mt-4 md:mb-0 ring-2 ring-procheck-orange ring-offset-4 ring-offset-canvas"
                       : "bg-white border border-line shadow-card"
                   }`}
                 >
@@ -721,8 +728,8 @@ export default function HomePage() {
                       tier.outlined
                         ? "border border-ink-300 text-ink-900 hover:bg-ink-50"
                         : tier.highlighted
-                          ? "bg-[#F97316] hover:bg-[#EA580C] text-white"
-                          : "bg-[#F97316] hover:bg-[#EA580C] text-white"
+                          ? "bg-[#F97316] hover:bg-[#EA580C] text-white shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
+                          : "bg-[#F97316] hover:bg-[#EA580C] text-white shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
                     }`}
                   >
                     {tier.ctaLabel} <ArrowRight className="h-4 w-4" />
