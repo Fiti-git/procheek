@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { CartBadge } from "./CartBadge";
 
 const nav = [
@@ -12,12 +13,33 @@ const nav = [
 ];
 
 export function Header() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-4 z-40 w-full px-4">
-      <div className="mx-auto max-w-7xl flex h-16 items-center justify-between gap-6 rounded-full border border-line/80 bg-white/90 pl-4 pr-3 shadow-[0_10px_40px_-10px_rgba(15,23,37,0.15)] backdrop-blur-md">
+    <header
+      className={`sticky z-40 w-full transition-all duration-300 ease-out ${
+        scrolled ? "top-4 px-4" : "top-0 px-0"
+      }`}
+    >
+      <div
+        className={`mx-auto flex items-center justify-between gap-6 transition-all duration-300 ease-out ${
+          scrolled
+            ? "max-w-7xl h-16 rounded-full border border-line/80 bg-white/90 pl-4 pr-3 shadow-[0_10px_40px_-10px_rgba(15,23,37,0.15)] backdrop-blur-md"
+            : "container-page h-20 rounded-none border-b border-line bg-white pl-0 pr-0"
+        }`}
+      >
         <Link href="/" className="flex items-center gap-3">
           <span
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-white font-display font-bold text-sm tracking-tight shrink-0"
+            className={`flex items-center justify-center rounded-lg text-white font-display font-bold tracking-tight shrink-0 transition-all duration-300 ${
+              scrolled ? "h-10 w-10 text-sm" : "h-11 w-11 text-sm"
+            }`}
             style={{ background: "linear-gradient(135deg, #0F1E3D 0%, #F97316 100%)" }}
             aria-hidden
           >
@@ -32,7 +54,11 @@ export function Header() {
                 SAFETY
               </span>
             </span>
-            <span className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.14em] text-ink-500 hidden xl:block">
+            <span
+              className={`mt-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-ink-500 transition-all duration-300 ${
+                scrolled ? "hidden xl:block" : "hidden sm:block"
+              }`}
+            >
               Plataforma de capacitación STPS
             </span>
           </span>
