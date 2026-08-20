@@ -36,32 +36,15 @@ export function Header() {
             : "container-page h-20 rounded-none border-b border-line bg-white pl-0 pr-0"
         }`}
       >
-        <Link href="/" className="flex items-center gap-2.5">
+        <Link href="/" className="flex items-center">
           <Image
-            src="/images/logo.svg"
+            src="/images/logo_bg_removed.png"
             alt="PROCHECK Solutions logo"
-            width={44}
-            height={51}
-            className={`shrink-0 h-auto transition-all duration-300 ${scrolled ? "w-10" : "w-11"}`}
+            width={160}
+            height={160}
+            className={`shrink-0 w-auto transition-all duration-300 ${scrolled ? "h-12" : "h-16"}`}
             priority
           />
-          <span className="flex flex-col leading-none">
-            <span className="flex items-baseline gap-1">
-              <span className="font-display font-bold text-xl tracking-tight text-ink-900">
-                PROCHECK
-              </span>
-              <span className="font-display font-semibold text-base text-[#F97316] tracking-wide">
-                SOLUTIONS
-              </span>
-            </span>
-            <span
-              className={`mt-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-ink-500 transition-all duration-300 ${
-                scrolled ? "hidden xl:block" : "hidden sm:block"
-              }`}
-            >
-              Capacitación y Cumplimiento
-            </span>
-          </span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">

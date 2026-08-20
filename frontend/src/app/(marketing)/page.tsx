@@ -372,7 +372,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={block.imageLeft ? "md:order-2" : "md:order-1"}>
-                <h3 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tighter leading-[1.05]">
+                <h3 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white tracking-tighter leading-[1.05]">
                   {block.heading}
                 </h3>
                 <p className="mt-5 text-base md:text-lg text-white/75 leading-relaxed">
@@ -400,7 +400,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="md:order-1">
-              <h3 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tighter leading-[1.05]">
+              <h3 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white tracking-tighter leading-[1.05]">
                 Certificados DC-3 emitidos automáticamente
               </h3>
               <p className="mt-5 text-base md:text-lg text-white/75 leading-relaxed">
