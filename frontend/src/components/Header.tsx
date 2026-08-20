@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CartBadge } from "./CartBadge";
@@ -35,23 +36,22 @@ export function Header() {
             : "container-page h-20 rounded-none border-b border-line bg-white pl-0 pr-0"
         }`}
       >
-        <Link href="/" className="flex items-center gap-3">
-          <span
-            className={`flex items-center justify-center rounded-lg text-white font-display font-bold tracking-tight shrink-0 transition-all duration-300 ${
-              scrolled ? "h-10 w-10 text-sm" : "h-11 w-11 text-sm"
-            }`}
-            style={{ background: "linear-gradient(135deg, #0F1E3D 0%, #F97316 100%)" }}
-            aria-hidden
-          >
-            PC
-          </span>
+        <Link href="/" className="flex items-center gap-2.5">
+          <Image
+            src="/images/logo.svg"
+            alt="PROCHECK Solutions logo"
+            width={44}
+            height={51}
+            className={`shrink-0 h-auto transition-all duration-300 ${scrolled ? "w-10" : "w-11"}`}
+            priority
+          />
           <span className="flex flex-col leading-none">
-            <span className="flex items-baseline gap-1.5">
+            <span className="flex items-baseline gap-1">
               <span className="font-display font-bold text-xl tracking-tight text-ink-900">
                 PROCHECK
               </span>
-              <span className="font-display font-light text-base text-ink-600 tracking-wide">
-                SAFETY
+              <span className="font-display font-semibold text-base text-[#F97316] tracking-wide">
+                SOLUTIONS
               </span>
             </span>
             <span
@@ -59,7 +59,7 @@ export function Header() {
                 scrolled ? "hidden xl:block" : "hidden sm:block"
               }`}
             >
-              Plataforma de capacitación STPS
+              Capacitación y Cumplimiento
             </span>
           </span>
         </Link>
