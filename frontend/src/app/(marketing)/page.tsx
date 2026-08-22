@@ -314,9 +314,9 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 2 · PROMO BANNER */}
-      <section className="bg-canvas py-14" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
+      <section className="bg-canvas py-10 md:py-14" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
         <div className="container-page">
-          <div className="rounded-full bg-[#0F1E3D] border border-white/10 px-6 py-4 md:px-8 md:py-5 flex flex-col md:flex-row items-center gap-4 md:gap-6 shadow-cardHover">
+          <div className="rounded-2xl md:rounded-full bg-[#0F1E3D] border border-white/10 px-6 py-4 md:px-8 md:py-5 flex flex-col md:flex-row items-center gap-4 md:gap-6 shadow-cardHover">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#F97316]/15 text-[#F97316]">
               <Gift className="h-6 w-6" />
             </span>
@@ -339,9 +339,9 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 3 · INTRO HEADING */}
-      <section className="bg-canvas py-28 md:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
+      <section className="bg-canvas py-16 md:py-28 lg:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
         <div className="container-page max-w-4xl text-center">
-          <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
             Todo lo que tu empresa necesita para cumplir con la STPS
           </h2>
           <p className="mt-6 text-lg text-ink-700 leading-relaxed">
@@ -351,7 +351,7 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 4 · ALTERNATING FEATURE BLOCKS */}
-      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white py-28 md:py-36">
+      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white py-16 md:py-28 lg:py-36">
         <div className="container-page space-y-20 md:space-y-28">
           {featureBlocks.map((block) => (
             <div
@@ -372,7 +372,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className={block.imageLeft ? "md:order-2" : "md:order-1"}>
-                <h3 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white tracking-tighter leading-[1.05]">
+                <h3 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-white tracking-tighter leading-[1.05]">
                   {block.heading}
                 </h3>
                 <p className="mt-5 text-base md:text-lg text-white/75 leading-relaxed">
@@ -412,9 +412,9 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 5 · GET STARTED CTA */}
-      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white border-t border-white/10 py-28 md:py-36">
+      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white border-t border-white/10 py-16 md:py-28 lg:py-36">
         <div className="container-page max-w-3xl text-center">
-          <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white tracking-tighter leading-[1.05]">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-white tracking-tighter leading-[1.05]">
             Empieza hoy mismo
           </h2>
           <p className="mt-5 text-lg text-white/75 leading-relaxed">
@@ -438,14 +438,14 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 6 · 2-COL FEATURE LIST */}
-      <section className="bg-canvas py-28 md:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
+      <section className="bg-canvas py-16 md:py-28 lg:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
         <div className="container-page">
           <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
             <div>
               <CoursePlayerMock />
             </div>
             <div>
-              <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
                 Cursos diseñados para llevarte del riesgo al cumplimiento
               </h2>
               <ul className="mt-8 space-y-6">
@@ -488,7 +488,7 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 7 · FEATURED TESTIMONIAL */}
-      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white py-28 md:py-36">
+      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white py-16 md:py-28 lg:py-36">
         <div className="container-page">
           <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
             <div className="md:col-span-5">
@@ -528,10 +528,10 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 8 · RATINGS */}
-      <section className="bg-canvas py-28 md:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
+      <section className="bg-canvas py-16 md:py-28 lg:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
         <div className="container-page">
           <div className="max-w-2xl mx-auto text-center mb-14">
-            <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
               A las empresas les encanta cumplir con PROCHECK
             </h2>
           </div>
@@ -579,10 +579,10 @@ export default function HomePage() {
       </section>
 
       {/* SECTION 9 · PRICING */}
-      <section className="bg-canvas-2 border-y border-line py-28 md:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
+      <section className="bg-canvas-2 border-y border-line py-16 md:py-28 lg:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
         <div className="container-page">
           <div className="max-w-2xl mx-auto text-center mb-10">
-            <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
               Precios simples y transparentes
             </h2>
             <p className="mt-5 text-lg text-ink-700 leading-relaxed">

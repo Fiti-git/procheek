@@ -42,7 +42,7 @@ export function Header() {
             alt="PROCHECK Solutions logo"
             width={160}
             height={160}
-            className={`shrink-0 w-auto transition-all duration-300 ${scrolled ? "h-16" : "h-20"}`}
+            className={`shrink-0 w-auto transition-all duration-300 ${scrolled ? "h-10 md:h-12" : "h-12 md:h-16"}`}
             priority
           />
         </Link>
