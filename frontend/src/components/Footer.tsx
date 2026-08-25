@@ -1,7 +1,11 @@
-import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export function Footer() {
+  const t = useTranslations("Footer");
+  const badges = [t("badgeStps"), t("badgeDc3"), t("badgeLfpdppp")];
+
   return (
     <footer className="bg-ink-900 text-ink-100">
       <div className="container-page py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -15,29 +19,28 @@ export function Footer() {
             </span>
           </div>
           <p className="text-sm text-ink-200 max-w-xs leading-relaxed">
-            Plataforma de cumplimiento STPS para constructoras, industriales y
-            sus subcontratistas en México.
+            {t("tagline")}
           </p>
         </div>
 
         <div>
           <h4 className="text-xs uppercase tracking-widest text-ink-300 font-medium mb-4">
-            PROCHECK
+            {t("colProcheck")}
           </h4>
           <ul className="space-y-2.5 text-sm">
             <li>
               <Link href="/courses" className="text-ink-200 hover:text-white transition-colors">
-                Cursos en línea
+                {t("coursesOnline")}
               </Link>
             </li>
             <li>
               <Link href="/consulting" className="text-ink-200 hover:text-white transition-colors">
-                Consultoría
+                {t("consulting")}
               </Link>
             </li>
             <li>
               <Link href="/software" className="text-ink-200 hover:text-white transition-colors">
-                Software
+                {t("software")}
               </Link>
             </li>
           </ul>
@@ -45,22 +48,22 @@ export function Footer() {
 
         <div>
           <h4 className="text-xs uppercase tracking-widest text-ink-300 font-medium mb-4">
-            Recursos
+            {t("colResources")}
           </h4>
           <ul className="space-y-2.5 text-sm">
             <li>
               <Link href="/help" className="text-ink-200 hover:text-white transition-colors">
-                Centro de ayuda
+                {t("helpCenter")}
               </Link>
             </li>
             <li>
               <Link href="/privacy" className="text-ink-200 hover:text-white transition-colors">
-                Aviso de privacidad
+                {t("privacy")}
               </Link>
             </li>
             <li>
               <Link href="/terms" className="text-ink-200 hover:text-white transition-colors">
-                Términos y condiciones
+                {t("terms")}
               </Link>
             </li>
           </ul>
@@ -68,7 +71,7 @@ export function Footer() {
 
         <div>
           <h4 className="text-xs uppercase tracking-widest text-ink-300 font-medium mb-4">
-            Contacto
+            {t("colContact")}
           </h4>
           <ul className="space-y-2.5 text-sm">
             <li>
@@ -79,7 +82,7 @@ export function Footer() {
                 contacto@procheck.com
               </a>
             </li>
-            <li className="text-ink-200">Ciudad de México</li>
+            <li className="text-ink-200">{t("location")}</li>
           </ul>
         </div>
       </div>
@@ -87,9 +90,9 @@ export function Footer() {
       <div className="h-px bg-ink-800" />
 
       <div className="container-page py-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-center text-xs">
-        <p className="text-ink-300">© 2026 PROCHECK Safety</p>
+        <p className="text-ink-300">{t("copyright")}</p>
         <div className="flex flex-wrap gap-2 md:justify-end">
-          {["STPS Registrado", "DC-3 Verificado", "LFPDPPP"].map((b) => (
+          {badges.map((b) => (
             <span
               key={b}
               className="inline-flex items-center gap-1.5 bg-ink-800 border border-ink-700 text-ink-100 text-[11px] font-medium tracking-wide px-2.5 py-1 rounded-full"

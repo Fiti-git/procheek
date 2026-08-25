@@ -1,4 +1,8 @@
-export default {
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+
+export default withNextIntl({
   async redirects() {
     return [
       { source: '/cursos', destination: '/courses', permanent: true },
@@ -9,4 +13,4 @@ export default {
       { source: '/terminos', destination: '/terms', permanent: true },
     ];
   },
-};
+});

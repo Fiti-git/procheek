@@ -1,20 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { CartBadge } from "./CartBadge";
-
-const nav = [
-  { href: "/courses", label: "Cursos" },
-  { href: "/consulting", label: "Consultoría" },
-  { href: "/software", label: "Software" },
-  { href: "/certificate-lookup", label: "Verificar certificado" },
-  { href: "/help", label: "Recursos" },
-];
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const t = useTranslations("Header");
+  const locale = useLocale();
+  const pathname = usePathname();
+  const router = useRouter();
+  const [, startTransition] = useTransition();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -22,6 +20,21 @@ export function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const nav = [
+    { href: "/courses", label: t("courses") },
+    { href: "/consulting", label: t("consulting") },
+    { href: "/software", label: t("software") },
+    { href: "/certificate-lookup", label: t("certificateLookup") },
+    { href: "/help", label: t("resources") },
+  ] as const;
+
+  const switchLocale = (next: "es" | "en") => {
+    if (next === locale) return;
+    startTransition(() => {
+      router.replace(pathname, { locale: next });
+    });
+  };
 
   return (
     <header
@@ -39,7 +52,7 @@ export function Header() {
         <Link href="/" className="flex items-center">
           <Image
             src="/images/logo_bg_removed.png"
-            alt="PROCHECK Solutions logo"
+            alt={t("logoAlt")}
             width={160}
             height={160}
             className={`shrink-0 w-auto transition-all duration-300 ${scrolled ? "h-10 md:h-12" : "h-12 md:h-16"}`}
@@ -60,16 +73,42 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center rounded-full border border-line overflow-hidden text-xs font-semibold">
-            <span className="px-2.5 py-1 bg-ink-900 text-white">ES</span>
-            <span className="px-2.5 py-1 text-ink-500 bg-white">EN</span>
+          <div
+            className="hidden md:flex items-center rounded-full border border-line overflow-hidden text-xs font-semibold"
+            role="group"
+            aria-label="Language switcher"
+          >
+            <button
+              type="button"
+              onClick={() => switchLocale("es")}
+              className={`px-2.5 py-1 transition-colors ${
+                locale === "es"
+                  ? "bg-ink-900 text-white"
+                  : "text-ink-500 bg-white hover:text-ink-900"
+              }`}
+              aria-pressed={locale === "es"}
+            >
+              ES
+            </button>
+            <button
+              type="button"
+              onClick={() => switchLocale("en")}
+              className={`px-2.5 py-1 transition-colors ${
+                locale === "en"
+                  ? "bg-ink-900 text-white"
+                  : "text-ink-500 bg-white hover:text-ink-900"
+              }`}
+              aria-pressed={locale === "en"}
+            >
+              EN
+            </button>
           </div>
           <CartBadge />
           <Link
             href="/login"
             className="inline-flex items-center rounded-full bg-[#FBB601] hover:bg-[#D99A00] text-white font-semibold text-sm px-5 py-2 transition-all shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5"
           >
-            Iniciar sesión
+            {t("signIn")}
           </Link>
         </div>
       </div>
