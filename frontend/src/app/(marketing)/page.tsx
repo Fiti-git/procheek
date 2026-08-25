@@ -53,7 +53,7 @@ function ProductPreview() {
           <span className="font-display font-bold text-ink-900 tracking-tight">
             CHECK LIST
           </span>
-          <ClipboardCheck className="h-5 w-5 text-[#F97316]" />
+          <ClipboardCheck className="h-5 w-5 text-[#FBB601]" />
         </div>
         <ul className="space-y-2.5">
           {checklist.map((item) => (
@@ -106,7 +106,7 @@ function CoursePlayerMock() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={IMG.course_altura} alt="Reproductor de curso" />
             <div className="absolute inset-0 z-10 flex items-center justify-center">
-              <div className="h-16 w-16 rounded-full bg-[#F97316] shadow-cardHover flex items-center justify-center">
+              <div className="h-16 w-16 rounded-full bg-[#FBB601] shadow-cardHover flex items-center justify-center">
                 <Play className="h-7 w-7 text-white fill-white ml-1" />
               </div>
             </div>
@@ -115,7 +115,7 @@ function CoursePlayerMock() {
           <div className="mt-4">
             <div className="h-1.5 rounded-full bg-ink-700 overflow-hidden">
               <div
-                className="h-full bg-[#F97316] rounded-full"
+                className="h-full bg-[#FBB601] rounded-full"
                 style={{ width: "68%" }}
               />
             </div>
@@ -136,7 +136,7 @@ function CoursePlayerMock() {
                 key={m.n}
                 className={`flex items-center gap-2 text-xs leading-tight ${
                   m.state === "active"
-                    ? "text-[#F97316] font-medium"
+                    ? "text-[#FBB601] font-medium"
                     : m.state === "done"
                       ? "text-emerald-400"
                       : "text-ink-300"
@@ -150,7 +150,7 @@ function CoursePlayerMock() {
                   <Check className="h-3.5 w-3.5 shrink-0" />
                 )}
                 {m.state === "active" && (
-                  <span className="text-[9px] font-mono uppercase tracking-wider bg-[#F97316]/20 border border-[#F97316]/40 px-1.5 py-0.5 rounded shrink-0">
+                  <span className="text-[9px] font-mono uppercase tracking-wider bg-[#FBB601]/20 border border-[#FBB601]/40 px-1.5 py-0.5 rounded shrink-0">
                     En vivo
                   </span>
                 )}
@@ -244,12 +244,12 @@ export default function HomePage() {
       <section className="relative bg-[#0F1E3D] text-white overflow-hidden">
         <div className="container-page pt-16 pb-14 md:pt-20 md:pb-16 grid md:grid-cols-12 gap-12 md:gap-10 items-center">
           <div className="md:col-span-6 order-2 md:order-1">
-            <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.18em] text-[#F97316] mb-5">
+            <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.18em] text-[#FBB601] mb-5">
               Plataforma de capacitación STPS
             </p>
             <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] leading-[1.02] tracking-tighter font-bold">
               <span className="block text-white">Capacita a tu equipo.</span>
-              <span className="block text-[#F97316]">Cumple con la STPS.</span>
+              <span className="block text-[#FBB601]">Cumple con la STPS.</span>
             </h1>
             <p className="mt-6 text-base md:text-lg text-white/75 leading-relaxed max-w-xl">
               Plataforma todo en uno para la capacitación, certificación y
@@ -264,7 +264,7 @@ export default function HomePage() {
                 { icon: Users, text: "Gestiona a todo tu equipo y subcontratistas" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex flex-col gap-2.5">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#F97316]/60 text-[#F97316]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#FBB601]/60 text-[#FBB601]">
                     <Icon className="h-5 w-5" />
                   </span>
                   <p className="text-[13px] leading-snug text-white/85">{text}</p>
@@ -275,7 +275,7 @@ export default function HomePage() {
             <div className="mt-9 flex flex-wrap gap-3 items-center">
               <Link
                 href="/courses"
-                className="inline-flex items-center gap-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold text-sm px-5 py-3 shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#FBB601] hover:bg-[#D99A00] text-white font-semibold text-sm px-5 py-3 shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
               >
                 Ver cursos <ArrowRight className="h-4 w-4" />
               </Link>
@@ -303,7 +303,7 @@ export default function HomePage() {
               { icon: TrendingUp, label: "Mejores resultados" },
             ].map(({ icon: Icon, label }) => (
               <div key={label} className="flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F97316]/15 text-[#F97316] shrink-0">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FBB601]/15 text-[#FBB601] shrink-0">
                   <Icon className="h-4.5 w-4.5" />
                 </span>
                 <span className="text-sm font-semibold text-white/90">{label}</span>
@@ -317,7 +317,7 @@ export default function HomePage() {
       <section className="bg-canvas py-10 md:py-14" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
         <div className="container-page">
           <div className="rounded-2xl md:rounded-full bg-[#0F1E3D] border border-white/10 px-6 py-4 md:px-8 md:py-5 flex flex-col md:flex-row items-center gap-4 md:gap-6 shadow-cardHover">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#F97316]/15 text-[#F97316]">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#FBB601]/15 text-[#FBB601]">
               <Gift className="h-6 w-6" />
             </span>
             <div className="flex-1 text-center md:text-left">
@@ -330,7 +330,7 @@ export default function HomePage() {
             </div>
             <Link
               href="/agendar"
-              className="inline-flex items-center gap-2 rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold text-sm px-6 py-3 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-2 rounded-full bg-[#FBB601] hover:bg-[#D99A00] text-white font-semibold text-sm px-6 py-3 transition-colors whitespace-nowrap"
             >
               Aprovechar oferta <ArrowRight className="h-4 w-4" />
             </Link>
@@ -423,7 +423,7 @@ export default function HomePage() {
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <Link
               href="/courses"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold text-sm px-6 py-3 shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#FBB601] hover:bg-[#D99A00] text-white font-semibold text-sm px-6 py-3 shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
             >
               Ver planes <ArrowRight className="h-4 w-4" />
             </Link>
@@ -468,7 +468,7 @@ export default function HomePage() {
                   },
                 ].map((item) => (
                   <li key={item.title} className="flex items-start gap-4">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#F97316]/15 text-[#F97316] mt-0.5">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#FBB601]/15 text-[#FBB601] mt-0.5">
                       <Check className="h-4 w-4" strokeWidth={3} />
                     </span>
                     <div>
@@ -506,7 +506,7 @@ export default function HomePage() {
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star
                     key={i}
-                    className="h-5 w-5 text-[#F97316] fill-[#F97316]"
+                    className="h-5 w-5 text-[#FBB601] fill-[#FBB601]"
                   />
                 ))}
               </div>
@@ -541,7 +541,7 @@ export default function HomePage() {
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star
                     key={i}
-                    className="h-5 w-5 text-[#F97316] fill-[#F97316]"
+                    className="h-5 w-5 text-[#FBB601] fill-[#FBB601]"
                   />
                 ))}
               </div>
@@ -565,7 +565,7 @@ export default function HomePage() {
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star
                     key={i}
-                    className="h-5 w-5 text-[#F97316] fill-[#F97316]"
+                    className="h-5 w-5 text-[#FBB601] fill-[#FBB601]"
                   />
                 ))}
               </div>
@@ -639,13 +639,13 @@ export default function HomePage() {
                   key={tier.name}
                   className={`relative rounded-2xl p-8 flex flex-col ${
                     tier.highlighted
-                      ? "bg-[#0F1E3D] text-white border-2 border-[#F97316] shadow-orangeGlowXl md:-mt-4 md:mb-0 ring-2 ring-procheck-orange ring-offset-4 ring-offset-canvas"
+                      ? "bg-[#0F1E3D] text-white border-2 border-[#FBB601] shadow-orangeGlowXl md:-mt-4 md:mb-0 ring-2 ring-procheck-orange ring-offset-4 ring-offset-canvas"
                       : "bg-white border border-line shadow-card"
                   }`}
                 >
                   {tier.highlighted && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="inline-flex items-center rounded-full bg-[#F97316] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1">
+                      <span className="inline-flex items-center rounded-full bg-[#FBB601] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1">
                         Más popular
                       </span>
                     </div>
@@ -701,7 +701,7 @@ export default function HomePage() {
                         <span
                           className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full mt-0.5 ${
                             f.included
-                              ? "bg-[#F97316]/15 text-[#F97316]"
+                              ? "bg-[#FBB601]/15 text-[#FBB601]"
                               : "bg-white/10 text-white/40"
                           }`}
                         >
@@ -728,8 +728,8 @@ export default function HomePage() {
                       tier.outlined
                         ? "border border-ink-300 text-ink-900 hover:bg-ink-50"
                         : tier.highlighted
-                          ? "bg-[#F97316] hover:bg-[#EA580C] text-white shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
-                          : "bg-[#F97316] hover:bg-[#EA580C] text-white shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
+                          ? "bg-[#FBB601] hover:bg-[#D99A00] text-white shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
+                          : "bg-[#FBB601] hover:bg-[#D99A00] text-white shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
                     }`}
                   >
                     {tier.ctaLabel} <ArrowRight className="h-4 w-4" />

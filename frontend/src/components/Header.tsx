@@ -67,7 +67,7 @@ export function Header() {
           <CartBadge />
           <Link
             href="/login"
-            className="inline-flex items-center rounded-full bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold text-sm px-5 py-2 transition-all shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5"
+            className="inline-flex items-center rounded-full bg-[#FBB601] hover:bg-[#D99A00] text-white font-semibold text-sm px-5 py-2 transition-all shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5"
           >
             Iniciar sesión
           </Link>

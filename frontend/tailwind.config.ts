@@ -35,9 +35,9 @@ const config: Config = {
           950: "#0A1628",
         },
         "procheck-orange": {
-          DEFAULT: "#F97316",
-          500: "#F97316",
-          600: "#EA580C",
+          DEFAULT: "#FBB601",
+          500: "#FBB601",
+          600: "#D99A00",
         },
         coral: {
           DEFAULT: "#FF6B35",
@@ -78,10 +78,10 @@ const config: Config = {
         cardHover:
           "0 4px 8px rgba(15, 23, 37, 0.06), 0 8px 24px rgba(15, 23, 37, 0.08)",
         subtle: "0 1px 0 rgba(15, 23, 37, 0.04)",
-        orangeGlow: "0 10px 40px -10px rgba(249, 115, 22, 0.5)",
-        orangeGlowLg: "0 20px 60px -10px rgba(249, 115, 22, 0.7)",
-        orangeGlowXl: "0 20px 80px -20px rgba(249, 115, 22, 0.4)",
-        orangeHalo: "0 0 80px -20px rgba(249, 115, 22, 0.4)",
+        orangeGlow: "0 10px 40px -10px rgba(251, 182, 1, 0.5)",
+        orangeGlowLg: "0 20px 60px -10px rgba(251, 182, 1, 0.7)",
+        orangeGlowXl: "0 20px 80px -20px rgba(251, 182, 1, 0.4)",
+        orangeHalo: "0 0 80px -20px rgba(251, 182, 1, 0.4)",
       },
     },
   },
