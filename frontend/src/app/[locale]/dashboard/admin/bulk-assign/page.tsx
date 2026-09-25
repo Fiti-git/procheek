@@ -25,12 +25,6 @@ type User = {
   is_active?: boolean;
 };
 
-const FAKE_COMPANIES: Company[] = [
-  { id: "00000000-0000-0000-0000-000000000001", name: "Constructora Demo" },
-  { id: "00000000-0000-0000-0000-000000000002", name: "Grupo Industrial Norte" },
-  { id: "00000000-0000-0000-0000-000000000003", name: "Servicios Manufactureros MX" },
-];
-
 function fullName(u: User) {
   const f = u.firstName ?? u.first_name ?? "";
   const l = u.lastName ?? u.last_name ?? "";
@@ -84,9 +78,9 @@ function BulkAssignPageInner() {
           id: x.id,
           name: x.name ?? x.legalName ?? x.slug ?? "Empresa",
         }));
-        setCompanies(list.length > 0 ? list : FAKE_COMPANIES);
+        setCompanies(list);
       } catch {
-        setCompanies(FAKE_COMPANIES);
+        setCompanies([]);
       }
       try {
         const us = await apiGet<User[]>("/users");

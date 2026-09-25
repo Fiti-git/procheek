@@ -205,7 +205,6 @@ function TeamPageInner() {
   };
 
   const activos = members.length;
-  const cupos = Math.max(0, 30 - members.length);
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -230,7 +229,7 @@ function TeamPageInner() {
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
         {[
           { label: "Miembros activos", value: `${activos}`, icon: Users },
-          { label: "Cupos disponibles", value: `${cupos}`, icon: UserPlus },
+          { label: "Invitaciones pendientes", value: "—", icon: UserPlus },
           { label: "Cumplimiento promedio", value: "—", icon: TrendingUp },
         ].map((k) => (
           <div
