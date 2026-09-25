@@ -53,7 +53,10 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.prebuilt
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://procheck.mx/api}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
     image: procheeck-frontend:latest
     container_name: procheeck-frontend
     restart: unless-stopped
