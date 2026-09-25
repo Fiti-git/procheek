@@ -7,6 +7,7 @@ import {
   Award,
   CheckCircle2,
   Activity,
+  BarChart3,
 } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import ReportsExport from "./ReportsExport";
@@ -26,8 +27,11 @@ type Summary = {
   }>;
 };
 
+type SalesPoint = { month: string; total: number; count: number };
+
 function ReportsPageInner() {
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [sales, setSales] = useState<SalesPoint[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,6 +41,9 @@ function ReportsPageInner() {
     try {
       const data = await apiGet<Summary>("/analytics/summary");
       setSummary(data);
+      apiGet<SalesPoint[]>("/analytics/sales-by-month")
+        .then((rows) => setSales(rows || []))
+        .catch(() => setSales([]));
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Error al cargar";
       if (/403|forbidden/i.test(msg)) {
@@ -127,6 +134,27 @@ function ReportsPageInner() {
         ))}
       </div>
 
+      {/* Sales by month */}
+      <div className="bg-white border border-line rounded-xl overflow-hidden mb-6">
+        <div className="px-6 py-5 border-b border-line flex items-center gap-2">
+          <BarChart3 className="h-4 w-4 text-ink-500" />
+          <h3 className="font-display text-lg font-semibold text-ink-900 tracking-tight">
+            Ventas por mes (MXN)
+          </h3>
+        </div>
+        <div className="p-6">
+          {sales === null ? (
+            <div className="text-sm text-ink-500">Cargando ventas…</div>
+          ) : sales.length === 0 || sales.every((s) => s.total === 0) ? (
+            <div className="text-sm text-ink-500 py-6 text-center">
+              Sin ventas registradas en los últimos 12 meses.
+            </div>
+          ) : (
+            <SalesChart data={sales} />
+          )}
+        </div>
+      </div>
+
       {/* Recent activity */}
       <div className="bg-white border border-line rounded-xl overflow-hidden">
         <div className="px-6 py-5 border-b border-line flex items-center gap-2">
@@ -168,6 +196,80 @@ function ReportsPageInner() {
           </ul>
         )}
       </div>
+    </div>
+  );
+}
+
+function SalesChart({ data }: { data: SalesPoint[] }) {
+  const width = 720;
+  const height = 220;
+  const padX = 32;
+  const padY = 28;
+  const chartW = width - padX * 2;
+  const chartH = height - padY * 2;
+  const max = Math.max(...data.map((d) => d.total), 1);
+  const barW = chartW / data.length - 8;
+
+  const fmtMxn = (n: number) =>
+    new Intl.NumberFormat("es-MX", {
+      style: "currency",
+      currency: "MXN",
+      maximumFractionDigits: 0,
+    }).format(n);
+
+  const monthLabel = (m: string) => {
+    const [y, mm] = m.split("-");
+    const names = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+    return `${names[Number(mm) - 1] ?? mm}·${y.slice(2)}`;
+  };
+
+  return (
+    <div className="w-full overflow-x-auto">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="w-full h-auto"
+        role="img"
+        aria-label="Ventas por mes"
+      >
+        {/* baseline */}
+        <line
+          x1={padX}
+          x2={width - padX}
+          y1={height - padY}
+          y2={height - padY}
+          stroke="#E5E7EB"
+        />
+        {data.map((d, i) => {
+          const h = (d.total / max) * chartH;
+          const x = padX + i * (chartW / data.length) + 4;
+          const y = height - padY - h;
+          return (
+            <g key={d.month}>
+              <title>{`${monthLabel(d.month)} — ${fmtMxn(d.total)} (${d.count})`}</title>
+              <rect
+                x={x}
+                y={y}
+                width={Math.max(barW, 2)}
+                height={h}
+                rx={3}
+                fill="#FBB601"
+              />
+              <text
+                x={x + barW / 2}
+                y={height - padY + 14}
+                textAnchor="middle"
+                fontSize="10"
+                fill="#64748B"
+              >
+                {monthLabel(d.month)}
+              </text>
+            </g>
+          );
+        })}
+        <text x={padX} y={16} fontSize="10" fill="#64748B">
+          Máx: {fmtMxn(max)}
+        </text>
+      </svg>
     </div>
   );
 }

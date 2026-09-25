@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuditLog } from './audit-log.entity';
+import { User } from '../users/user.entity';
 
 export interface AuditEntry {
   actorId?: string | null;
@@ -21,6 +22,7 @@ export class AuditService {
 
   constructor(
     @InjectRepository(AuditLog) private readonly repo: Repository<AuditLog>,
+    @InjectRepository(User) private readonly users: Repository<User>,
   ) {}
 
   async record(entry: AuditEntry): Promise<void> {
@@ -47,5 +49,26 @@ export class AuditService {
     if (opts.entityId) qb.andWhere('a.entity_id = :ei', { ei: opts.entityId });
     if (opts.actorId) qb.andWhere('a.actor_id = :aid', { aid: opts.actorId });
     return qb.getMany();
+  }
+
+  /**
+   * Company-scoped audit list — returns audit entries whose acting user
+   * belongs to the caller's company (or the caller's own actions).
+   */
+  async listForCompany(callerUserId: string, limit = 100) {
+    const caller = await this.users.findOne({ where: { id: callerUserId } });
+    if (!caller?.companyId) return [];
+    const members = await this.users.find({
+      where: { companyId: caller.companyId },
+      select: ['id'],
+    });
+    const ids = members.map((u) => u.id);
+    if (ids.length === 0) return [];
+    return this.repo
+      .createQueryBuilder('a')
+      .where('a.actor_id IN (:...ids)', { ids })
+      .orderBy('a.created_at', 'DESC')
+      .limit(Math.min(500, Math.max(1, limit)))
+      .getMany();
   }
 }

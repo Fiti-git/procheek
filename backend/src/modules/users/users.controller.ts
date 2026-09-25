@@ -54,6 +54,18 @@ export class UsersController {
     return this.svc.update((req.user as RequestUser).userId, safe, req.user as RequestUser);
   }
 
+  @Roles(Role.PRINCIPAL_ADMIN, Role.CLIENT_ADMIN)
+  @Get('me/team-invites')
+  teamInvites(@Req() req: any) {
+    return this.svc.listTeamInvites(req.user as RequestUser);
+  }
+
+  @Roles(Role.PRINCIPAL_ADMIN, Role.CLIENT_ADMIN)
+  @Post(':id/resend-invite')
+  resendInvite(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: any) {
+    return this.svc.resendInvite(id, req.user as RequestUser);
+  }
+
   @Get('me/rfc')
   getMyRfc(@Req() req: any) {
     return this.svc.getMyRfc(req.user as RequestUser);

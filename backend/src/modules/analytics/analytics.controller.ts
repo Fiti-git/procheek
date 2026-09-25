@@ -72,6 +72,12 @@ export class AnalyticsController {
     return this.svc.learners(req.user as RequestUser);
   }
 
+  @Roles(Role.PRINCIPAL_ADMIN, Role.CLIENT_ADMIN, Role.VENDEDOR)
+  @Get('sales-by-month')
+  salesByMonth(@Req() req: any) {
+    return this.svc.salesByMonth(req.user as RequestUser);
+  }
+
   @Get('overview.csv')
   async overviewCsv(@Req() req: any, @Res() res: Response) {
     const data = await this.svc.overview(req.user as RequestUser);

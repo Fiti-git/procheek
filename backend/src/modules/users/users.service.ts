@@ -266,6 +266,77 @@ export class UsersService {
     return { id, deactivated: true };
   }
 
+  /**
+   * List pending team invitations for the caller's company.
+   * Pending = users in the same company that are inactive (soft-deactivated
+   * or invited-but-never-logged-in). Principal admin sees all pending.
+   */
+  async listTeamInvites(actor: RequestUser) {
+    let where: any;
+    if (actor.role === Role.PRINCIPAL_ADMIN) {
+      where = { isActive: false };
+    } else {
+      const acting = await this.repo.findOne({ where: { id: actor.userId } });
+      if (!acting?.companyId) return [];
+      where = { isActive: false, companyId: acting.companyId };
+    }
+    const rows = await this.repo.find({ where, order: { createdAt: 'DESC' } });
+    return rows.map((u) => ({
+      id: u.id,
+      email: u.email,
+      firstName: u.firstName,
+      lastName: u.lastName,
+      roleCode: u.role,
+      invitedAt: u.createdAt,
+    }));
+  }
+
+  /**
+   * Re-send the invite email with a new temporary password.
+   * If the user is already active (i.e. has completed onboarding), no-op
+   * with { ok: true, alreadyActive: true } so callers can toast accordingly.
+   */
+  async resendInvite(id: string, actor: RequestUser) {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    await this.assertWritable(user, actor);
+
+    if (user.isActive && !user.mustChangePassword) {
+      return { ok: true, alreadyActive: true };
+    }
+
+    const tempPassword = generateTempPassword();
+    user.passwordHash = await bcrypt.hash(tempPassword, 10);
+    user.mustChangePassword = true;
+    user.isActive = true;
+    await this.repo.save(user);
+
+    let invitedByName: string | undefined;
+    let companyName: string | undefined;
+    try {
+      const inviter = await this.repo.findOne({ where: { id: actor.userId } });
+      if (inviter) invitedByName = `${inviter.firstName} ${inviter.lastName}`.trim();
+      if (user.companyId) {
+        const c = await this.companies.findOne({ where: { id: user.companyId } });
+        if (c) companyName = c.legalName;
+      }
+    } catch { /* best-effort */ }
+
+    this.mail.sendInvite({
+      to: user.email,
+      firstName: user.firstName,
+      tempPassword,
+      invitedByName,
+      companyName,
+    }).catch((e) => {
+      // eslint-disable-next-line no-console
+      console.error('[UsersService] resend-invite email failed:', e?.message ?? e);
+    });
+
+    this.auditFor('user.invite_resend', user.id, actor, { email: user.email });
+    return { ok: true, sentTo: user.email };
+  }
+
   private async assertReadable(user: User, actor: RequestUser) {
     if (actor.role === Role.PRINCIPAL_ADMIN) return;
     if (user.id === actor.userId) return;

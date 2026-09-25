@@ -39,6 +39,15 @@ export class CompaniesController {
     return this.svc.myMembers(req.user as RequestUser);
   }
 
+  @Roles(Role.PRINCIPAL_ADMIN, Role.CLIENT_ADMIN)
+  @Get('my/members/:id/compliance')
+  memberCompliance(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Req() req: any,
+  ) {
+    return this.svc.memberCompliance(id, req.user as RequestUser);
+  }
+
   @Get(':id')
   get(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: any) {
     return this.svc.findOne(id, req.user as RequestUser);

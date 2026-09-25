@@ -6,6 +6,8 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Role } from '../../common/roles';
 import { User } from '../users/user.entity';
+import { Enrollment } from '../enrollments/enrollment.entity';
+import { Certificate } from '../certificates/certificate.entity';
 import { AuditService } from '../audit/audit.service';
 
 export interface RequestUser {
@@ -19,6 +21,8 @@ export class CompaniesService {
   constructor(
     @InjectRepository(Company) private readonly repo: Repository<Company>,
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(Enrollment) private readonly enrollments: Repository<Enrollment>,
+    @InjectRepository(Certificate) private readonly certificates: Repository<Certificate>,
     private readonly audit: AuditService,
   ) {}
 
@@ -94,6 +98,57 @@ export class CompaniesService {
       isActive: u.isActive,
       createdAt: u.createdAt,
     }));
+  }
+
+  /**
+   * Per-member compliance summary. Caller must be able to read the target user
+   * (same company, or principal admin).
+   *
+   * Note: `finalScore` / `pricePaidMxn` columns do not yet exist on the
+   * enrollment entity — `avgScore` is intentionally returned as `null` here
+   * until that column is added. Flagged for a follow-up migration.
+   */
+  async memberCompliance(memberId: string, actor: RequestUser) {
+    const target = await this.users.findOne({ where: { id: memberId } });
+    if (!target) throw new NotFoundException('Member not found');
+
+    // Scope check.
+    if (actor.role !== Role.PRINCIPAL_ADMIN) {
+      const acting = await this.loadActingUser(actor.userId);
+      if (!acting.companyId || acting.companyId !== target.companyId) {
+        throw new ForbiddenException('Cannot access this member');
+      }
+    }
+
+    const [coursesEnrolled, coursesCompleted, certRows] = await Promise.all([
+      this.enrollments.count({ where: { userId: memberId } }),
+      this.enrollments.count({ where: { userId: memberId, status: 'completed' } }),
+      this.certificates.find({ where: { userId: memberId } }),
+    ]);
+
+    const now = new Date();
+    let certificatesActive = 0;
+    let certificatesExpired = 0;
+    for (const c of certRows) {
+      const revoked = !!c.revokedAt;
+      const expired = c.expiresAt ? c.expiresAt.getTime() <= now.getTime() : false;
+      if (!revoked && !expired) certificatesActive++;
+      else certificatesExpired++;
+    }
+
+    const complianceRate =
+      coursesEnrolled > 0
+        ? Number((certificatesActive / coursesEnrolled).toFixed(4))
+        : null;
+
+    return {
+      coursesEnrolled,
+      coursesCompleted,
+      certificatesActive,
+      certificatesExpired,
+      avgScore: null as number | null,
+      complianceRate,
+    };
   }
 
   async list(actor: RequestUser): Promise<Company[]> {

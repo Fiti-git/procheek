@@ -183,6 +183,42 @@ export class AnalyticsService {
     }));
   }
 
+  /**
+   * Revenue by month for the last 12 calendar months (inclusive of current).
+   * Falls back to joining `courses.price_mxn` because `enrollments` does not
+   * carry a `price_paid_mxn` column yet. Chronological ascending.
+   */
+  async salesByMonth(actor: RequestUser): Promise<Array<{ month: string; total: number; count: number }>> {
+    const userIds = await this.scopeUserIds(actor);
+    const scope = userIds ? `AND e.user_id = ANY($1::uuid[])` : '';
+    const params = userIds ? [userIds] : [];
+
+    const rows = await this.ds.query(
+      `WITH months AS (
+         SELECT to_char(date_trunc('month', now()) - (n || ' months')::interval, 'YYYY-MM') AS month
+         FROM generate_series(0, 11) n
+       )
+       SELECT
+         m.month AS month,
+         COALESCE(SUM(c.price_mxn), 0)::float AS total,
+         COUNT(e.id)::int AS count
+       FROM months m
+       LEFT JOIN enrollments e
+         ON to_char(e.enrolled_at, 'YYYY-MM') = m.month
+         ${scope}
+       LEFT JOIN courses c ON c.id = e.course_id
+       GROUP BY m.month
+       ORDER BY m.month ASC`,
+      params,
+    );
+
+    return rows.map((r: any) => ({
+      month: r.month,
+      total: Number(r.total) || 0,
+      count: Number(r.count) || 0,
+    }));
+  }
+
   async learners(actor: RequestUser): Promise<LearnerStats[]> {
     const userIds = await this.scopeUserIds(actor);
     const scope = userIds ? `WHERE u.id = ANY($1::uuid[])` : '';

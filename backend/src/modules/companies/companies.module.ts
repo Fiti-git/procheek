@@ -4,9 +4,11 @@ import { Company } from './company.entity';
 import { CompaniesService } from './companies.service';
 import { CompaniesController } from './companies.controller';
 import { User } from '../users/user.entity';
+import { Enrollment } from '../enrollments/enrollment.entity';
+import { Certificate } from '../certificates/certificate.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Company, User])],
+  imports: [TypeOrmModule.forFeature([Company, User, Enrollment, Certificate])],
   controllers: [CompaniesController],
   providers: [CompaniesService],
   exports: [CompaniesService],

@@ -14,7 +14,7 @@ import {
 import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { IMG } from "@/lib/images";
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet, apiPost, apiDelete } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
 import { RoleGate } from "@/components/RoleGate";
 
@@ -36,6 +36,35 @@ type Member = {
   roleCode: string;
   last: string;
   avatar: string;
+};
+
+type MemberCompliance = {
+  coursesEnrolled: number;
+  coursesCompleted: number;
+  certificatesActive: number;
+  certificatesExpired: number;
+  avgScore: number | null;
+  complianceRate: number | null;
+};
+
+type TeamInvite = {
+  id: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  roleCode: string;
+  invitedAt: string;
+};
+
+type AuditRow = {
+  id: string;
+  actorEmail: string | null;
+  actorRole: string | null;
+  action: string;
+  entityType: string | null;
+  entityId: string | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -90,6 +119,10 @@ function TeamPageInner() {
   const [tab, setTab] = useState<"directos" | "subs">("directos");
   const [showInvite, setShowInvite] = useState(false);
   const [members, setMembers] = useState<Member[]>([]);
+  const [compliance, setCompliance] = useState<Record<string, MemberCompliance>>({});
+  const [pendingInvites, setPendingInvites] = useState<number | null>(null);
+  const [avgCompliance, setAvgCompliance] = useState<number | null>(null);
+  const [recentAudit, setRecentAudit] = useState<AuditRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [firstName, setFirstName] = useState("");
@@ -105,7 +138,46 @@ function TeamPageInner() {
     setLoadError(null);
     try {
       const data = await apiGet<ApiMember[]>("/companies/my/members");
-      setMembers((data || []).map(mapMember));
+      const mapped = (data || []).map(mapMember);
+      setMembers(mapped);
+
+      // Kick off side loads in parallel — never fail the page on their errors.
+      const complianceP = Promise.all(
+        mapped.map(async (m) => {
+          try {
+            const c = await apiGet<MemberCompliance>(
+              `/companies/my/members/${m.id}/compliance`,
+            );
+            return [m.id, c] as const;
+          } catch {
+            return null;
+          }
+        }),
+      ).then((entries) => {
+        const map: Record<string, MemberCompliance> = {};
+        for (const e of entries) if (e) map[e[0]] = e[1];
+        setCompliance(map);
+        const rates = entries
+          .filter((e): e is readonly [string, MemberCompliance] => !!e)
+          .map(([, c]) => c.complianceRate)
+          .filter((v): v is number => v !== null);
+        setAvgCompliance(
+          rates.length > 0
+            ? Math.round((rates.reduce((s, v) => s + v, 0) / rates.length) * 100)
+            : null,
+        );
+      });
+
+      const invitesP = apiGet<TeamInvite[]>("/users/me/team-invites")
+        .then((rows) => setPendingInvites(rows?.length ?? 0))
+        .catch(() => setPendingInvites(null));
+
+      const auditP = apiGet<AuditRow[]>("/audit?scope=my-company")
+        .then((rows) => setRecentAudit((rows || []).slice(0, 5)))
+        .catch(() => setRecentAudit([]));
+
+      // Fire and forget; page renders as soon as roster is in.
+      void Promise.all([complianceP, invitesP, auditP]);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Error al cargar el equipo";
       if (/403|forbidden/i.test(msg)) {
@@ -182,27 +254,72 @@ function TeamPageInner() {
     }
   };
 
-  const onRemove = (id: string) => {
+  const onRemove = async (id: string) => {
     setOpenMenu(null);
     const m = members.find((x) => x.id === id);
-    toast({
-      title: "Función en desarrollo",
-      description: m
-        ? `Eliminar a ${m.name} estará disponible pronto.`
-        : "La eliminación de miembros estará disponible pronto.",
-    });
-  };
-
-  const onResend = (id: string) => {
-    const m = members.find((x) => x.id === id);
-    setOpenMenu(null);
-    if (m) {
+    if (!m) return;
+    if (
+      typeof window !== "undefined" &&
+      !window.confirm(`¿Desactivar a ${m.name}? Podrás reactivarlo reenviando la invitación.`)
+    ) {
+      return;
+    }
+    try {
+      await apiDelete(`/users/${id}`);
       toast({
-        title: "Función en desarrollo",
-        description: `El reenvío de invitación a ${m.email} estará disponible pronto.`,
+        title: "Miembro desactivado",
+        description: `${m.name} ya no tiene acceso.`,
+        variant: "success",
       });
+      await load();
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message : "No se pudo desactivar";
+      toast({ title: "Error", description: msg, variant: "error" });
     }
   };
+
+  const onResend = async (id: string) => {
+    const m = members.find((x) => x.id === id);
+    setOpenMenu(null);
+    if (!m) return;
+    try {
+      const res = await apiPost<{ ok: true; alreadyActive?: boolean; sentTo?: string }>(
+        `/users/${id}/resend-invite`,
+      );
+      if (res?.alreadyActive) {
+        toast({
+          title: "Ya activo",
+          description: `${m.email} ya activó su cuenta.`,
+        });
+      } else {
+        toast({
+          title: "Invitación reenviada",
+          description: `Enviamos un nuevo correo a ${res?.sentTo ?? m.email}.`,
+          variant: "success",
+        });
+      }
+      await load();
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message : "No se pudo reenviar la invitación";
+      toast({ title: "Error", description: msg, variant: "error" });
+    }
+  };
+
+  function formatAuditAction(a: AuditRow): string {
+    const map: Record<string, string> = {
+      "user.invite": "Invitó a un miembro",
+      "user.invite_resend": "Reenvió invitación",
+      "user.deactivate": "Desactivó un miembro",
+      "user.update": "Actualizó un miembro",
+      "user.update_rfc": "Actualizó datos fiscales",
+      "company.create": "Creó una empresa",
+      "company.update": "Actualizó la empresa",
+      "company.delete": "Eliminó una empresa",
+    };
+    return map[a.action] || a.action;
+  }
 
   const activos = members.length;
 
@@ -229,8 +346,16 @@ function TeamPageInner() {
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
         {[
           { label: "Miembros activos", value: `${activos}`, icon: Users },
-          { label: "Invitaciones pendientes", value: "—", icon: UserPlus },
-          { label: "Cumplimiento promedio", value: "—", icon: TrendingUp },
+          {
+            label: "Invitaciones pendientes",
+            value: pendingInvites === null ? "—" : `${pendingInvites}`,
+            icon: UserPlus,
+          },
+          {
+            label: "Cumplimiento promedio",
+            value: avgCompliance === null ? "—" : `${avgCompliance}%`,
+            icon: TrendingUp,
+          },
         ].map((k) => (
           <div
             key={k.label}
@@ -417,10 +542,17 @@ function TeamPageInner() {
                       <span className="badge-compliance">{m.role}</span>
                     </td>
                     <td className="px-5 py-3 font-mono text-xs text-ink-700">
-                      —
+                      {compliance[m.id]
+                        ? `${compliance[m.id].coursesCompleted}/${compliance[m.id].coursesEnrolled}`
+                        : "—"}
                     </td>
                     <td className="px-5 py-3 font-display text-lg font-semibold text-ink-900">
-                      —
+                      {compliance[m.id]?.complianceRate !== undefined &&
+                      compliance[m.id]?.complianceRate !== null
+                        ? `${Math.round(
+                            (compliance[m.id].complianceRate as number) * 100,
+                          )}%`
+                        : "—"}
                     </td>
                     <td className="px-5 py-3 text-ink-500">{m.last}</td>
                     <td className="px-5 py-3 text-right relative">
@@ -475,6 +607,38 @@ function TeamPageInner() {
           </table>
         </div>
       </div>
+
+      {recentAudit.length > 0 && (
+        <div className="mt-6 bg-white border border-line rounded-xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-line">
+            <h3 className="font-display text-base font-semibold text-ink-900 tracking-tight">
+              Actividad reciente
+            </h3>
+          </div>
+          <ul className="divide-y divide-line">
+            {recentAudit.map((a) => (
+              <li
+                key={a.id}
+                className="px-5 py-3 flex items-start justify-between gap-4"
+              >
+                <div>
+                  <div className="text-sm text-ink-900">
+                    {formatAuditAction(a)}
+                  </div>
+                  {a.actorEmail && (
+                    <div className="text-xs text-ink-500 mt-0.5">
+                      {a.actorEmail}
+                    </div>
+                  )}
+                </div>
+                <div className="text-xs text-ink-500 whitespace-nowrap">
+                  {new Date(a.createdAt).toLocaleString("es-MX")}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

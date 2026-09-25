@@ -15,9 +15,11 @@ function repo() {
 function make() {
   const companies = repo();
   const users = repo();
+  const enrollments = repo();
+  const certificates = repo();
   const audit = { record: jest.fn().mockResolvedValue(undefined) } as any;
-  const svc = new CompaniesService(companies, users, audit);
-  return { svc, companies, users, audit };
+  const svc = new CompaniesService(companies, users, enrollments, certificates, audit);
+  return { svc, companies, users, enrollments, certificates, audit };
 }
 
 const admin = { userId: 'a', email: 'a@x.com', role: Role.PRINCIPAL_ADMIN };
