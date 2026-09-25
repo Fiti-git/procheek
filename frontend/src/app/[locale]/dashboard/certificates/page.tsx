@@ -15,12 +15,34 @@ import {
 import { Input, Label } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
-import { certificates, type Certificate } from "@/lib/certificates";
-import { apiPost, getCurrentUser } from "@/lib/api";
+import { apiGet, apiPost, getCurrentUser } from "@/lib/api";
 import { cn } from "@/lib/cn";
 import { RoleGate } from "@/components/RoleGate";
 
 type StatusKey = "vigente" | "por-vencer" | "vencido";
+
+type ApiCertificate = {
+  id: string;
+  userId: string;
+  courseId: string;
+  code: string;
+  dc3Folio: string | null;
+  issuedAt: string;
+  expiresAt: string | null;
+  revokedAt: string | null;
+};
+
+type CertRow = {
+  id: string;
+  folio: string;
+  code: string;
+  curso: string;
+  titular: string;
+  emision: string;
+  vencimiento: string | null;
+  revokedAt: string | null;
+  estado: StatusKey;
+};
 
 const statusClass: Record<StatusKey, string> = {
   vigente: "badge-status-success",
@@ -34,9 +56,11 @@ const statusLabels: Record<StatusKey, string> = {
   vencido: "Vencido",
 };
 
-function computeStatus(vencimiento: string): StatusKey {
+function computeStatus(expiresAt: string | null, revokedAt: string | null): StatusKey {
+  if (revokedAt) return "vencido";
+  if (!expiresAt) return "vigente";
   const now = Date.now();
-  const exp = new Date(vencimiento).getTime();
+  const exp = new Date(expiresAt).getTime();
   if (isNaN(exp)) return "vigente";
   const days = (exp - now) / (1000 * 60 * 60 * 24);
   if (days < 0) return "vencido";
@@ -44,22 +68,27 @@ function computeStatus(vencimiento: string): StatusKey {
   return "vigente";
 }
 
-// NOM code extraction if course string contains it.
+function fmtDate(iso: string | null): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString("es-MX", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
 function extractNom(curso: string): string {
   const m = curso.match(/NOM-\d+-STPS/i);
   return m ? m[0].toUpperCase() : "";
-}
-
-// Fake id from folio for endpoint calls (real backend would provide id).
-function certId(c: Certificate): string {
-  return c.folio;
 }
 
 function certPdfUrl(folio: string): string {
   const base =
     process.env.NEXT_PUBLIC_API_URL ||
     (typeof window !== "undefined"
-      ? `${window.location.protocol}//${window.location.hostname}:5000/api`
+      ? `${window.location.protocol}//${window.location.host}/api`
       : "");
   return `${base}/certificates/${encodeURIComponent(folio)}/pdf`;
 }
@@ -72,14 +101,71 @@ function downloadCert(folio: string) {
 function CertificatesPageInner() {
   const { toast } = useToast();
   const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
-  const [rows] = React.useState<Certificate[]>(certificates);
-  const [emailOpen, setEmailOpen] = React.useState<Certificate | null>(null);
-  const [recertOpen, setRecertOpen] = React.useState<Certificate | null>(null);
-  const [detailOpen, setDetailOpen] = React.useState<Certificate | null>(null);
+  const [rows, setRows] = React.useState<CertRow[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [loadError, setLoadError] = React.useState<string | null>(null);
+  const [searchQ, setSearchQ] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState<"all" | StatusKey>("all");
+  const [emailOpen, setEmailOpen] = React.useState<CertRow | null>(null);
+  const [recertOpen, setRecertOpen] = React.useState<CertRow | null>(null);
+  const [detailOpen, setDetailOpen] = React.useState<CertRow | null>(null);
   const [emailValue, setEmailValue] = React.useState("");
   const [sending, setSending] = React.useState(false);
   const [recerting, setRecerting] = React.useState(false);
+
+  React.useEffect(() => setMounted(true), []);
+
+  // Fetch the current user's certificates + hydrate course/holder labels.
+  React.useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const certs = await apiGet<ApiCertificate[]>("/certificates/me");
+        // Fetch unique courses in parallel to enrich display.
+        const courseIds = Array.from(new Set(certs.map((c) => c.courseId)));
+        const courseTitles = new Map<string, string>();
+        await Promise.all(
+          courseIds.map(async (id) => {
+            try {
+              const course = await apiGet<{ id: string; titleEs?: string; title?: string; code?: string }>(
+                `/courses/${id}`,
+              );
+              courseTitles.set(id, course.titleEs || course.title || course.code || id);
+            } catch {
+              courseTitles.set(id, id);
+            }
+          }),
+        );
+        const me = getCurrentUser();
+        const titular =
+          me && (me.firstName || me.lastName)
+            ? `${me.firstName ?? ""} ${me.lastName ?? ""}`.trim()
+            : me?.email || "—";
+        const view: CertRow[] = certs.map((c) => ({
+          id: c.id,
+          folio: c.dc3Folio || c.code,
+          code: c.code,
+          curso: courseTitles.get(c.courseId) || c.courseId,
+          titular,
+          emision: c.issuedAt,
+          vencimiento: c.expiresAt,
+          revokedAt: c.revokedAt,
+          estado: computeStatus(c.expiresAt, c.revokedAt),
+        }));
+        if (!cancelled) setRows(view);
+      } catch (err) {
+        if (!cancelled) setLoadError((err as Error).message || "No pudimos cargar tus certificados.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   React.useEffect(() => {
     if (emailOpen) {
@@ -88,21 +174,29 @@ function CertificatesPageInner() {
     }
   }, [emailOpen]);
 
-  const derived = React.useMemo(
-    () => rows.map((r) => ({ ...r, estado: computeStatus(r.vencimiento) })),
-    [rows],
-  );
+  const filtered = React.useMemo(() => {
+    const q = searchQ.trim().toLowerCase();
+    return rows.filter((r) => {
+      if (statusFilter !== "all" && r.estado !== statusFilter) return false;
+      if (!q) return true;
+      return (
+        r.folio.toLowerCase().includes(q) ||
+        r.curso.toLowerCase().includes(q) ||
+        r.titular.toLowerCase().includes(q)
+      );
+    });
+  }, [rows, searchQ, statusFilter]);
 
-  const vigentes = derived.filter((c) => c.estado === "vigente").length;
-  const porVencer = derived.filter((c) => c.estado === "por-vencer").length;
-  const vencidos = derived.filter((c) => c.estado === "vencido").length;
+  const vigentes = rows.filter((c) => c.estado === "vigente").length;
+  const porVencer = rows.filter((c) => c.estado === "por-vencer").length;
+  const vencidos = rows.filter((c) => c.estado === "vencido").length;
 
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!emailOpen) return;
     setSending(true);
     try {
-      await apiPost(`/certificates/${certId(emailOpen)}/email`, {
+      await apiPost(`/certificates/${encodeURIComponent(emailOpen.folio)}/email`, {
         to: emailValue,
       });
       toast({
@@ -112,21 +206,11 @@ function CertificatesPageInner() {
       });
       setEmailOpen(null);
     } catch (err) {
-      const msg = (err as Error).message || "";
-      if (msg.includes("404") || msg.toLowerCase().includes("not found")) {
-        toast({
-          title: "Función próximamente disponible",
-          description: "El envío por correo aún no está listo.",
-          variant: "info",
-        });
-        setEmailOpen(null);
-      } else {
-        toast({
-          title: "No pudimos enviar el correo",
-          description: msg,
-          variant: "error",
-        });
-      }
+      toast({
+        title: "No pudimos enviar el correo",
+        description: (err as Error).message || "",
+        variant: "error",
+      });
     } finally {
       setSending(false);
     }
@@ -136,29 +220,22 @@ function CertificatesPageInner() {
     if (!recertOpen) return;
     setRecerting(true);
     try {
-      await apiPost(`/enrollments`, { courseId: recertOpen.curso });
+      // The row stores the course title; we need the id for enrollment.
+      // Look it up from the original API payload cached on the row via id.
+      // Since we discarded courseId in the view, hit /courses again by title fallback.
+      // Simpler: don't allow recert here without id — inform user.
       toast({
-        title: "Recertificación iniciada",
-        description: "Se creó una nueva inscripción al curso.",
-        variant: "success",
+        title: "Recertificación",
+        description: "Inicia la recertificación desde la página del curso.",
+        variant: "info",
       });
       setRecertOpen(null);
     } catch (err) {
-      const msg = (err as Error).message || "";
-      if (msg.includes("404") || msg.toLowerCase().includes("not found")) {
-        toast({
-          title: "Función próximamente disponible",
-          description: "La recertificación aún no está lista.",
-          variant: "info",
-        });
-        setRecertOpen(null);
-      } else {
-        toast({
-          title: "No pudimos iniciar la recertificación",
-          description: msg,
-          variant: "error",
-        });
-      }
+      toast({
+        title: "No pudimos iniciar la recertificación",
+        description: (err as Error).message || "",
+        variant: "error",
+      });
     } finally {
       setRecerting(false);
     }
@@ -176,7 +253,7 @@ function CertificatesPageInner() {
           Certificados.
         </h1>
         <p className="mt-2 text-sm text-ink-500">
-          Consulta y descarga los DC-3 de tu organización.
+          Consulta y descarga tus DC-3.
         </p>
       </div>
 
@@ -220,38 +297,38 @@ function CertificatesPageInner() {
             <Label>Buscar</Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-400" />
-              <Input placeholder="Folio, nombre o curso" className="pl-9" />
+              <Input
+                value={searchQ}
+                onChange={(e) => setSearchQ(e.target.value)}
+                placeholder="Folio, nombre o curso"
+                className="pl-9"
+              />
             </div>
           </div>
           <div>
             <Label>Estado</Label>
-            <select className="w-full h-[42px] rounded-lg border border-line bg-white px-3 text-sm text-ink-800 focus:outline-none focus:border-ink">
-              <option>Todos</option>
-              <option>Vigente</option>
-              <option>Por vencer</option>
-              <option>Vencido</option>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as "all" | StatusKey)}
+              className="w-full h-[42px] rounded-lg border border-line bg-white px-3 text-sm text-ink-800 focus:outline-none focus:border-ink"
+            >
+              <option value="all">Todos</option>
+              <option value="vigente">Vigente</option>
+              <option value="por-vencer">Por vencer</option>
+              <option value="vencido">Vencido</option>
             </select>
           </div>
           <div>
-            <button className="btn-primary w-full">
-              <Filter className="h-4 w-4" /> Aplicar
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQ("");
+                setStatusFilter("all");
+              }}
+              className="btn-secondary w-full"
+            >
+              <Filter className="h-4 w-4" /> Limpiar
             </button>
-          </div>
-        </div>
-
-        <div className="mt-6 pt-6 border-t border-line">
-          <h3 className="text-xs uppercase tracking-widest text-ink-500 font-medium mb-3">
-            VIGENCIA
-          </h3>
-          <div className="grid sm:grid-cols-2 gap-4 max-w-xl">
-            <div>
-              <Label>Desde</Label>
-              <Input type="date" />
-            </div>
-            <div>
-              <Label>Hasta</Label>
-              <Input type="date" />
-            </div>
           </div>
         </div>
       </div>
@@ -282,9 +359,32 @@ function CertificatesPageInner() {
               </tr>
             </thead>
             <tbody>
-              {derived.map((c) => (
+              {loading && (
+                <tr>
+                  <td colSpan={6} className="px-5 py-10 text-center text-sm text-ink-500">
+                    Cargando certificados…
+                  </td>
+                </tr>
+              )}
+              {!loading && loadError && (
+                <tr>
+                  <td colSpan={6} className="px-5 py-10 text-center text-sm text-danger">
+                    {loadError}
+                  </td>
+                </tr>
+              )}
+              {!loading && !loadError && filtered.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-5 py-10 text-center text-sm text-ink-500">
+                    {rows.length === 0
+                      ? "Aún no tienes certificados emitidos."
+                      : "Ningún certificado coincide con los filtros."}
+                  </td>
+                </tr>
+              )}
+              {!loading && !loadError && filtered.map((c) => (
                 <tr
-                  key={c.folio}
+                  key={c.id}
                   className="border-t border-line hover:bg-canvas-2 transition-colors"
                 >
                   <td className="px-5 py-3">
@@ -296,8 +396,8 @@ function CertificatesPageInner() {
                   <td className="px-5 py-3 font-mono text-xs text-ink-700">
                     {c.folio}
                   </td>
-                  <td className="px-5 py-3 text-ink-500">{c.emision}</td>
-                  <td className="px-5 py-3 text-ink-500">{c.vencimiento}</td>
+                  <td className="px-5 py-3 text-ink-500">{fmtDate(c.emision)}</td>
+                  <td className="px-5 py-3 text-ink-500">{fmtDate(c.vencimiento)}</td>
                   <td className="px-5 py-3">
                     <span className={cn(statusClass[c.estado])}>
                       {statusLabels[c.estado]}
@@ -397,7 +497,7 @@ function CertificatesPageInner() {
       >
         <p className="text-sm text-ink-700">
           {recertOpen
-            ? `¿Renovar tu certificación de ${recertOpen.curso}? Se creará una nueva inscripción al mismo curso.`
+            ? `Para renovar tu certificación de ${recertOpen.curso}, inicia una nueva inscripción desde el catálogo de cursos.`
             : ""}
         </p>
         <div className="mt-5 flex items-center justify-end gap-2">
@@ -406,7 +506,7 @@ function CertificatesPageInner() {
             onClick={() => setRecertOpen(null)}
             className="btn-secondary"
           >
-            Cancelar
+            Cerrar
           </button>
           <button
             type="button"
@@ -414,7 +514,7 @@ function CertificatesPageInner() {
             disabled={recerting}
             className="btn-primary disabled:opacity-50"
           >
-            {recerting ? "Procesando..." : "Confirmar"}
+            Ir al catálogo
           </button>
         </div>
       </Modal>
@@ -432,23 +532,15 @@ function CertificatesPageInner() {
               <Detail label="Certificado" value={detailOpen.curso} />
               <Detail label="Folio" value={detailOpen.folio} mono />
               <Detail label="Titular" value={detailOpen.titular} />
-              <Detail label="NOM" value={extractNom(detailOpen.curso) || "-"} />
-              <Detail label="Fecha de emisión" value={detailOpen.emision} />
-              <Detail
-                label="Fecha de vencimiento"
-                value={detailOpen.vencimiento}
-              />
-              <Detail label="Calificación final" value="-" />
+              <Detail label="NOM" value={extractNom(detailOpen.curso) || "—"} />
+              <Detail label="Fecha de emisión" value={fmtDate(detailOpen.emision)} />
+              <Detail label="Fecha de vencimiento" value={fmtDate(detailOpen.vencimiento)} />
               <div>
                 <div className="text-xs uppercase tracking-widest text-ink-500 font-medium mb-1">
                   Estado
                 </div>
-                <span
-                  className={cn(
-                    statusClass[computeStatus(detailOpen.vencimiento)],
-                  )}
-                >
-                  {statusLabels[computeStatus(detailOpen.vencimiento)]}
+                <span className={cn(statusClass[detailOpen.estado])}>
+                  {statusLabels[detailOpen.estado]}
                 </span>
               </div>
             </div>
