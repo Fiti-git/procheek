@@ -7,12 +7,12 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  ShieldAlert,
   RefreshCw,
 } from "lucide-react";
-import { apiDelete, apiGet, apiPatch, apiPost, getCurrentUser } from "@/lib/api";
+import { apiDelete, apiGet, apiPatch, apiPost } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
 import { Modal } from "@/components/ui/Modal";
+import { RoleGate } from "@/components/RoleGate";
 
 type LibraryDoc = {
   id: string;
@@ -77,9 +77,8 @@ const emptyForm: FormState = {
   price: "",
 };
 
-export default function AdminLibraryPage() {
+function AdminLibraryPageInner() {
   const { toast } = useToast();
-  const [role, setRole] = useState<string | null>(null);
   const [docs, setDocs] = useState<LibraryDoc[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,11 +86,6 @@ export default function AdminLibraryPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    const u = getCurrentUser();
-    setRole(u?.role || null);
-  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -110,8 +104,8 @@ export default function AdminLibraryPage() {
   }, []);
 
   useEffect(() => {
-    if (role === "principal_admin") load();
-  }, [role, load]);
+    load();
+  }, [load]);
 
   const openCreate = () => {
     setEditingId(null);
@@ -213,24 +207,6 @@ export default function AdminLibraryPage() {
         ),
     [docs],
   );
-
-  if (role && role !== "principal_admin") {
-    return (
-      <div className="max-w-2xl mx-auto">
-        <div className="card-enterprise p-8 text-center flex flex-col items-center gap-3">
-          <div className="h-12 w-12 rounded-full bg-ink-50 flex items-center justify-center">
-            <ShieldAlert className="h-6 w-6 text-ink-500" />
-          </div>
-          <p className="font-display text-lg text-ink-900">
-            Solo administradores.
-          </p>
-          <p className="text-sm text-ink-500">
-            Esta sección está reservada al equipo principal de PROCHECK.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -535,5 +511,13 @@ export default function AdminLibraryPage() {
         </form>
       </Modal>
     </div>
+  );
+}
+
+export default function AdminLibraryPage() {
+  return (
+    <RoleGate allow={["principal_admin"]}>
+      <AdminLibraryPageInner />
+    </RoleGate>
   );
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -52,6 +53,13 @@ export class TrainingController {
     return this.svc.updateSession(id, dto, req.user as RequestUser);
   }
 
+  @ApiOperation({ summary: 'Delete (or cancel) a training session' })
+  @Roles(Role.PRINCIPAL_ADMIN, Role.CAPACITADOR)
+  @Delete('sessions/:id')
+  deleteSession(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: any) {
+    return this.svc.deleteSession(id, req.user as RequestUser);
+  }
+
   @ApiOperation({ summary: 'List appointments (assigned)' })
   @Roles(Role.PRINCIPAL_ADMIN, Role.VENDEDOR, Role.CAPACITADOR)
   @Get('appointments')
@@ -70,8 +78,7 @@ export class TrainingController {
     return this.svc.updateAppointment(id, dto, req.user as RequestUser);
   }
 
-  @ApiOperation({ summary: "Get current trainer's profile" })
-  @Roles(Role.CAPACITADOR, Role.PRINCIPAL_ADMIN)
+  @ApiOperation({ summary: "Get current user's trainer profile (defaults if none)" })
   @Get('trainer-profile/me')
   myProfile(@Req() req: any) {
     return this.svc.getMyTrainerProfile(req.user as RequestUser);

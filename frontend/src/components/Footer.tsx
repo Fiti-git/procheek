@@ -1,4 +1,4 @@
-import { ShieldCheck } from "lucide-react";
+﻿import { ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
@@ -76,10 +76,10 @@ export function Footer() {
           <ul className="space-y-2.5 text-sm">
             <li>
               <a
-                href="mailto:contacto@procheck.com"
+                href="mailto:contacto@procheck.mx"
                 className="text-ink-200 hover:text-white transition-colors"
               >
-                contacto@procheck.com
+                contacto@procheck.mx
               </a>
             </li>
             <li className="text-ink-200">{t("location")}</li>

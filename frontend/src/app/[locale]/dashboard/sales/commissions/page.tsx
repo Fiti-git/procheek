@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { apiGet } from "@/lib/api";
+import { RoleGate } from "@/components/RoleGate";
 
 type Commission = {
   id: string;
@@ -37,7 +38,7 @@ function statusPill(s: Commission["status"]) {
   );
 }
 
-export default function CommissionsPage() {
+function CommissionsPageInner() {
   const [items, setItems] = useState<Commission[]>([]);
   const [err, setErr] = useState<string | null>(null);
   const [period, setPeriod] = useState<string>("all");
@@ -137,5 +138,13 @@ export default function CommissionsPage() {
         </table>
       </div>
     </div>
+  );
+}
+
+export default function CommissionsPage() {
+  return (
+    <RoleGate allow={["principal_admin","vendedor"]}>
+      <CommissionsPageInner />
+    </RoleGate>
   );
 }

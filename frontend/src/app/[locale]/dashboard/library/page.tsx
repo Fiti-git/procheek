@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { apiGet, apiPost } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
+import { RoleGate } from "@/components/RoleGate";
 
 type LibraryDoc = {
   id: string;
@@ -86,7 +87,7 @@ function industryLabel(v: string | null): string {
   return m ? m.label : v;
 }
 
-export default function LibraryPage() {
+function LibraryPageInner() {
   const { toast } = useToast();
   const [docs, setDocs] = useState<LibraryDoc[]>([]);
   const [purchases, setPurchases] = useState<Set<string>>(new Set());
@@ -420,5 +421,13 @@ export default function LibraryPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function LibraryPage() {
+  return (
+    <RoleGate allow={["principal_admin","client","client_admin","subcontractor","employee"]}>
+      <LibraryPageInner />
+    </RoleGate>
   );
 }

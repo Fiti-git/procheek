@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
+import { RoleGate } from "@/components/RoleGate";
 
 type Summary = {
   quota_mtd: number;
@@ -39,7 +40,7 @@ function mx(n: number) {
   }).format(Number.isFinite(n) ? n : 0);
 }
 
-export default function SalesDashboardPage() {
+function SalesDashboardPageInner() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [err, setErr] = useState<string | null>(null);
@@ -178,5 +179,13 @@ export default function SalesDashboardPage() {
         </table>
       </div>
     </div>
+  );
+}
+
+export default function SalesDashboardPage() {
+  return (
+    <RoleGate allow={["principal_admin","vendedor"]}>
+      <SalesDashboardPageInner />
+    </RoleGate>
   );
 }

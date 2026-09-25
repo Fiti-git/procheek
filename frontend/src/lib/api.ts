@@ -3,8 +3,19 @@
 // Client-side API helpers for PROCHECK backend.
 // Reads JWT from localStorage under `procheck_token`.
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+function getApiUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl) return envUrl;
+  if (typeof window !== "undefined") {
+    const { protocol, hostname } = window.location;
+    if (hostname !== "localhost" && hostname !== "127.0.0.1") {
+      return `${protocol}//${hostname}:5000/api`;
+    }
+  }
+  return "http://localhost:4000/api";
+}
+
+const API_URL = getApiUrl();
 
 export type CurrentUser = {
   id: string;

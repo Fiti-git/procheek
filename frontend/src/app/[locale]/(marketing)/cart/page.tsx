@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Trash2, ShieldCheck, ArrowRight, Minus, Plus, ShoppingBag } from "lucide-react";
@@ -52,7 +53,7 @@ export default function CartPage() {
       <div className="container-page py-12 md:py-16">
         <div className="mb-8">
           <p className="kicker mb-3">Carrito</p>
-          <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-tight">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
             Tu carrito.
           </h1>
           <p className="mt-2 text-sm text-ink-500">
@@ -67,14 +68,16 @@ export default function CartPage() {
               return (
                 <div
                   key={i.courseId}
-                  className="card-enterprise p-4 flex items-center gap-4"
+                  className="card-enterprise p-4 flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4"
                 >
                   <div className="relative h-16 w-24 shrink-0 rounded-lg overflow-hidden border border-line">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={src}
                       alt={i.courseTitle}
-                      className="absolute inset-0 h-full w-full object-cover"
+                      fill
+                      sizes="96px"
+                      className="object-cover"
+                      quality={85}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -87,11 +90,11 @@ export default function CartPage() {
                       {i.courseTitle}
                     </div>
                     <div className="mt-1.5 flex items-center gap-1.5 text-xs text-ink-500">
-                      <ShieldCheck className="h-3 w-3 text-coral-500" />
-                      Incluye certificado DC-3
+                      <ShieldCheck className="h-3 w-3 text-coral-500 shrink-0" />
+                      <span className="truncate">Incluye certificado DC-3</span>
                     </div>
                   </div>
-                  <div className="inline-flex items-center gap-0 rounded-lg border border-line overflow-hidden">
+                  <div className="inline-flex items-center gap-0 rounded-lg border border-line overflow-hidden shrink-0">
                     <button
                       type="button"
                       aria-label="Reducir cantidad"
@@ -112,7 +115,7 @@ export default function CartPage() {
                       <Plus className="h-3.5 w-3.5" />
                     </button>
                   </div>
-                  <div className="text-right w-24">
+                  <div className="text-right w-auto sm:w-24 shrink-0 ml-auto sm:ml-0">
                     <div className="font-display text-lg font-semibold text-ink-900">
                       ${lineTotal.toLocaleString("es-MX")}
                     </div>
@@ -121,7 +124,7 @@ export default function CartPage() {
                   <button
                     type="button"
                     onClick={() => remove(i.courseId)}
-                    className="p-2 rounded-lg text-ink-500 hover:bg-danger-bg hover:text-danger transition-colors"
+                    className="p-2 rounded-lg text-ink-500 hover:bg-danger-bg hover:text-danger transition-colors shrink-0"
                     aria-label="Eliminar"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -131,7 +134,7 @@ export default function CartPage() {
             })}
           </div>
 
-          <aside className="bg-ink-900 text-white p-7 h-fit rounded-xl border border-ink-900 lg:sticky lg:top-24">
+          <aside className="bg-ink-900 text-white p-5 sm:p-7 h-fit rounded-xl border border-ink-900 lg:sticky lg:top-24 min-w-0">
             <h3 className="font-display text-lg font-semibold text-white tracking-tight mb-5">
               Resumen del pedido
             </h3>

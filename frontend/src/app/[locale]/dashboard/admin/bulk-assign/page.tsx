@@ -5,6 +5,7 @@ import { ClipboardCheck, Users, BookOpen, Building2 } from "lucide-react";
 import { apiGet, apiPost, getCurrentUser } from "@/lib/api";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
+import { RoleGate } from "@/components/RoleGate";
 
 type Course = { id: string; slug: string; titleEs: string; title_es?: string };
 type Company = { id: string; name: string };
@@ -44,7 +45,7 @@ function roleOf(u: User): string {
   return u.roleCode ?? u.role_code ?? u.role ?? "";
 }
 
-export default function BulkAssignPage() {
+function BulkAssignPageInner() {
   const { toast } = useToast();
   const [ready, setReady] = React.useState(false);
   const [authorized, setAuthorized] = React.useState(false);
@@ -321,5 +322,13 @@ export default function BulkAssignPage() {
         </Button>
       </div>
     </div>
+  );
+}
+
+export default function BulkAssignPage() {
+  return (
+    <RoleGate allow={["principal_admin"]}>
+      <BulkAssignPageInner />
+    </RoleGate>
   );
 }

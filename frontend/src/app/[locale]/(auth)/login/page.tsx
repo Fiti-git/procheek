@@ -74,7 +74,7 @@ function LoginInner() {
   return (
     <div>
       <p className="kicker mb-3">Iniciar sesión</p>
-      <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-tight">
+      <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
         Bienvenido de nuevo.
       </h1>
       <p className="mt-3 text-ink-700 text-sm leading-relaxed">

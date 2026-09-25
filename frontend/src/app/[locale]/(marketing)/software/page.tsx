@@ -8,6 +8,7 @@ import {
   Check,
   ArrowRight,
 } from "lucide-react";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { IMG } from "@/lib/images";
@@ -138,21 +139,29 @@ export default async function SoftwarePage() {
   return (
     <>
       {/* HERO */}
-      <section className="bg-canvas">
+      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white">
         <div className="container-page py-16 md:py-24 grid md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-6">
-            <p className="kicker mb-3">{t("kicker")}</p>
-            <h1 className="font-display text-5xl md:text-6xl font-semibold text-ink-900 leading-[1.05] tracking-tighter">
+            <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.18em] text-[#FBB601] mb-3">
+              {t("kicker")}
+            </p>
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-semibold text-white leading-[1.08] tracking-tighter [hyphens:none] break-words">
               {t("heroTitle")}
             </h1>
-            <p className="mt-6 text-lg text-ink-700 leading-relaxed max-w-lg">
+            <p className="mt-6 text-lg text-white/80 leading-relaxed max-w-lg">
               {t("heroSubtitle")}
             </p>
             <div className="mt-8 flex flex-wrap gap-4 items-center">
-              <Link href="#planes" className="btn-primary">
+              <Link
+                href="#planes"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#FBB601] hover:bg-[#D99A00] text-white font-semibold text-sm px-5 py-3 shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
+              >
                 {t("ctaPlans")}
               </Link>
-              <Link href="/consulting" className="btn-ghost">
+              <Link
+                href="/consulting"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-white/90 hover:text-[#FBB601] transition-colors"
+              >
                 {t("ctaDemo")} <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -166,7 +175,17 @@ export default async function SoftwarePage() {
             </div>
           </div>
           <div className="md:col-span-6">
-            <TeamPreview />
+            <div className="relative rounded-2xl overflow-hidden shadow-cardHover aspect-[4/3] border border-line">
+              <Image
+                src={IMG.softwareShowcase}
+                alt="Software PROCHECK en planta industrial"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+                quality={95}
+                priority
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -180,98 +199,25 @@ export default async function SoftwarePage() {
               {t("featuresTitle")}
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-5 auto-rows-[minmax(180px,auto)]">
-            {/* Wide with mini chart */}
-            <div className="md:col-span-2 card-enterprise p-7">
-              <div className="h-10 w-10 rounded-lg bg-coral-50 flex items-center justify-center mb-4">
-                <BarChart3 className="h-5 w-5 text-coral-600" />
-              </div>
-              <h3 className="font-display text-xl font-semibold text-ink-900 mb-2 tracking-tight">
-                {t("reportsTitle")}
-              </h3>
-              <p className="text-sm text-ink-700 leading-relaxed mb-4">
-                {t("reportsDesc")}
-              </p>
-              <div className="flex items-end gap-1 h-12">
-                {[30, 45, 40, 55, 62, 58, 72, 68, 80].map((h, i) => (
-                  <div
-                    key={i}
-                    className={`flex-1 rounded-sm ${i >= 6 ? "bg-coral-500" : "bg-ink-700"}`}
-                    style={{ height: `${h}%` }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Tall */}
-            <div className="md:col-span-2 md:row-span-2 card-enterprise p-7 flex flex-col">
-              <div className="h-10 w-10 rounded-lg bg-coral-50 flex items-center justify-center mb-4">
-                <ShieldCheck className="h-5 w-5 text-coral-600" />
-              </div>
-              <h3 className="font-display text-xl font-semibold text-ink-900 mb-2 tracking-tight">
-                {t("auditTitle")}
-              </h3>
-              <p className="text-sm text-ink-700 leading-relaxed mb-5">
-                {t("auditDesc")}
-              </p>
-              <ul className="space-y-2.5 text-sm text-ink-700 mb-5">
-                {[t("auditBullet1"), t("auditBullet2"), t("auditBullet3")].map((b) => (
-                  <li key={b} className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-success shrink-0" />
-                    {b}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto border border-line rounded-lg p-4 bg-canvas">
-                <div className="font-mono text-[10px] text-ink-500 mb-2">
-                  {t("auditLogLabel")}
-                </div>
-                <ul className="space-y-2 text-xs text-ink-700">
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-success" />
-                    {t("auditLog1")}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-coral-500" />
-                    {t("auditLog2")}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-ink-300" />
-                    {t("auditLog3")}
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Small cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
+              { icon: BarChart3, title: t("reportsTitle"), desc: t("reportsDesc") },
+              { icon: ShieldCheck, title: t("auditTitle"), desc: t("auditDesc") },
               { icon: Users, title: t("smallCard1Title"), desc: t("smallCard1Desc") },
               { icon: FileText, title: t("smallCard2Title"), desc: t("smallCard2Desc") },
               { icon: Lock, title: t("smallCard3Title"), desc: t("smallCard3Desc") },
+              { icon: MessageCircle, title: t("supportTitle"), desc: t("supportDesc") },
             ].map((f) => (
-              <div key={f.title} className="card-enterprise p-6">
-                <div className="h-9 w-9 rounded-lg bg-coral-50 flex items-center justify-center mb-3">
-                  <f.icon className="h-4.5 w-4.5 text-coral-600" />
+              <div key={f.title} className="card-enterprise p-7 flex flex-col">
+                <div className="h-11 w-11 rounded-lg bg-coral-50 flex items-center justify-center mb-4">
+                  <f.icon className="h-5 w-5 text-coral-600" />
                 </div>
-                <h3 className="font-display text-base font-semibold text-ink-900 mb-1.5 tracking-tight">
+                <h3 className="font-display text-lg font-semibold text-ink-900 mb-2 tracking-tight">
                   {f.title}
                 </h3>
-                <p className="text-xs text-ink-700 leading-relaxed">{f.desc}</p>
+                <p className="text-sm text-ink-700 leading-relaxed">{f.desc}</p>
               </div>
             ))}
-
-            {/* Wide bottom */}
-            <div className="md:col-span-2 card-enterprise p-7">
-              <div className="h-10 w-10 rounded-lg bg-coral-50 flex items-center justify-center mb-4">
-                <MessageCircle className="h-5 w-5 text-coral-600" />
-              </div>
-              <h3 className="font-display text-xl font-semibold text-ink-900 mb-2 tracking-tight">
-                {t("supportTitle")}
-              </h3>
-              <p className="text-sm text-ink-700 leading-relaxed">
-                {t("supportDesc")}
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -348,32 +294,6 @@ export default async function SoftwarePage() {
         </div>
       </section>
 
-      {/* TESTIMONIAL */}
-      <section className="py-16 md:py-20 bg-canvas-2 border-t border-line">
-        <div className="container-page max-w-3xl">
-          <div className="card-enterprise p-8 md:p-10">
-            <p className="text-lg text-ink-800 leading-relaxed">
-              {t("testimonialQuote")}
-            </p>
-            <div className="mt-6 flex items-center gap-3 border-t border-line pt-5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={IMG.avatar1}
-                alt={t("testimonialName")}
-                className="h-11 w-11 rounded-full object-cover border border-line"
-              />
-              <div>
-                <div className="font-medium text-ink-900 text-sm">
-                  {t("testimonialName")}
-                </div>
-                <div className="text-xs text-ink-500 mt-0.5">
-                  {t("testimonialRole")}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

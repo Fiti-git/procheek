@@ -1,5 +1,6 @@
 import { GraduationCap, ClipboardCheck, ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { IMG } from "@/lib/images";
 
@@ -30,29 +31,44 @@ export default async function ConsultingPage() {
   return (
     <>
       {/* HERO */}
-      <section className="bg-canvas">
+      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white">
         <div className="container-page py-16 md:py-24 grid md:grid-cols-12 gap-12 items-center">
           <div className="md:col-span-6">
-            <p className="kicker mb-3">{t("kicker")}</p>
-            <h1 className="font-display text-5xl md:text-6xl font-semibold text-ink-900 leading-[1.05] tracking-tighter">
+            <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.18em] text-[#FBB601] mb-3">
+              {t("kicker")}
+            </p>
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-semibold text-white leading-[1.08] tracking-tighter [hyphens:none] break-words">
               {t("heroTitle")}
             </h1>
-            <p className="mt-6 text-lg text-ink-700 leading-relaxed max-w-lg">
+            <p className="mt-6 text-lg text-white/80 leading-relaxed max-w-lg">
               {t("heroSubtitle")}
             </p>
             <div className="mt-8 flex flex-wrap gap-4 items-center">
-              <Link href="/agendar?type=consulting" className="btn-primary">
+              <Link
+                href="/agendar?type=consulting"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#FBB601] hover:bg-[#D99A00] text-white font-semibold text-sm px-5 py-3 shadow-orangeGlow hover:shadow-orangeGlowLg hover:-translate-y-0.5 transition-all duration-300"
+              >
                 {t("ctaBook")}
               </Link>
-              <Link href="#casos" className="btn-ghost">
+              <Link
+                href="#casos"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-white/90 hover:text-[#FBB601] transition-colors"
+              >
                 {t("ctaCases")} <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
           <div className="md:col-span-6">
-            <div className="card-enterprise rounded-2xl overflow-hidden relative aspect-[4/3] photo-duotone-subtle">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={IMG.heroConsulting} alt={t("heroImageAlt")} />
+            <div className="rounded-2xl overflow-hidden relative aspect-[4/3] shadow-cardHover border border-line">
+              <Image
+                src={IMG.heroConsulting}
+                alt={t("heroImageAlt")}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+                quality={95}
+                priority
+              />
             </div>
           </div>
         </div>
@@ -93,11 +109,13 @@ export default async function ConsultingPage() {
                 icon: GraduationCap,
                 title: t("service1Title"),
                 desc: t("service1Desc"),
+                fee: t("service1Fee"),
               },
               {
                 icon: ClipboardCheck,
                 title: t("service2Title"),
                 desc: t("service2Desc"),
+                fee: null as string | null,
               },
             ].map((s) => (
               <div key={s.title} className="card-enterprise p-7">
@@ -108,6 +126,11 @@ export default async function ConsultingPage() {
                   {s.title}
                 </h3>
                 <p className="text-sm text-ink-700 leading-relaxed">{s.desc}</p>
+                {s.fee && (
+                  <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[#0F1E3D] bg-[#FBB601]/15 border border-[#FBB601]/40 px-2.5 py-1 rounded-full">
+                    {s.fee}
+                  </p>
+                )}
               </div>
             ))}
           </div>

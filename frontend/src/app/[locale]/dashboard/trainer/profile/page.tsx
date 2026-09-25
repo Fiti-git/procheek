@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { apiGet, apiPatch, getCurrentUser } from "@/lib/api";
 import { Input, Label, HelperText } from "@/components/ui/Input";
+import { RoleGate } from "@/components/RoleGate";
 
 type TrainerProfile = {
   userId: string;
@@ -13,7 +14,7 @@ type TrainerProfile = {
   specialties: string[];
 };
 
-export default function TrainerProfilePage() {
+function TrainerProfilePageInner() {
   const [profile, setProfile] = useState<TrainerProfile | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -27,7 +28,14 @@ export default function TrainerProfilePage() {
         const d = await apiGet<TrainerProfile>("/training/trainer-profile/me");
         setProfile(d);
       } catch (e) {
-        setErr((e as Error).message);
+        const msg = (e as Error).message || "";
+        if (/not found|404/i.test(msg)) {
+          setErr(
+            "Aún no tienes un perfil de capacitador. Solicita al administrador que te asigne el rol de capacitador.",
+          );
+        } else {
+          setErr(msg);
+        }
       }
     })();
   }, []);
@@ -188,5 +196,13 @@ export default function TrainerProfilePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function TrainerProfilePage() {
+  return (
+    <RoleGate allow={["principal_admin","capacitador"]}>
+      <TrainerProfilePageInner />
+    </RoleGate>
   );
 }

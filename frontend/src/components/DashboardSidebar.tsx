@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -47,6 +48,7 @@ const salesItems: NavItem[] = [
 ];
 
 const adminItems: NavItem[] = [
+  { href: "/dashboard/admin/courses", label: "Catálogo de cursos", icon: BookOpen },
   { href: "/dashboard/admin/bulk-assign", label: "Asignar cursos en lote", icon: ClipboardCheck },
   { href: "/dashboard/admin/certificates", label: "Gestión de certificados", icon: ShieldCheck },
   { href: "/dashboard/admin/library", label: "Biblioteca", icon: Library },
@@ -131,10 +133,18 @@ function NavGroup({
 export function DashboardSidebar() {
   const pathname = usePathname();
   const [user, setUser] = useState<CurrentUser | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     setUser(getCurrentUser());
   }, [pathname]);
+
+  if (!mounted) {
+    return (
+      <aside className="hidden md:flex flex-col w-64 shrink-0 bg-white border-r border-line" suppressHydrationWarning />
+    );
+  }
 
   const role = user?.role || "employee";
   const roleLabel = ROLE_LABEL[role] || "Empleado";
@@ -151,18 +161,16 @@ export function DashboardSidebar() {
 
   return (
     <aside className="hidden md:flex flex-col w-64 shrink-0 bg-white border-r border-line">
-      <div className="h-16 flex items-center px-5 border-b border-line">
-        <div className="flex flex-col">
-          <div className="flex items-baseline gap-1.5">
-            <span className="font-display font-bold text-lg tracking-tight text-ink-900 leading-none">
-              PROCHECK
-            </span>
-            <span className="font-display font-normal text-sm text-coral-500 leading-none">
-              Safety
-            </span>
-          </div>
-          <span className="text-xs text-ink-500 mt-1">{roleLabel}</span>
-        </div>
+      <div className="h-20 flex items-center gap-3 px-5 border-b border-line">
+        <Image
+          src="/images/logo_hires.png"
+          alt="PROCHECK Solutions"
+          width={1254}
+          height={1254}
+          className="h-12 w-auto shrink-0"
+          priority
+        />
+        <span className="text-xs text-ink-500 font-medium">{roleLabel}</span>
       </div>
 
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">

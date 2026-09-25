@@ -15,7 +15,69 @@ export type Course = {
   industry: Industry;
   tier: "basico" | "complementario";
   description?: string;
+  imageUrl?: string;
+  isActive?: boolean;
 };
+
+// API row shape returned by GET /api/courses. Fields may be null for legacy
+// rows that were created before the code/title/industry/tier columns existed.
+export type ApiCourse = {
+  id: string;
+  code: string | null;
+  title: string | null;
+  description: string | null;
+  hours: number | null;
+  price: number | string | null;
+  industry: string | null;
+  tier: string | null;
+  imageUrl: string | null;
+  isActive: boolean;
+  slug?: string;
+  titleEs?: string | null;
+  descriptionEs?: string | null;
+  priceMxn?: number | string | null;
+  durationHours?: number | string | null;
+};
+
+/**
+ * Normalize an API row (which may have legacy or new fields) into the
+ * canonical client-side `Course` shape used by the marketing UI and the
+ * admin table.
+ */
+export function normalizeCourse(row: ApiCourse): Course {
+  const code = row.code || row.slug || row.id;
+  const title = row.title || row.titleEs || code;
+  const description = row.description || row.descriptionEs || undefined;
+  const hours = Number(row.hours ?? row.durationHours ?? 0) || 0;
+  const price = Number(row.price ?? row.priceMxn ?? 0) || 0;
+  const industry = (row.industry || "general") as Industry;
+  const tier = (row.tier || "basico") as "basico" | "complementario";
+  const image = row.imageUrl || `/images/courses/${code}.jpg`;
+  return {
+    id: row.id,
+    code,
+    title,
+    description,
+    hours,
+    price,
+    image,
+    imageUrl: row.imageUrl || undefined,
+    industry,
+    tier,
+    isActive: row.isActive,
+  };
+}
+
+/**
+ * Fetch the public course catalog from the API. Client-side only.
+ * Callers should handle errors and optionally fall back to the static
+ * `courses` array for build-time SSG.
+ */
+export async function fetchCourses(): Promise<Course[]> {
+  const { apiGet } = await import("@/lib/api");
+  const rows = await apiGet<ApiCourse[]>("/courses");
+  return rows.map(normalizeCourse);
+}
 
 export const courses: Course[] = [
   // Básicos (NOM)

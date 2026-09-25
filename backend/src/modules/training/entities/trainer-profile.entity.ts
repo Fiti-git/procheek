@@ -17,6 +17,12 @@ export class TrainerProfile {
   @Column({ type: 'text', name: 'stps_registration', nullable: true })
   stpsRegistration!: string | null;
 
+  @Column({ type: 'text', name: 'ace_registration', nullable: true })
+  aceRegistration!: string | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  availability!: Record<string, unknown> | null;
+
   @Column({ type: 'text', nullable: true })
   rfc!: string | null;
 

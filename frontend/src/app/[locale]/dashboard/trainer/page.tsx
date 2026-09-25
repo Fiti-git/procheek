@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { apiGet } from "@/lib/api";
 import KpiCard from "@/components/KpiCard";
+import { RoleGate } from "@/components/RoleGate";
 
 type Summary = {
   sessions_this_month: number;
@@ -28,7 +29,7 @@ type Session = {
   status: string;
 };
 
-export default function TrainerDashboardPage() {
+function TrainerDashboardPageInner() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [err, setErr] = useState<string | null>(null);
@@ -146,5 +147,13 @@ export default function TrainerDashboardPage() {
         </table>
       </div>
     </div>
+  );
+}
+
+export default function TrainerDashboardPage() {
+  return (
+    <RoleGate allow={["principal_admin","capacitador"]}>
+      <TrainerDashboardPageInner />
+    </RoleGate>
   );
 }

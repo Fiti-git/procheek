@@ -1,4 +1,5 @@
 import { IsEmail, IsEnum, IsOptional, IsString, IsUUID, Length } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { Role } from '../../../common/roles';
 
 export class InviteUserDto {
@@ -11,6 +12,10 @@ export class InviteUserDto {
   @IsString() @Length(1, 100)
   lastName!: string;
 
+  // Accept either `role` (canonical) or `roleCode` (alias used by the frontend
+  // Team page and QA tooling). If `role` is missing but `roleCode` is present,
+  // the transformer promotes it before validation runs.
+  @Transform(({ value, obj }) => value ?? obj?.roleCode ?? obj?.role_code)
   @IsEnum(Role)
   role!: Role;
 

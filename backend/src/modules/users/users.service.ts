@@ -213,6 +213,49 @@ export class UsersService {
     return this.sanitize(saved);
   }
 
+  async getMyRfc(actor: RequestUser) {
+    const user = await this.repo.findOne({ where: { id: actor.userId } });
+    if (!user) throw new NotFoundException('User not found');
+    return {
+      rfc: user.rfc ?? null,
+      razonSocial: user.razonSocial ?? null,
+      codigoPostal: user.codigoPostal ?? null,
+      regimenFiscal: user.regimenFiscal ?? null,
+      usoCfdi: user.usoCfdi ?? null,
+      siempreFacturar: !!user.siempreFacturar,
+      contribuyenteIeps: !!user.contribuyenteIeps,
+    };
+  }
+
+  async updateMyRfc(actor: RequestUser, dto: Record<string, unknown>) {
+    const user = await this.repo.findOne({ where: { id: actor.userId } });
+    if (!user) throw new NotFoundException('User not found');
+    const pick = (a: unknown, b: unknown) =>
+      typeof a === 'string' ? a : typeof b === 'string' ? b : undefined;
+    const pickBool = (a: unknown, b: unknown) =>
+      typeof a === 'boolean' ? a : typeof b === 'boolean' ? b : undefined;
+
+    const rfc = pick(dto.rfc, undefined);
+    const razonSocial = pick(dto.razonSocial, dto.razon_social);
+    const codigoPostal = pick(dto.codigoPostal, dto.codigo_postal);
+    const regimenFiscal = pick(dto.regimenFiscal, dto.regimen_fiscal);
+    const usoCfdi = pick(dto.usoCfdi, dto.uso_cfdi);
+    const siempreFacturar = pickBool(dto.siempreFacturar, dto.siempre_facturar);
+    const contribuyenteIeps = pickBool(dto.contribuyenteIeps, dto.contribuyente_ieps);
+
+    if (rfc !== undefined) user.rfc = rfc ? rfc.toUpperCase() : null;
+    if (razonSocial !== undefined) user.razonSocial = razonSocial || null;
+    if (codigoPostal !== undefined) user.codigoPostal = codigoPostal || null;
+    if (regimenFiscal !== undefined) user.regimenFiscal = regimenFiscal || null;
+    if (usoCfdi !== undefined) user.usoCfdi = usoCfdi || null;
+    if (siempreFacturar !== undefined) user.siempreFacturar = siempreFacturar;
+    if (contribuyenteIeps !== undefined) user.contribuyenteIeps = contribuyenteIeps;
+
+    await this.repo.save(user);
+    this.auditFor('user.update_rfc', user.id, actor);
+    return this.getMyRfc(actor);
+  }
+
   async deactivate(id: string, actor: RequestUser) {
     const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('User not found');

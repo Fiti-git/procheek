@@ -18,6 +18,7 @@ import { useToast } from "@/components/ui/Toast";
 import { certificates, type Certificate } from "@/lib/certificates";
 import { apiPost, getCurrentUser } from "@/lib/api";
 import { cn } from "@/lib/cn";
+import { RoleGate } from "@/components/RoleGate";
 
 type StatusKey = "vigente" | "por-vencer" | "vencido";
 
@@ -54,8 +55,24 @@ function certId(c: Certificate): string {
   return c.folio;
 }
 
-export default function CertificatesPage() {
+function certPdfUrl(folio: string): string {
+  const base =
+    process.env.NEXT_PUBLIC_API_URL ||
+    (typeof window !== "undefined"
+      ? `${window.location.protocol}//${window.location.hostname}:5000/api`
+      : "");
+  return `${base}/certificates/${encodeURIComponent(folio)}/pdf`;
+}
+
+function downloadCert(folio: string) {
+  if (typeof window === "undefined") return;
+  window.open(certPdfUrl(folio), "_blank");
+}
+
+function CertificatesPageInner() {
   const { toast } = useToast();
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
   const [rows] = React.useState<Certificate[]>(certificates);
   const [emailOpen, setEmailOpen] = React.useState<Certificate | null>(null);
   const [recertOpen, setRecertOpen] = React.useState<Certificate | null>(null);
@@ -146,6 +163,10 @@ export default function CertificatesPage() {
       setRecerting(false);
     }
   };
+
+  if (!mounted) {
+    return <div className="max-w-6xl mx-auto" suppressHydrationWarning />;
+  }
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -310,6 +331,7 @@ export default function CertificatesPage() {
                       </button>
                       <button
                         type="button"
+                        onClick={() => downloadCert(c.folio)}
                         title="Descargar PDF"
                         className="p-2 rounded-lg text-ink-700 hover:bg-canvas-2 hover:text-coral-500 transition-colors"
                       >
@@ -442,7 +464,11 @@ export default function CertificatesPage() {
               >
                 <Mail className="h-4 w-4" /> Enviar por correo
               </button>
-              <button type="button" className="btn-primary">
+              <button
+                type="button"
+                onClick={() => downloadCert(detailOpen.folio)}
+                className="btn-primary"
+              >
                 <Download className="h-4 w-4" /> Descargar PDF
               </button>
             </div>
@@ -476,5 +502,13 @@ function Detail({
         {value}
       </div>
     </div>
+  );
+}
+
+export default function CertificatesPage() {
+  return (
+    <RoleGate allow={["principal_admin","client","client_admin","subcontractor","employee"]}>
+      <CertificatesPageInner />
+    </RoleGate>
   );
 }

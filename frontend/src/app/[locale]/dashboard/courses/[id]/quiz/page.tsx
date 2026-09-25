@@ -1,64 +1,40 @@
 "use client";
 
-import { use, useEffect, useMemo, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Clock,
   CheckCircle2,
   XCircle,
-  Award,
-  Download,
   RotateCw,
+  Loader2,
 } from "lucide-react";
-import { courses } from "@/lib/courses";
-import { getQuizForCourse } from "@/lib/quiz-data";
+import { apiGet, apiPost } from "@/lib/api";
+import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/cn";
 
-type Attempt = {
-  score: number;
-  passed: boolean;
-  at: string;
+type ApiCourse = {
+  id: string;
+  code: string | null;
+  title: string | null;
 };
 
-function readAttempts(courseId: string): Attempt[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(
-      `procheck_quiz_attempts_${courseId}`,
-    );
-    if (!raw) return [];
-    return JSON.parse(raw) as Attempt[];
-  } catch {
-    return [];
-  }
-}
+type QuizQuestion = {
+  id: string;
+  text: string;
+  options: string[];
+};
 
-function writeAttempts(courseId: string, attempts: Attempt[]) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(
-    `procheck_quiz_attempts_${courseId}`,
-    JSON.stringify(attempts),
-  );
-}
+type QuizPayload = { questions: QuizQuestion[] };
 
-function markExamComplete(courseId: string) {
-  if (typeof window === "undefined") return;
-  try {
-    const raw = window.localStorage.getItem(
-      `procheck_progress_${courseId}`,
-    );
-    const arr = raw ? (JSON.parse(raw) as number[]) : [];
-    const set = new Set(arr);
-    set.add(5);
-    window.localStorage.setItem(
-      `procheck_progress_${courseId}`,
-      JSON.stringify(Array.from(set)),
-    );
-  } catch {
-    // ignore
-  }
-}
+type SubmitResult = {
+  score: number;
+  passed: boolean;
+  correct: number;
+  total: number;
+  wrongQuestions: string[];
+};
 
 export default function QuizPage({
   params,
@@ -67,22 +43,21 @@ export default function QuizPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const { toast } = useToast();
 
-  const course =
-    courses.find((c) => c.id === id) ||
-    courses.find((c) => c.code.toLowerCase() === id.toLowerCase()) ||
-    courses[0];
-
-  const questions = useMemo(() => getQuizForCourse(course.code), [course.code]);
   const [ready, setReady] = useState(false);
-  const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [course, setCourse] = useState<ApiCourse | null>(null);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [answers, setAnswers] = useState<Record<string, number>>({});
   const [idx, setIdx] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [submitted, setSubmitted] = useState(false);
-  const [score, setScore] = useState(0);
-  const [passed, setPassed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<SubmitResult | null>(null);
+  const [attempts, setAttempts] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(600);
+  const [error, setError] = useState<string | null>(null);
 
+  // Auth guard + initial fetch.
   useEffect(() => {
     if (typeof window !== "undefined") {
       const token = window.localStorage.getItem("procheck_token");
@@ -91,93 +66,158 @@ export default function QuizPage({
         return;
       }
     }
-    setAttempts(readAttempts(course.id));
-    setReady(true);
-  }, [course.id, id, router]);
+    let cancelled = false;
+    (async () => {
+      try {
+        // Resolve course by id (uuid) or code.
+        let c: ApiCourse | null = null;
+        try {
+          c = await apiGet<ApiCourse>(`/courses/${id}`);
+        } catch {
+          try {
+            c = await apiGet<ApiCourse>(`/courses/code/${id}`);
+          } catch {
+            c = null;
+          }
+        }
+        if (!c) throw new Error("Curso no encontrado");
+        if (cancelled) return;
+        setCourse(c);
+        const q = await apiGet<QuizPayload>(`/courses/${c.id}/quiz`);
+        if (cancelled) return;
+        setQuestions(q.questions || []);
+        setReady(true);
+      } catch (err) {
+        if (!cancelled) {
+          setError((err as Error).message || "No se pudo cargar el examen");
+          setReady(true);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [id, router]);
 
+  // Countdown timer — only while quiz is in progress.
   useEffect(() => {
-    if (submitted) return;
-    const t = setInterval(() => {
+    if (result || !ready || questions.length === 0) return;
+    const t = window.setInterval(() => {
       setSecondsLeft((s) => (s > 0 ? s - 1 : 0));
     }, 1000);
-    return () => clearInterval(t);
-  }, [submitted]);
+    return () => window.clearInterval(t);
+  }, [result, ready, questions.length]);
 
+  const total = questions.length;
+  const q = questions[idx];
+  const progressPct = total > 0 ? Math.round(((idx + 1) / total) * 100) : 0;
   const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const ss = String(secondsLeft % 60).padStart(2, "0");
 
-  const q = questions[idx];
-  const total = questions.length;
-  const progressPct = Math.round(((idx + 1) / total) * 100);
-  const attemptNumber = attempts.length + 1;
-
-  const handleSubmit = () => {
-    // Demo: guarantee 8/10 pass on submit for smooth demo, but count real answers if higher
-    const real = questions.reduce(
-      (n, question) =>
-        n + (answers[question.id] === question.correctIndex ? 1 : 0),
-      0,
-    );
-    const finalScore = Math.max(real, 8);
-    const pct = Math.round((finalScore / total) * 100);
-    const didPass = pct >= 90;
-    setScore(pct);
-    setPassed(didPass);
-    setSubmitted(true);
-    const newAttempts: Attempt[] = [
-      ...attempts,
-      { score: pct, passed: didPass, at: new Date().toISOString() },
-    ];
-    setAttempts(newAttempts);
-    writeAttempts(course.id, newAttempts);
-    if (didPass) markExamComplete(course.id);
+  const handleSubmit = async () => {
+    if (!course) return;
+    setSubmitting(true);
+    try {
+      const res = await apiPost<SubmitResult>(
+        `/courses/${course.id}/quiz/submit`,
+        { answers },
+      );
+      setResult(res);
+      setAttempts((a) => a + 1);
+      if (res.passed) {
+        toast({
+          title: "¡Aprobaste el examen!",
+          description: "Tu certificado se está emitiendo.",
+          variant: "success",
+        });
+        // Redirect to certificates after 3s per spec.
+        window.setTimeout(() => {
+          router.push(`/dashboard/certificates`);
+        }, 3000);
+      } else {
+        toast({
+          title: "No alcanzaste el 90%",
+          description: `Puntaje: ${res.score}%. Puedes reintentar.`,
+          variant: "error",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "No se pudo enviar el examen",
+        description: (err as Error).message,
+        variant: "error",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleRetry = () => {
     setIdx(0);
     setAnswers({});
-    setSubmitted(false);
-    setScore(0);
-    setPassed(false);
+    setResult(null);
     setSecondsLeft(600);
   };
 
   if (!ready) {
-    return <div className="min-h-[50vh]" />;
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center text-ink-500">
+        Cargando examen…
+      </div>
+    );
   }
 
-  if (submitted) {
+  if (error || questions.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto py-16 text-center">
+        <h1 className="font-display text-2xl font-semibold text-ink-900">
+          No se pudo cargar el examen
+        </h1>
+        <p className="mt-2 text-sm text-ink-700">
+          {error || "No hay preguntas disponibles para este curso."}
+        </p>
+        <Link
+          href={`/dashboard/courses/${id}`}
+          className="btn-primary mt-6 inline-flex"
+        >
+          Volver al curso
+        </Link>
+      </div>
+    );
+  }
+
+  if (result) {
     return (
       <div className="max-w-2xl mx-auto">
-        {passed ? (
-          <div className="relative bg-white border border-line rounded-xl p-10 text-center overflow-hidden">
-            <ConfettiOverlay />
-            <div className="relative">
-              <div className="mx-auto h-16 w-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mb-5">
-                <CheckCircle2 className="h-8 w-8 text-emerald-600" />
-              </div>
-              <p className="kicker mb-2">Certificado emitido</p>
-              <h1 className="font-display text-4xl font-semibold text-ink-900 tracking-tight">
-                ¡Aprobaste con {score}%!
-              </h1>
-              <p className="mt-3 text-sm text-ink-700 max-w-md mx-auto">
-                Superaste el umbral del 90%. Tu certificado DC-3 está listo
-                para descargar.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-                <button className="btn-primary inline-flex items-center gap-2">
-                  <Download className="h-4 w-4" /> Descargar DC-3
-                </button>
-                <Link
-                  href={`/dashboard/courses/${id}`}
-                  className="btn-secondary"
-                >
-                  Volver al curso
-                </Link>
-              </div>
-              <div className="mt-6 inline-flex items-center gap-2 text-xs text-ink-500 font-mono">
-                <Award className="h-3.5 w-3.5" /> DC-3 vigente por 12 meses
-              </div>
+        {result.passed ? (
+          <div className="bg-white border border-line rounded-xl p-10 text-center">
+            <div className="mx-auto h-16 w-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mb-5">
+              <CheckCircle2 className="h-8 w-8 text-emerald-600" />
+            </div>
+            <p className="kicker mb-2">Examen aprobado</p>
+            <h1 className="font-display text-4xl font-semibold text-ink-900 tracking-tight">
+              ¡Aprobaste con {result.score}%!
+            </h1>
+            <p className="mt-3 text-sm text-ink-700 max-w-md mx-auto">
+              Respondiste correctamente {result.correct} de {result.total}.
+              Tu certificado se emitirá automáticamente. Redirigiendo…
+            </p>
+            <div className="mt-8 flex items-center justify-center text-ink-500 text-xs">
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              Preparando tu DC-3…
+            </div>
+            <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/dashboard/certificates" className="btn-primary">
+                Ir a mis certificados
+              </Link>
+              <Link
+                href={`/dashboard/courses/${id}`}
+                className="btn-secondary"
+              >
+                Volver al curso
+              </Link>
             </div>
           </div>
         ) : (
@@ -185,16 +225,38 @@ export default function QuizPage({
             <div className="mx-auto h-16 w-16 rounded-full bg-red-50 border border-red-200 flex items-center justify-center mb-5">
               <XCircle className="h-8 w-8 text-red-600" />
             </div>
-            <p className="kicker mb-2">Intento {attemptNumber} de 3</p>
+            <p className="kicker mb-2">Intento {attempts}</p>
             <h1 className="font-display text-3xl font-semibold text-ink-900 tracking-tight">
-              Obtuviste {score}%.
+              Obtuviste {result.score}%
             </h1>
             <p className="mt-3 text-sm text-ink-700 max-w-md mx-auto">
-              No alcanzaste el 90% mínimo. Puedes reintentar el examen y
-              consultar el material nuevamente.
+              Necesitas al menos 90% para aprobar. Respondiste correctamente{" "}
+              {result.correct} de {result.total}.
             </p>
+            {result.wrongQuestions.length > 0 && (
+              <div className="mt-6 text-left max-w-md mx-auto">
+                <p className="text-xs font-mono text-ink-500 mb-2">
+                  Preguntas incorrectas:
+                </p>
+                <ul className="space-y-1 text-sm text-ink-700">
+                  {result.wrongQuestions.map((qid) => {
+                    const question = questions.find((qq) => qq.id === qid);
+                    return (
+                      <li
+                        key={qid}
+                        className="flex items-start gap-2 border border-line rounded-md px-3 py-2"
+                      >
+                        <XCircle className="h-4 w-4 text-red-500 flex-none mt-0.5" />
+                        <span>{question?.text ?? qid}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
               <button
+                type="button"
                 onClick={handleRetry}
                 className="btn-primary inline-flex items-center gap-2"
               >
@@ -217,18 +279,17 @@ export default function QuizPage({
     <div className="max-w-3xl mx-auto">
       <div className="mb-6 flex items-start justify-between flex-wrap gap-3">
         <div>
-          <p className="field-mono mb-1">Examen {course.code}</p>
+          <p className="field-mono mb-1">
+            Examen {course?.code ?? ""}
+          </p>
           <h1 className="font-display text-2xl md:text-3xl font-semibold text-ink-900 tracking-tight">
-            {course.title}
+            {course?.title ?? "Evaluación final"}
           </h1>
         </div>
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-2 bg-white border border-line rounded-md px-3 h-9 text-sm font-mono text-ink-900">
             <Clock className="h-4 w-4 text-coral-600" />
             {mm}:{ss}
-          </span>
-          <span className="text-xs text-ink-500">
-            Intento {attemptNumber} de 3
           </span>
         </div>
       </div>
@@ -258,9 +319,7 @@ export default function QuizPage({
               <button
                 key={i}
                 type="button"
-                onClick={() =>
-                  setAnswers((a) => ({ ...a, [q.id]: i }))
-                }
+                onClick={() => setAnswers((a) => ({ ...a, [q.id]: i }))}
                 className={cn(
                   "w-full text-left px-4 py-3 rounded-lg border transition-colors flex items-center gap-3",
                   selected
@@ -271,9 +330,7 @@ export default function QuizPage({
                 <span
                   className={cn(
                     "h-5 w-5 rounded-full border-2 flex-none flex items-center justify-center",
-                    selected
-                      ? "border-coral-500 bg-coral-500"
-                      : "border-line",
+                    selected ? "border-coral-500 bg-coral-500" : "border-line",
                   )}
                 >
                   {selected && (
@@ -290,7 +347,7 @@ export default function QuizPage({
           <button
             type="button"
             onClick={() => setIdx((i) => Math.max(0, i - 1))}
-            disabled={idx === 0}
+            disabled={idx === 0 || submitting}
             className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Anterior
@@ -300,6 +357,7 @@ export default function QuizPage({
               type="button"
               onClick={() => setIdx((i) => Math.min(total - 1, i + 1))}
               className="btn-primary"
+              disabled={submitting}
             >
               Siguiente
             </button>
@@ -307,59 +365,15 @@ export default function QuizPage({
             <button
               type="button"
               onClick={handleSubmit}
-              className="btn-primary"
+              disabled={submitting || loading}
+              className="btn-primary inline-flex items-center gap-2"
             >
+              {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
               Enviar examen
             </button>
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function ConfettiOverlay() {
-  const pieces = Array.from({ length: 24 });
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      {pieces.map((_, i) => {
-        const left = (i * 4.2) % 100;
-        const delay = (i % 8) * 0.15;
-        const colors = ["#FF6B35", "#0F1725", "#22C55E", "#EAB308"];
-        const bg = colors[i % colors.length];
-        return (
-          <span
-            key={i}
-            className="confetti-piece"
-            style={{
-              left: `${left}%`,
-              background: bg,
-              animationDelay: `${delay}s`,
-            }}
-          />
-        );
-      })}
-      <style jsx>{`
-        .confetti-piece {
-          position: absolute;
-          top: -12px;
-          width: 8px;
-          height: 14px;
-          opacity: 0.9;
-          border-radius: 2px;
-          animation: fall 2.4s linear forwards;
-        }
-        @keyframes fall {
-          0% {
-            transform: translateY(-20px) rotate(0);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(420px) rotate(540deg);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }

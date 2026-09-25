@@ -1,43 +1,86 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
 import {
   TrendingUp,
+  Users,
+  BookOpen,
   Award,
-  Clock,
-  Target,
-  BadgeCheck,
-  ArrowUp,
+  CheckCircle2,
+  Activity,
 } from "lucide-react";
-import { IMG } from "@/lib/images";
+import { apiGet } from "@/lib/api";
 import ReportsExport from "./ReportsExport";
+import { RoleGate } from "@/components/RoleGate";
 
-const salesByRep = [
-  { rep: "Ana Sofía Gutiérrez", ventas: 128500, comision: 12850, paquetes: 14, avatar: IMG.avatar3 },
-  { rep: "Luis Fernando Ríos", ventas: 96200, comision: 9620, paquetes: 10, avatar: IMG.avatar2 },
-  { rep: "Paola Herrera", ventas: 74300, comision: 7430, paquetes: 8, avatar: IMG.avatar1 },
-  { rep: "Miguel Ángel Torres", ventas: 51100, comision: 5110, paquetes: 6, avatar: IMG.avatar2 },
-];
+type Summary = {
+  totalUsers: number;
+  totalCourses: number;
+  totalCertificates: number;
+  totalEnrollments: number;
+  complianceRate: number;
+  recentActivity: Array<{
+    id?: string;
+    title?: string;
+    description?: string;
+    at?: string;
+  }>;
+};
 
-function MiniSpark({ points }: { points: string }) {
-  return (
-    <svg viewBox="0 0 60 20" width="60" height="20">
-      <polyline
-        fill="none"
-        stroke="#059669"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        points={points}
-      />
-    </svg>
-  );
-}
+function ReportsPageInner() {
+  const [summary, setSummary] = useState<Summary | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const sparks = [
-  "0,16 10,12 20,14 30,8 40,10 50,4 60,6",
-  "0,14 10,16 20,10 30,12 40,8 50,10 60,6",
-  "0,10 10,12 20,8 30,10 40,6 50,8 60,4",
-  "0,18 10,14 20,16 30,10 40,12 50,8 60,10",
-];
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await apiGet<Summary>("/analytics/summary");
+      setSummary(data);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Error al cargar";
+      if (/403|forbidden/i.test(msg)) {
+        setSummary(null);
+      } else {
+        setError(
+          "No pudimos cargar los reportes. Intenta nuevamente en unos momentos.",
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-export default function ReportsPage() {
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const kpis = [
+    {
+      label: "Total usuarios",
+      value: summary ? summary.totalUsers.toLocaleString("es-MX") : "—",
+      icon: Users,
+    },
+    {
+      label: "Cursos activos",
+      value: summary ? summary.totalCourses.toLocaleString("es-MX") : "—",
+      icon: BookOpen,
+    },
+    {
+      label: "Certificados emitidos",
+      value: summary ? summary.totalCertificates.toLocaleString("es-MX") : "—",
+      icon: Award,
+    },
+    {
+      label: "Tasa de cumplimiento",
+      value: summary ? `${summary.complianceRate}%` : "—",
+      icon: CheckCircle2,
+    },
+  ];
+
+  const activity = summary?.recentActivity ?? [];
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
@@ -47,20 +90,21 @@ export default function ReportsPage() {
             Reportes.
           </h1>
           <p className="mt-2 text-sm text-ink-500">
-            Cumplimiento, capacitación y desempeño comercial.
+            Métricas de la plataforma y actividad reciente.
           </p>
         </div>
         <ReportsExport />
       </div>
 
+      {error && (
+        <div className="bg-white border border-line rounded-xl p-4 mb-6 text-sm text-ink-700">
+          {error}
+        </div>
+      )}
+
       {/* KPIs */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "Cumplimiento global", value: "89%", icon: Target, delta: "+3%" },
-          { label: "Cursos completados", value: "312", icon: BadgeCheck, delta: "+18" },
-          { label: "Cursos por vencer", value: "18", icon: Clock, delta: "-2" },
-          { label: "Score promedio", value: "91", icon: Award, delta: "+1" },
-        ].map((k) => (
+        {kpis.map((k) => (
           <div
             key={k.label}
             className="bg-white border border-line rounded-xl p-5"
@@ -73,33 +117,38 @@ export default function ReportsPage() {
             </div>
             <div className="mt-3 flex items-baseline gap-2">
               <div className="font-display text-3xl font-semibold text-ink-900 tracking-tight">
-                {k.value}
+                {loading ? (
+                  <span className="inline-block h-8 w-16 bg-canvas-2 rounded animate-pulse" />
+                ) : (
+                  k.value
+                )}
               </div>
-              <span className="inline-flex items-center text-xs font-medium text-success gap-0.5">
-                <ArrowUp className="h-3 w-3" /> {k.delta}
-              </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Line chart */}
+      {/* Line chart — sample data */}
       <div className="bg-white border border-line rounded-xl p-6 mb-6">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
           <div>
             <h3 className="font-display text-lg font-semibold text-ink-900 tracking-tight">
-              Completadas por mes (12 meses)
+              Ventas por mes (12 meses)
             </h3>
             <p className="text-xs text-ink-500 mt-0.5">
-              Certificaciones emitidas por periodo
+              Monto facturado por periodo
             </p>
           </div>
-          <span className="badge-status-success">
-            <TrendingUp className="h-3 w-3" /> +18% vs. año anterior
+          <span className="inline-flex items-center gap-1 rounded-full bg-ink-50 border border-line text-ink-500 text-[11px] px-2 py-0.5">
+            <TrendingUp className="h-3 w-3" /> Datos de muestra
           </span>
         </div>
         <div className="relative h-64 rounded-lg bg-canvas-2 overflow-hidden">
-          <svg viewBox="0 0 600 200" className="w-full h-full" preserveAspectRatio="none">
+          <svg
+            viewBox="0 0 600 200"
+            className="w-full h-full"
+            preserveAspectRatio="none"
+          >
             {[40, 80, 120, 160].map((y) => (
               <line
                 key={y}
@@ -114,7 +163,7 @@ export default function ReportsPage() {
               />
             ))}
             <polyline
-              fill="rgba(255,107,53,0.10)"
+              fill="rgba(251,182,1,0.15)"
               stroke="none"
               points="0,160 50,140 100,150 150,120 200,110 250,90 300,95 350,70 400,80 450,55 500,45 550,30 600,20 600,200 0,200"
             />
@@ -125,80 +174,77 @@ export default function ReportsPage() {
               points="0,160 50,140 100,150 150,120 200,110 250,90 300,95 350,70 400,80 450,55 500,45 550,30 600,20"
             />
             {[
-              [0, 160], [100, 150], [200, 110], [300, 95], [400, 80], [500, 45], [600, 20],
+              [0, 160],
+              [100, 150],
+              [200, 110],
+              [300, 95],
+              [400, 80],
+              [500, 45],
+              [600, 20],
             ].map(([x, y]) => (
-              <circle key={`${x}-${y}`} cx={x} cy={y} r="4" fill="#FF6B35" stroke="#FFFFFF" strokeWidth="2" />
+              <circle
+                key={`${x}-${y}`}
+                cx={x}
+                cy={y}
+                r="4"
+                fill="#FBB601"
+                stroke="#FFFFFF"
+                strokeWidth="2"
+              />
             ))}
           </svg>
         </div>
       </div>
 
-      {/* Sales by rep */}
+      {/* Recent activity */}
       <div className="bg-white border border-line rounded-xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-line">
+        <div className="px-6 py-5 border-b border-line flex items-center gap-2">
+          <Activity className="h-4 w-4 text-ink-500" />
           <h3 className="font-display text-lg font-semibold text-ink-900 tracking-tight">
-            Ventas por vendedor
+            Actividad reciente
           </h3>
-          <p className="text-xs text-ink-500 mt-0.5">
-            Comisión al 10% de ventas totales
-          </p>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-canvas-2">
-              <tr>
-                <th className="text-left px-6 py-3 text-xs uppercase tracking-widest text-ink-500 font-medium">
-                  Vendedor
-                </th>
-                <th className="text-left px-6 py-3 text-xs uppercase tracking-widest text-ink-500 font-medium">
-                  Tendencia
-                </th>
-                <th className="text-right px-6 py-3 text-xs uppercase tracking-widest text-ink-500 font-medium">
-                  Ventas totales
-                </th>
-                <th className="text-right px-6 py-3 text-xs uppercase tracking-widest text-ink-500 font-medium">
-                  Comisión
-                </th>
-                <th className="text-right px-6 py-3 text-xs uppercase tracking-widest text-ink-500 font-medium">
-                  Paquetes
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {salesByRep.map((s, i) => (
-                <tr
-                  key={s.rep}
-                  className="border-t border-line hover:bg-canvas-2 transition-colors"
-                >
-                  <td className="px-6 py-3">
-                    <div className="flex items-center gap-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={s.avatar}
-                        alt={s.rep}
-                        className="h-9 w-9 rounded-full object-cover border border-line"
-                      />
-                      <span className="font-medium text-ink-900">{s.rep}</span>
+        {loading ? (
+          <div className="p-6 text-sm text-ink-500">Cargando actividad…</div>
+        ) : activity.length === 0 ? (
+          <div className="p-8 text-center text-sm text-ink-500">
+            Sin actividad reciente.
+          </div>
+        ) : (
+          <ul className="divide-y divide-line">
+            {activity.map((a, i) => (
+              <li
+                key={a.id ?? i}
+                className="px-6 py-4 flex items-start justify-between gap-4"
+              >
+                <div>
+                  <div className="font-medium text-ink-900">
+                    {a.title ?? "Actividad"}
+                  </div>
+                  {a.description && (
+                    <div className="text-sm text-ink-500 mt-0.5">
+                      {a.description}
                     </div>
-                  </td>
-                  <td className="px-6 py-3">
-                    <MiniSpark points={sparks[i]} />
-                  </td>
-                  <td className="px-6 py-3 text-right font-display font-semibold text-ink-900">
-                    ${s.ventas.toLocaleString("es-MX")}
-                  </td>
-                  <td className="px-6 py-3 text-right font-display font-semibold text-coral-600">
-                    ${s.comision.toLocaleString("es-MX")}
-                  </td>
-                  <td className="px-6 py-3 text-right font-mono text-ink-700">
-                    {s.paquetes}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  )}
+                </div>
+                {a.at && (
+                  <div className="text-xs text-ink-500 whitespace-nowrap">
+                    {new Date(a.at).toLocaleString("es-MX")}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
+  );
+}
+
+export default function ReportsPage() {
+  return (
+    <RoleGate allow={["principal_admin","client","client_admin","subcontractor","employee"]}>
+      <ReportsPageInner />
+    </RoleGate>
   );
 }

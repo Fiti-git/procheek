@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import {
   ArrowRight,
@@ -33,28 +34,27 @@ function ProductPreview({
   stampApproved: string;
 }) {
   return (
-    <div className="relative">
-      <div className="relative rounded-2xl overflow-hidden shadow-cardHover aspect-[4/5] sm:aspect-[4/3] bg-ink-900">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+    <div className="space-y-4">
+      <div className="relative rounded-2xl overflow-hidden shadow-cardHover aspect-[16/10] bg-ink-900">
+        <Image
           src={IMG.heroMain}
           alt={imageAlt}
-          className="h-full w-full object-cover"
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover"
+          quality={95}
+          priority
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-black/30 via-transparent to-transparent" />
       </div>
 
-      <div
-        className="absolute top-6 right-2 sm:-right-6 w-[240px] sm:w-[280px] bg-white rounded-2xl shadow-2xl border border-line p-5"
-        style={{ transform: "rotate(2deg)" }}
-      >
+      <div className="relative bg-white rounded-2xl shadow-2xl border border-line p-5">
         <div className="flex items-center justify-between mb-4 pb-3 border-b border-line">
           <span className="font-display font-bold text-ink-900 tracking-tight">
             {checklistTitle}
           </span>
           <ClipboardCheck className="h-5 w-5 text-[#FBB601]" />
         </div>
-        <ul className="space-y-2.5">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           {checklist.map((item) => (
             <li key={item} className="flex items-center gap-2.5">
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 shrink-0">
@@ -65,8 +65,8 @@ function ProductPreview({
           ))}
         </ul>
         <div
-          className="absolute -bottom-3 -right-3 border-2 border-emerald-600 text-emerald-600 font-display font-bold text-sm tracking-widest px-3 py-1 rounded bg-white"
-          style={{ transform: "rotate(-10deg)" }}
+          className="absolute -bottom-3 -right-3 border-2 border-emerald-600 text-emerald-600 font-display font-bold text-xs tracking-widest px-3 py-1 rounded bg-white"
+          style={{ transform: "rotate(-6deg)" }}
         >
           {stampApproved}
         </div>
@@ -106,8 +106,14 @@ function CoursePlayerMock({
       <div className="grid md:grid-cols-3 gap-0">
         <div className="md:col-span-2 p-4">
           <div className="relative aspect-video rounded-lg overflow-hidden photo-duotone">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={IMG.course_altura} alt={playerAlt} />
+            <Image
+              src={IMG.course_altura}
+              alt={playerAlt}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              quality={90}
+            />
             <div className="absolute inset-0 z-10 flex items-center justify-center">
               <div className="h-16 w-16 rounded-full bg-[#FBB601] shadow-cardHover flex items-center justify-center">
                 <Play className="h-7 w-7 text-white fill-white ml-1" />
@@ -204,14 +210,14 @@ export default function HomePage() {
     {
       heading: t("features.block2Heading"),
       text: t("features.block2Text"),
-      image: IMG.heroSoftware,
+      image: IMG.metalmech,
       alt: t("features.block2Alt"),
       imageLeft: false,
     },
     {
       heading: t("features.block3Heading"),
       text: t("features.block3Text"),
-      image: IMG.avatar3,
+      image: IMG.heroConsulting,
       alt: t("features.block3Alt"),
       imageLeft: true,
     },
@@ -293,7 +299,7 @@ export default function HomePage() {
             <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.18em] text-[#FBB601] mb-5">
               {t("hero.badge")}
             </p>
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] leading-[1.02] tracking-tighter font-bold">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] leading-[1.05] tracking-tighter font-bold [hyphens:none] break-words">
               <span className="block text-white">{t("hero.titleLine1")}</span>
               <span className="block text-[#FBB601]">{t("hero.titleLine2")}</span>
             </h1>
@@ -381,7 +387,7 @@ export default function HomePage() {
       {/* INTRO */}
       <section className="bg-canvas py-16 md:py-28 lg:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
         <div className="container-page max-w-4xl text-center">
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.08] [hyphens:none] break-words">
             {t("intro.title")}
           </h2>
           <p className="mt-6 text-lg text-ink-700 leading-relaxed">
@@ -402,17 +408,19 @@ export default function HomePage() {
                 <div className="relative">
                   <div aria-hidden className="absolute -inset-8 -z-10 rounded-[48px] bg-procheck-orange/20 blur-3xl" />
                   <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 shadow-cardHover">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={block.image}
                       alt={block.alt}
-                      className="h-full w-full object-cover"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
+                      quality={95}
                     />
                   </div>
                 </div>
               </div>
               <div className={block.imageLeft ? "md:order-2" : "md:order-1"}>
-                <h3 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-white tracking-tighter leading-[1.05]">
+                <h3 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-white tracking-tighter leading-[1.08] [hyphens:none] break-words">
                   {block.heading}
                 </h3>
                 <p className="mt-5 text-base md:text-lg text-white/75 leading-relaxed">
@@ -426,20 +434,20 @@ export default function HomePage() {
             <div className="md:order-2">
               <div className="relative">
                 <div aria-hidden className="absolute -inset-8 -z-10 rounded-[48px] bg-procheck-orange/20 blur-3xl" />
-                <div className="rounded-3xl bg-white/[0.03] backdrop-blur-sm border border-white/10 p-8 md:p-10 flex items-center justify-center">
-                  <DC3Card
-                    folio="PCH-2026-000101"
-                    holder="José Antonio Ramírez"
-                    courseCode="NOM-009"
-                    courseName="Trabajos en altura"
-                    validUntil="14/05/2028"
-                    className="w-full max-w-sm"
+                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 shadow-cardHover">
+                  <Image
+                    src={IMG.certificateShowcase}
+                    alt="Trabajador con certificado DC-3 en planta"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover"
+                    quality={95}
                   />
                 </div>
               </div>
             </div>
             <div className="md:order-1">
-              <h3 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white tracking-tighter leading-[1.05]">
+              <h3 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-white tracking-tighter leading-[1.08] [hyphens:none] break-words">
                 {t("features.dc3Heading")}
               </h3>
               <p className="mt-5 text-base md:text-lg text-white/75 leading-relaxed">
@@ -453,7 +461,7 @@ export default function HomePage() {
       {/* GET STARTED CTA */}
       <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white border-t border-white/10 py-16 md:py-28 lg:py-36">
         <div className="container-page max-w-3xl text-center">
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-white tracking-tighter leading-[1.05]">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-white tracking-tighter leading-[1.08] [hyphens:none] break-words">
             {t("getStarted.title")}
           </h2>
           <p className="mt-5 text-lg text-white/75 leading-relaxed">
@@ -481,16 +489,19 @@ export default function HomePage() {
         <div className="container-page">
           <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
             <div>
-              <CoursePlayerMock
-                playerAlt={t("player.playerAlt")}
-                modules={coursePlayerModules}
-                modulesLabel={t("player.modulesLabel")}
-                moduleProgress={t("player.moduleProgress")}
-                liveLabel={t("player.live")}
-              />
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-line shadow-cardHover">
+                <Image
+                  src={IMG.coursePlayerShowcase}
+                  alt={t("player.playerAlt")}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  quality={95}
+                />
+              </div>
             </div>
             <div>
-              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.08] [hyphens:none] break-words">
                 {t("player.heading")}
               </h2>
               <ul className="mt-8 space-y-6">
@@ -515,102 +526,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* TESTIMONIAL */}
-      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white py-16 md:py-28 lg:py-36">
-        <div className="container-page">
-          <div className="grid md:grid-cols-12 gap-10 md:gap-14 items-center">
-            <div className="md:col-span-5">
-              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden border border-white/10 shadow-cardHover">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={IMG.avatar1}
-                  alt={t("testimonial.avatarAlt")}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            </div>
-            <div className="md:col-span-7">
-              <div className="flex gap-1 mb-6">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <Star
-                    key={i}
-                    className="h-5 w-5 text-[#FBB601] fill-[#FBB601]"
-                  />
-                ))}
-              </div>
-              <div className="text-6xl md:text-8xl text-procheck-orange font-display leading-none mb-4">“</div>
-              <blockquote className="text-2xl md:text-3xl font-display italic leading-relaxed text-white">
-                &ldquo;{t("testimonial.quote")}&rdquo;
-              </blockquote>
-              <div className="mt-8">
-                <p className="font-display text-lg font-semibold text-white">
-                  {t("testimonial.author")}
-                </p>
-                <p className="text-sm text-white/70 mt-1">
-                  {t("testimonial.role")}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* RATINGS */}
-      <section className="bg-canvas py-16 md:py-28 lg:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
-        <div className="container-page">
-          <div className="max-w-2xl mx-auto text-center mb-14">
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
-              {t("ratings.title")}
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white border border-line rounded-3xl shadow-card p-8 text-center">
-              <div className="flex justify-center gap-1 mb-4">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <Star
-                    key={i}
-                    className="h-5 w-5 text-[#FBB601] fill-[#FBB601]"
-                  />
-                ))}
-              </div>
-              <p className="font-display text-xl font-semibold text-ink-900 tracking-tight">
-                {t("ratings.trustpilot")}
-              </p>
-              <p className="text-sm text-ink-500 mt-1">{t("ratings.trustpilotReviews")}</p>
-            </div>
-
-            <div className="bg-white border border-line rounded-3xl shadow-card p-8 text-center flex flex-col items-center justify-center">
-              <p className="font-display text-lg text-ink-800 tracking-tight leading-snug italic">
-                {t("ratings.quotedReview")}
-              </p>
-              <p className="text-sm text-ink-500 mt-4">
-                {t("ratings.quotedSource")}
-              </p>
-            </div>
-
-            <div className="bg-white border border-line rounded-3xl shadow-card p-8 text-center">
-              <div className="flex justify-center gap-1 mb-4">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <Star
-                    key={i}
-                    className="h-5 w-5 text-[#FBB601] fill-[#FBB601]"
-                  />
-                ))}
-              </div>
-              <p className="font-display text-xl font-semibold text-ink-900 tracking-tight">
-                {t("ratings.google")}
-              </p>
-              <p className="text-sm text-ink-500 mt-1">{t("ratings.googleReviews")}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* PRICING */}
       <section className="bg-canvas-2 border-y border-line py-16 md:py-28 lg:py-36" style={{backgroundImage:"linear-gradient(rgba(248,249,250,0.97),rgba(248,249,250,0.97)),url('/images/pattern_bg_procheek.png')",backgroundSize:"auto,320px",backgroundRepeat:"repeat"}}>
         <div className="container-page">
           <div className="max-w-2xl mx-auto text-center mb-10">
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.05]">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold text-ink-900 tracking-tighter leading-[1.08] [hyphens:none] break-words">
               {t("pricing.title")}
             </h2>
             <p className="mt-5 text-lg text-ink-700 leading-relaxed">

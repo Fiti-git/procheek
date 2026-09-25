@@ -33,7 +33,14 @@ async function bootstrap() {
   app.use(express.json({ limit: '5mb' }));
   app.use(express.urlencoded({ extended: true }));
   app.setGlobalPrefix('api');
-  app.enableCors();
+  const corsOrigins = (process.env.CORS_ORIGINS || 'https://procheck.mx,http://localhost:3000')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  app.enableCors({
+    origin: corsOrigins,
+    credentials: true,
+  });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(new SentryExceptionFilter());
 

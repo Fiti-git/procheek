@@ -71,7 +71,7 @@ export function DC3Card({
             <ShieldCheck className="w-3 h-3" />
             <span>VIGENTE HASTA {validUntil}</span>
           </div>
-          <div className="field-mono text-[0.58rem]">STPS · ACE-2025-0142</div>
+          <div className="field-mono text-[0.58rem]">STPS · Formato DC-3</div>
         </div>
       </div>
     </div>

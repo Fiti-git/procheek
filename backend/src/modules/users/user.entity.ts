@@ -61,6 +61,27 @@ export class User {
   @Column({ type: 'timestamptz', name: 'last_login_at', nullable: true })
   lastLoginAt!: Date | null;
 
+  @Column({ type: 'text', nullable: true })
+  rfc!: string | null;
+
+  @Column({ type: 'text', name: 'razon_social', nullable: true })
+  razonSocial!: string | null;
+
+  @Column({ type: 'text', name: 'codigo_postal', nullable: true })
+  codigoPostal!: string | null;
+
+  @Column({ type: 'text', name: 'regimen_fiscal', nullable: true })
+  regimenFiscal!: string | null;
+
+  @Column({ type: 'text', name: 'uso_cfdi', nullable: true })
+  usoCfdi!: string | null;
+
+  @Column({ type: 'boolean', name: 'siempre_facturar', default: false })
+  siempreFacturar!: boolean;
+
+  @Column({ type: 'boolean', name: 'contribuyente_ieps', default: false })
+  contribuyenteIeps!: boolean;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 

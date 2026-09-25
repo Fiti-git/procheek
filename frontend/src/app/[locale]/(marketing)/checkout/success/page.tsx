@@ -17,7 +17,7 @@ function SuccessContent() {
             <CheckCircle2 className="h-8 w-8 text-emerald-600" />
           </div>
           <p className="kicker mb-3">Confirmación</p>
-          <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-tight">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
             ¡Pedido confirmado!
           </h1>
           <p className="mt-4 text-sm text-ink-700 leading-relaxed">

@@ -21,21 +21,52 @@ function toCsv(rows: Array<Record<string, unknown>>): string {
 }
 
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(Role.PRINCIPAL_ADMIN, Role.CLIENT, Role.CLIENT_ADMIN, Role.SUBCONTRACTOR)
 @Controller('analytics')
 export class AnalyticsController {
   constructor(private readonly svc: AnalyticsService) {}
 
+  // Lightweight summary used by dashboards. Any authenticated role can call.
+  @Get('summary')
+  async summary(@Req() req: any) {
+    const user = req.user as RequestUser;
+    try {
+      const o = await this.svc.overview(user);
+      return {
+        totalUsers: o.users ?? 0,
+        totalCourses: o.courses ?? 0,
+        totalCertificates: o.certificates ?? 0,
+        totalEnrollments: o.enrollments ?? 0,
+        complianceRate:
+          o.enrollments > 0
+            ? Math.round(((o.completions ?? 0) / o.enrollments) * 100)
+            : 0,
+        recentActivity: [],
+      };
+    } catch {
+      return {
+        totalUsers: 0,
+        totalCourses: 0,
+        totalCertificates: 0,
+        totalEnrollments: 0,
+        complianceRate: 0,
+        recentActivity: [],
+      };
+    }
+  }
+
+  @Roles(Role.PRINCIPAL_ADMIN, Role.CLIENT, Role.CLIENT_ADMIN, Role.SUBCONTRACTOR)
   @Get('overview')
   overview(@Req() req: any) {
     return this.svc.overview(req.user as RequestUser);
   }
 
+  @Roles(Role.PRINCIPAL_ADMIN, Role.CLIENT, Role.CLIENT_ADMIN, Role.SUBCONTRACTOR)
   @Get('courses')
   courses(@Req() req: any) {
     return this.svc.courses(req.user as RequestUser);
   }
 
+  @Roles(Role.PRINCIPAL_ADMIN, Role.CLIENT, Role.CLIENT_ADMIN, Role.SUBCONTRACTOR)
   @Get('learners')
   learners(@Req() req: any) {
     return this.svc.learners(req.user as RequestUser);

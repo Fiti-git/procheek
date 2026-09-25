@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CreditCard, Building, Store, ShieldCheck, Loader2 } from "lucide-react";
 import { Input, Label } from "@/components/ui/Input";
@@ -114,7 +115,7 @@ export default function CheckoutPage() {
       <div className="container-page py-12 md:py-16">
         <div className="mb-8">
           <p className="kicker mb-3">Checkout</p>
-          <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-tight">
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
             Finalizar compra.
           </h1>
           <p className="mt-2 text-sm text-ink-500">
@@ -135,9 +136,9 @@ export default function CheckoutPage() {
                     {user.name || user.email}
                   </div>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <Label>Correo electrónico</Label>
-                  <div className="rounded-lg border border-line bg-canvas-2 px-3.5 py-2.5 text-sm text-ink-800 font-mono">
+                  <div className="rounded-lg border border-line bg-canvas-2 px-3.5 py-2.5 text-sm text-ink-800 font-mono break-all">
                     {user.email}
                   </div>
                 </div>
@@ -183,7 +184,7 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <aside className="bg-ink-900 text-white p-7 h-fit rounded-xl lg:sticky lg:top-24">
+          <aside className="bg-ink-900 text-white p-5 sm:p-7 h-fit rounded-xl lg:sticky lg:top-24 min-w-0">
             <h3 className="font-display text-lg font-semibold text-white tracking-tight mb-5">
               Resumen del pedido
             </h3>
@@ -191,11 +192,13 @@ export default function CheckoutPage() {
               {items.map((i) => (
                 <li key={i.courseId} className="flex items-center gap-3">
                   <div className="relative h-11 w-14 rounded-md overflow-hidden shrink-0 border border-ink-700">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={i.image || imageForCourse(i.courseCode)}
                       alt={i.courseTitle}
-                      className="absolute inset-0 h-full w-full object-cover"
+                      fill
+                      sizes="56px"
+                      className="object-cover"
+                      quality={80}
                     />
                   </div>
                   <div className="flex-1 min-w-0">

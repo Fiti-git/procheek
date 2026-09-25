@@ -72,6 +72,30 @@ export class CompaniesService {
     return saved;
   }
 
+  async myMembers(actor: RequestUser) {
+    const acting = await this.loadActingUser(actor.userId);
+    // Principal admin sees every user across the platform; scoped admins/employees see own company only.
+    const where = actor.role === Role.PRINCIPAL_ADMIN
+      ? {}
+      : acting.companyId
+        ? { companyId: acting.companyId }
+        : null;
+    if (where === null) return [];
+    const members = await this.users.find({
+      where,
+      order: { createdAt: 'ASC' },
+    });
+    return members.map((u) => ({
+      id: u.id,
+      email: u.email,
+      firstName: u.firstName,
+      lastName: u.lastName,
+      roleCode: u.role,
+      isActive: u.isActive,
+      createdAt: u.createdAt,
+    }));
+  }
+
   async list(actor: RequestUser): Promise<Company[]> {
     if (actor.role === Role.PRINCIPAL_ADMIN) {
       return this.repo.find({ order: { createdAt: 'DESC' } });

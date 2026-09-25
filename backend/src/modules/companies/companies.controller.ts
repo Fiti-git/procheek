@@ -34,6 +34,11 @@ export class CompaniesController {
     return this.svc.list(req.user as RequestUser);
   }
 
+  @Get('my/members')
+  myMembers(@Req() req: any) {
+    return this.svc.myMembers(req.user as RequestUser);
+  }
+
   @Get(':id')
   get(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: any) {
     return this.svc.findOne(id, req.user as RequestUser);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Clock, CheckCircle2, PlayCircle } from "lucide-react";
@@ -9,6 +10,7 @@ import { cn } from "@/lib/cn";
 import { imageForCourse } from "@/lib/images";
 import { apiGet, apiPost } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
+import { RoleGate } from "@/components/RoleGate";
 
 type EnrollmentRow = {
   id: string;
@@ -33,7 +35,7 @@ function readLocalProgress(courseId: string): number {
   }
 }
 
-export default function MyCoursesPage() {
+function MyCoursesPageInner() {
   const [tab, setTab] = useState<"mis" | "disponibles">("mis");
   const [enrollments, setEnrollments] = useState<EnrollmentRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -181,11 +183,13 @@ export default function MyCoursesPage() {
                   className="bg-white border border-line rounded-xl overflow-hidden hover:border-line-strong transition-colors"
                 >
                   <div className="relative aspect-video overflow-hidden bg-ink-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={imageForCourse(course.code)}
                       alt={course.title}
-                      className="absolute inset-0 h-full w-full object-cover"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                      quality={90}
                     />
                     <span className="absolute top-3 left-3 inline-flex items-center bg-white text-ink-900 border border-line rounded-md px-2 py-0.5 font-mono text-[11px] font-semibold uppercase">
                       {course.code}
@@ -239,11 +243,13 @@ export default function MyCoursesPage() {
                 href={`/courses/${c.code}`}
                 className="relative aspect-video overflow-hidden bg-ink-100 block"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={imageForCourse(c.code)}
                   alt={c.title}
-                  className="absolute inset-0 h-full w-full object-cover"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover"
+                  quality={90}
                 />
                 <span className="absolute top-3 left-3 inline-flex items-center bg-white text-ink-900 border border-line rounded-md px-2 py-0.5 font-mono text-[11px] font-semibold uppercase">
                   {c.code}
@@ -285,5 +291,13 @@ export default function MyCoursesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function MyCoursesPage() {
+  return (
+    <RoleGate allow={["principal_admin","client","client_admin","subcontractor","employee"]}>
+      <MyCoursesPageInner />
+    </RoleGate>
   );
 }

@@ -7,6 +7,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
   body {
     background-color: #FBFBFA;
@@ -14,6 +15,7 @@
     font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-x: hidden;
   }
   h1, h2, h3, h4, h5 {
     font-family: "Instrument Sans", "Inter", system-ui, sans-serif;
@@ -23,7 +25,7 @@
   }
   h1 { font-weight: 600; letter-spacing: -0.03em; }
   * { box-sizing: border-box; }
-  ::selection { background-color: #FF6B35; color: white; }
+  ::selection { background-color: #D99A00; color: white; }
 }
 
 @layer components {
@@ -43,7 +45,7 @@
     font-size: 0.75rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #FF6B35;
+    color: #D99A00;
     font-weight: 600;
   }
 
@@ -96,7 +98,7 @@
     font-size: 0.9375rem;
     transition: color 0.18s ease;
   }
-  .btn-ghost:hover { color: #FF6B35; }
+  .btn-ghost:hover { color: #D99A00; }
 
   .card-enterprise {
     background-color: #FFFFFF;
@@ -163,13 +165,13 @@
   }
 
   .link-inline {
-    color: #FF6B35;
+    color: #D99A00;
     text-decoration: underline;
-    text-decoration-color: rgba(255, 107, 53, 0.3);
+    text-decoration-color: rgba(217, 154, 0, 0.3);
     text-underline-offset: 3px;
     transition: text-decoration-color 0.18s ease;
   }
-  .link-inline:hover { text-decoration-color: #FF6B35; }
+  .link-inline:hover { text-decoration-color: #D99A00; }
 
   .divider-hair {
     height: 1px;
@@ -197,7 +199,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(15, 23, 37, 0.75), rgba(255, 107, 53, 0.15));
+    background: linear-gradient(135deg, rgba(15, 23, 37, 0.75), rgba(217, 154, 0, 0.15));
     pointer-events: none;
   }
   .photo-duotone-subtle > img {

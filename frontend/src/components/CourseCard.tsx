@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Play, Check } from "lucide-react";
 import type { Course } from "@/lib/courses";
 import { imageForCourse } from "@/lib/images";
@@ -34,12 +35,13 @@ export function CourseCard({ course }: { course: Course }) {
         href={`/courses/${course.code}`}
         className="relative aspect-video overflow-hidden bg-ink-100 photo-duotone-subtle block"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={src}
           alt={course.title}
-          className="transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          quality={90}
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute top-3 left-3 z-10">
           <span className="inline-flex items-center bg-ink-50 text-ink-900 border border-line rounded-md px-2 py-0.5 font-mono text-[11px] font-semibold tracking-wide uppercase">
@@ -77,11 +79,13 @@ export function CourseCard({ course }: { course: Course }) {
               key={i}
               className="h-8 w-8 rounded-md overflow-hidden border border-line bg-coral-50 relative"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={src}
                 alt=""
-                className="absolute inset-0 h-full w-full object-cover opacity-80"
+                fill
+                sizes="32px"
+                quality={80}
+                className="object-cover opacity-80"
                 style={{ filter: `hue-rotate(${i * 12}deg) saturate(0.9)` }}
               />
             </div>

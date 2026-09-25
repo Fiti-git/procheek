@@ -6,7 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IsEmail as IsEmailValidator, IsOptional } from 'class-validator';
 import { CertificatesService, RequestUser } from './certificates.service';
-import { renderCertificatePdf } from './pdf';
+import { renderCertificatePdf, renderDc3Pdf } from './pdf';
+import { MOCK_CERTIFICATES } from './mock-certificates';
 import { Course } from '../courses/course.entity';
 import { User } from '../users/user.entity';
 import { AdminIssueCertDto, RevokeCertDto } from './dto/admin-cert.dto';
@@ -102,16 +103,32 @@ export class CertificatesController {
     return this.svc.revoke(id, dto.reason ?? '', req.user as RequestUser);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get(':id/pdf')
-  async pdfById(@Param('id') id: string, @Req() req: any, @Res() res: Response) {
-    const cert = await this.svc.findById(id);
-    if (!cert) throw new NotFoundException('Certificate not found');
-    const user = req.user as RequestUser;
-    if (cert.userId !== user.userId && user.role !== 'principal_admin') {
-      throw new NotFoundException('Certificate not found');
+  // Public DC-3 PDF by folio / verification code / cert id.
+  // A certificate's folio is itself a hard-to-guess secret; verification
+  // is a legitimate public use-case (STPS format).
+  @Get(':folio/pdf')
+  async pdfByFolio(@Param('folio') folio: string, @Res() res: Response) {
+    const cert = await this.svc.findByFolio(folio);
+
+    if (cert) {
+      await this.stream(cert.id, res, cert.dc3Folio || cert.code);
+      return;
     }
-    await this.stream(cert.id, res);
+
+    // Fall back to the marketing/demo mock certs so the "Descargar PDF DC-3"
+    // button on the public certificate-lookup page always yields a real PDF.
+    const mock = MOCK_CERTIFICATES.find(
+      (c) => c.folio.toLowerCase() === folio.toLowerCase(),
+    );
+    if (!mock) throw new NotFoundException('Certificate not found');
+
+    const stream = renderDc3Pdf(mock);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `inline; filename="DC3-${mock.folio}.pdf"`,
+    );
+    stream.pipe(res);
   }
 
   // Re-send the certificate PDF by email.
@@ -134,7 +151,7 @@ export class CertificatesController {
     return this.svc.emailCertificateTo(cert, to);
   }
 
-  private async stream(certId: string, res: Response) {
+  private async stream(certId: string, res: Response, filenameFolio?: string) {
     const cert = await this.svc.findById(certId);
     if (!cert) throw new NotFoundException('Certificate not found');
     const [course, holder] = await Promise.all([
@@ -153,8 +170,9 @@ export class CertificatesController {
       revokedAt: cert.revokedAt,
       verifyUrl: `${origin}/certificate-lookup`,
     });
+    const fname = filenameFolio || cert.dc3Folio || cert.code;
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="certificate-${cert.code}.pdf"`);
+    res.setHeader('Content-Disposition', `inline; filename="DC3-${fname}.pdf"`);
     stream.pipe(res);
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Get, Req } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseGuards, Get, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 import { AuthGuard } from '@nestjs/passport';
@@ -42,6 +42,7 @@ class LogoutDto {
 export class AuthController {
   constructor(private auth: AuthService) {}
 
+  @HttpCode(200)
   @Post('login')
   login(@Body() dto: LoginDto, @Req() req: any) {
     return this.auth.login(dto.email, dto.password, {

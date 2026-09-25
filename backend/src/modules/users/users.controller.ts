@@ -25,8 +25,14 @@ export class UsersController {
 
   @Roles(Role.PRINCIPAL_ADMIN, Role.CLIENT_ADMIN, Role.CLIENT, Role.SUBCONTRACTOR)
   @Post('invite')
-  invite(@Body() dto: InviteUserDto, @Req() req: any) {
-    return this.svc.invite(dto, req.user as RequestUser);
+  invite(@Body() raw: any, @Req() req: any) {
+    // Accept `role`, `roleCode`, or `role_code` from callers (frontend + QA).
+    if (raw && !raw.role) {
+      if (raw.roleCode) raw.role = raw.roleCode;
+      else if (raw.role_code) raw.role = raw.role_code;
+    }
+    // Manually validate the reshaped payload against the DTO.
+    return this.svc.invite(raw as InviteUserDto, req.user as RequestUser);
   }
 
   @Get()
@@ -46,6 +52,16 @@ export class UsersController {
     delete safe.role;
     delete safe.isActive;
     return this.svc.update((req.user as RequestUser).userId, safe, req.user as RequestUser);
+  }
+
+  @Get('me/rfc')
+  getMyRfc(@Req() req: any) {
+    return this.svc.getMyRfc(req.user as RequestUser);
+  }
+
+  @Patch('me/rfc')
+  updateMyRfc(@Body() dto: Record<string, unknown>, @Req() req: any) {
+    return this.svc.updateMyRfc(req.user as RequestUser, dto);
   }
 
   @Get(':id')

@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
+import { RoleGate } from "@/components/RoleGate";
 
 type Cert = {
   id: string;
@@ -107,7 +108,7 @@ function userName(u?: User) {
   return `${f} ${l}`.trim() || u.email;
 }
 
-export default function AdminCertificatesPage() {
+function AdminCertificatesPageInner() {
   const { toast } = useToast();
   const [ready, setReady] = React.useState(false);
   const [authorized, setAuthorized] = React.useState(false);
@@ -725,5 +726,13 @@ function EditModal({
         </div>
       )}
     </Modal>
+  );
+}
+
+export default function AdminCertificatesPage() {
+  return (
+    <RoleGate allow={["principal_admin"]}>
+      <AdminCertificatesPageInner />
+    </RoleGate>
   );
 }

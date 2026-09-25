@@ -178,10 +178,15 @@ export class TrainingService {
     if (actor.role !== Role.PRINCIPAL_ADMIN && actor.role !== Role.CAPACITADOR) {
       throw new ForbiddenException('Capacitador or admin only');
     }
-    let capacitadorId = actor.userId;
+    // Only the principal admin needs to specify which capacitador owns the
+    // session. A capacitador is always the owner of the sessions they create,
+    // so we auto-fill from the actor and ignore any capacitadorId in the body.
+    let capacitadorId: string;
     if (actor.role === Role.PRINCIPAL_ADMIN) {
       if (!dto.capacitadorId) throw new BadRequestException('capacitadorId required for admin');
       capacitadorId = dto.capacitadorId;
+    } else {
+      capacitadorId = actor.userId;
     }
     const s = this.sessions.create({
       capacitadorId,
@@ -215,12 +220,30 @@ export class TrainingService {
     return this.sessions.save(s);
   }
 
+  async deleteSession(id: string, actor: RequestUser) {
+    const s = await this.sessions.findOne({ where: { id } });
+    if (!s) throw new NotFoundException('Session not found');
+    if (actor.role !== Role.PRINCIPAL_ADMIN && s.capacitadorId !== actor.userId) {
+      throw new ForbiddenException('Cannot delete this session');
+    }
+    await this.sessions.delete(id);
+    return { id, deleted: true };
+  }
+
   // ============================================================
   // Trainer profile
   // ============================================================
   async getMyTrainerProfile(actor: RequestUser) {
     const p = await this.trainers.findOne({ where: { userId: actor.userId } });
-    if (!p) throw new NotFoundException('Trainer profile not found');
+    if (!p) {
+      return {
+        userId: actor.userId,
+        aceRegistration: '',
+        specialties: [] as string[],
+        bio: '',
+        availability: {} as Record<string, unknown>,
+      };
+    }
     return p;
   }
 

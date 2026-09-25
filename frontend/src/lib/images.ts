@@ -1,4 +1,4 @@
-// Curated image library for PROCHECK Safety.
+// Curated image library for PROCHECK Solutions.
 // Multi-source: Unsplash (Unsplash License), Pexels (Pexels License),
 // Wikimedia Commons (CC BY / CC0 / public domain).
 // Every URL below is verified to return 200 as of 2026-07-18.
@@ -26,18 +26,23 @@ const WIKIMEDIA_COMMONS = {
 };
 
 export const IMG = {
-  // Hero photography. Big scenes, wide format.
-  heroMain: PEXELS(1216589, 1600), // construction crew helmets on site
-  heroConsulting: UNSPLASH("1503387762-592deb58ef4e", 1600), // scaffold heights
-  heroSoftware: UNSPLASH("1504307651254-35680f356dfd", 1600), // industrial site
-  heroAuth: UNSPLASH("1580982327559-c1202864eb05", 1200), // worker at dusk
-  heroBackdrop: PEXELS(534216, 1600), // hardhat crew backdrop
+  // Hero photography. Local AI-generated brand-consistent industrial imagery.
+  heroMain: "/images/industries/hero-main.jpg",
+  heroConsulting: "/images/industries/hero-consulting.jpg",
+  heroSoftware: "/images/industries/hero-software.jpg",
+  heroAuth: "/images/industries/hero-main.jpg",
+  heroBackdrop: "/images/industries/hero-software.jpg",
 
-  // Industry banners. Each subsector we serve. Verified subject-matches.
-  construction: PEXELS(220147, 1200), // yellow crane on construction site
-  chemical: UNSPLASH("1518623489648-a173ef7824f3", 1200), // industrial refinery pipes
-  metalmech: PEXELS(5691659, 1200), // welder with sparks and PPE
-  mining: UNSPLASH("1533162507191-d90c625b2640", 1200), // mining pit haul truck
+  // Industry banners. Each subsector we serve.
+  construction: "/images/industries/industry-construction.jpg",
+  chemical: "/images/industries/industry-chemical.jpg",
+  metalmech: "/images/industries/industry-metalmech.jpg",
+  mining: "/images/industries/industry-mining.jpg",
+
+  // Landing showcase blocks
+  certificateShowcase: "/images/industries/certificate-showcase.jpg",
+  coursePlayerShowcase: "/images/industries/course-player-showcase.jpg",
+  softwareShowcase: "/images/industries/software-showcase.jpg",
 
   // Course thumbnails. NOM-specific matching.
   course_altura: UNSPLASH("1503387762-592deb58ef4e", 800), // NOM-009 heights
@@ -64,10 +69,10 @@ export const IMG = {
   documentaryFireTraining: WIKIMEDIA_COMMONS.fireExtinguisherTraining,
   documentaryWelder: WIKIMEDIA_COMMONS.welderAtWork,
 
-  // Portraits for testimonials. Real people in industrial context.
-  avatar1: PEXELS(1108101, 400), // worker at height portrait
-  avatar2: PEXELS(1108572, 400), // worker sunset silhouette
-  avatar3: UNSPLASH("1581092160562-40aa08e78837", 400), // PPE hardhat portrait
+  // Portraits for testimonials. Local AI-generated brand-consistent.
+  avatar1: "/images/industries/worker-portrait-1.jpg",
+  avatar2: "/images/industries/worker-portrait-2.jpg",
+  avatar3: "/images/industries/trainer-portrait.jpg",
 
   // Cinematic industrial mood shots. Used sparingly.
   moodDawn: PEXELS(1108572, 1600),

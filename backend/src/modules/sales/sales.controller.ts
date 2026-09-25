@@ -20,6 +20,7 @@ import { Role } from '../../common/roles';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { CreateDealDto } from './dto/create-deal.dto';
+import { UpdateDealDto } from './dto/update-deal.dto';
 import { UpdateCommissionDto } from './dto/update-commission.dto';
 import { UpdateVendorProfileDto } from './dto/update-vendor-profile.dto';
 import { PreviewCommissionDto } from './dto/preview-commission.dto';
@@ -82,6 +83,24 @@ export class SalesController {
     return this.svc.createDeal(dto, req.user as RequestUser);
   }
 
+  @ApiOperation({ summary: 'Update a deal' })
+  @Roles(Role.PRINCIPAL_ADMIN, Role.VENDEDOR)
+  @Patch('deals/:id')
+  updateDeal(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: UpdateDealDto,
+    @Req() req: any,
+  ) {
+    return this.svc.updateDeal(id, dto, req.user as RequestUser);
+  }
+
+  @ApiOperation({ summary: 'Delete a deal' })
+  @Roles(Role.PRINCIPAL_ADMIN, Role.VENDEDOR)
+  @Delete('deals/:id')
+  deleteDeal(@Param('id', new ParseUUIDPipe()) id: string, @Req() req: any) {
+    return this.svc.deleteDeal(id, req.user as RequestUser);
+  }
+
   // ============================================================
   // Commissions
   // ============================================================
@@ -116,8 +135,7 @@ export class SalesController {
   // ============================================================
   // Vendor profile
   // ============================================================
-  @ApiOperation({ summary: "Get current vendedor's profile" })
-  @Roles(Role.VENDEDOR, Role.PRINCIPAL_ADMIN)
+  @ApiOperation({ summary: "Get current user's vendor profile (defaults if none)" })
   @Get('vendor-profile/me')
   myProfile(@Req() req: any) {
     return this.svc.getMyVendorProfile(req.user as RequestUser);
@@ -149,5 +167,15 @@ export class SalesController {
   @Get('dashboard/summary')
   dashboardSummary(@Req() req: any) {
     return this.svc.dashboardSummary(req.user as RequestUser);
+  }
+
+  // ============================================================
+  // Appointments (stub — real appointments module is separate)
+  // ============================================================
+  @ApiOperation({ summary: 'List sales appointments (own or all if admin)' })
+  @Roles(Role.VENDEDOR, Role.PRINCIPAL_ADMIN)
+  @Get('appointments')
+  appointments() {
+    return [];
   }
 }

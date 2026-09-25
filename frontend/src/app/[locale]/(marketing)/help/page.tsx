@@ -1,9 +1,8 @@
-"use client";
+﻿"use client";
 
 import {
   Search,
   Mail,
-  Phone,
   MessageCircle,
   ChevronDown,
   BookOpen,
@@ -41,14 +40,16 @@ export default function HelpPage() {
   return (
     <>
       {/* SUPPORT HERO */}
-      <section className="bg-canvas">
+      <section className="bg-gradient-to-br from-navy-900 via-navy-900 to-[#0A1628] text-white">
         <div className="container-page py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="kicker mb-3">{t("kicker")}</p>
-            <h1 className="font-display text-5xl md:text-6xl font-semibold text-ink-900 leading-[1.05] tracking-tighter">
+            <p className="text-[11px] md:text-xs font-semibold uppercase tracking-[0.18em] text-[#FBB601] mb-3">
+              {t("kicker")}
+            </p>
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white leading-[1.08] tracking-tight sm:tracking-tighter [hyphens:none] break-words">
               {t("title")}
             </h1>
-            <p className="mt-6 text-lg text-ink-700 leading-relaxed">
+            <p className="mt-6 text-lg text-white/80 leading-relaxed">
               {t("subtitle")}
             </p>
 
@@ -57,15 +58,15 @@ export default function HelpPage() {
               <input
                 type="text"
                 placeholder={t("searchPlaceholder")}
-                className="w-full pl-12 pr-4 py-4 text-base bg-white border border-line rounded-xl text-ink-900 placeholder:text-ink-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-coral-500 focus:border-coral-500 transition-shadow"
+                className="w-full pl-12 pr-4 py-4 text-base bg-white border border-line rounded-xl text-ink-900 placeholder:text-ink-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FBB601] focus:border-[#FBB601] transition-shadow"
               />
             </div>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
             <a
-              href="mailto:contacto@procheck.com"
-              className="card-enterprise p-6 hover:border-coral-200 transition-colors"
+              href="mailto:contacto@procheck.mx"
+              className="card-enterprise p-6 hover:border-coral-200 transition-colors flex flex-col"
             >
               <div className="h-10 w-10 rounded-lg bg-coral-50 flex items-center justify-center mb-4">
                 <Mail className="h-5 w-5 text-coral-600" />
@@ -73,23 +74,10 @@ export default function HelpPage() {
               <h3 className="font-display text-lg font-semibold text-ink-900 tracking-tight">
                 {t("emailTitle")}
               </h3>
-              <p className="text-sm text-ink-700 mt-1">contacto@procheck.com</p>
+              <p className="text-sm text-ink-700 mt-1">contacto@procheck.mx</p>
             </a>
 
-            <a
-              href="tel:+525555555555"
-              className="card-enterprise p-6 hover:border-coral-200 transition-colors"
-            >
-              <div className="h-10 w-10 rounded-lg bg-coral-50 flex items-center justify-center mb-4">
-                <Phone className="h-5 w-5 text-coral-600" />
-              </div>
-              <h3 className="font-display text-lg font-semibold text-ink-900 tracking-tight">
-                {t("phoneTitle")}
-              </h3>
-              <p className="text-sm text-ink-700 mt-1">{t("phoneValue")}</p>
-            </a>
-
-            <div className="card-enterprise p-6">
+            <div className="card-enterprise p-6 flex flex-col">
               <div className="h-10 w-10 rounded-lg bg-coral-50 flex items-center justify-center mb-4">
                 <MessageCircle className="h-5 w-5 text-coral-600" />
               </div>
@@ -105,7 +93,7 @@ export default function HelpPage() {
                     variant: "info",
                   })
                 }
-                className="mt-2 text-sm font-medium text-coral-600 hover:text-coral-700 inline-flex items-center gap-1"
+                className="mt-2 text-sm font-medium text-coral-600 hover:text-coral-700 inline-flex items-center gap-1 self-start"
               >
                 {t("chatStart")} <ArrowRight className="h-3.5 w-3.5" />
               </button>
@@ -119,7 +107,7 @@ export default function HelpPage() {
         <div className="container-page max-w-3xl">
           <div className="mb-12">
             <p className="kicker mb-3">{t("faqKicker")}</p>
-            <h2 className="font-display text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-tight">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
               {t("faqTitle")}
             </h2>
           </div>
@@ -150,7 +138,7 @@ export default function HelpPage() {
         <div className="container-page">
           <div className="mb-12 max-w-2xl">
             <p className="kicker mb-3">{t("categoriesKicker")}</p>
-            <h2 className="font-display text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-tight">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
               {t("categoriesTitle")}
             </h2>
           </div>
@@ -181,7 +169,7 @@ export default function HelpPage() {
       {/* FINAL CTA */}
       <section className="bg-canvas-2 py-16">
         <div className="container-page max-w-3xl text-center">
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-tight">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
             {t("finalTitle")}
           </h2>
           <p className="mt-4 text-ink-700 leading-relaxed">{t("finalSubtitle")}</p>

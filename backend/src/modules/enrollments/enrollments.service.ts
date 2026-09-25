@@ -278,7 +278,6 @@ export class EnrollmentsService {
     if (enr.userId !== actor.userId && actor.role !== Role.PRINCIPAL_ADMIN) {
       throw new ForbiddenException('Cannot update this enrollment');
     }
-    const wasCompleted = enr.status === 'completed';
     enr.progressPct = dto.progressPct;
     if (dto.markCompleted || dto.progressPct >= 100) {
       enr.status = 'completed';
@@ -286,9 +285,17 @@ export class EnrollmentsService {
       enr.progressPct = 100;
     }
     const saved = await this.repo.save(enr);
-    if (!wasCompleted && saved.status === 'completed') {
-      // Fire-and-forget issue; failure shouldn't roll back the progress update.
-      this.certificates.issueForEnrollment(saved.id).catch(() => undefined);
+    if (saved.progressPct === 100 && saved.status === 'completed') {
+      // Only issue if no cert exists for this (userId, courseId) — issueForEnrollment
+      // handles both enrollment-level and (user, course) level dedupe.
+      // Wrapped: cert failure must NOT rollback the progress update.
+      try {
+        await this.certificates.issueForEnrollment(saved.id);
+      } catch (err) {
+        // Log and swallow — the learner still has their 100% progress.
+        // eslint-disable-next-line no-console
+        console.warn(`[enrollments] cert issue failed for enrollment ${saved.id}:`, (err as Error)?.message ?? err);
+      }
     }
     return saved;
   }

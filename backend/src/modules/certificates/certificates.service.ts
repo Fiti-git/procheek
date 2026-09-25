@@ -40,6 +40,29 @@ export class CertificatesService {
     private readonly audit: AuditService,
   ) {}
 
+  /**
+   * Generate the next DC-3 folio for the given year:
+   * `PCH-YYYY-NNNNNN` where NNNNNN is a zero-padded incrementing counter.
+   * Counter derives from the existing certificates whose folio starts with
+   * `PCH-YYYY-`, so it survives restarts and doesn't require a separate table.
+   */
+  async nextDc3Folio(year: number = new Date().getFullYear()): Promise<string> {
+    const prefix = `PCH-${year}-`;
+    const rows = await this.repo
+      .createQueryBuilder('c')
+      .select('c.dc3_folio', 'folio')
+      .where('c.dc3_folio LIKE :p', { p: `${prefix}%` })
+      .getRawMany<{ folio: string }>();
+    let maxN = 0;
+    for (const r of rows) {
+      const suffix = (r.folio || '').slice(prefix.length);
+      const n = parseInt(suffix, 10);
+      if (!Number.isNaN(n) && n > maxN) maxN = n;
+    }
+    const next = maxN + 1;
+    return `${prefix}${String(next).padStart(6, '0')}`;
+  }
+
   async issueForEnrollment(enrollmentId: string): Promise<Certificate> {
     const existing = await this.repo.findOne({ where: { enrollmentId } });
     if (existing) return existing;
@@ -48,16 +71,27 @@ export class CertificatesService {
     if (enr.status !== 'completed') {
       throw new ForbiddenException('Enrollment not completed');
     }
+    // Guard against duplicates on the (userId, courseId) pair — a learner may
+    // have multiple enrollments (recertifications), but we still want one cert
+    // per enrollment. If a non-revoked cert already exists for a different
+    // enrollment of the same (user, course), reuse it.
+    const dupe = await this.repo.findOne({
+      where: { userId: enr.userId, courseId: enr.courseId },
+    });
+    if (dupe && !dupe.revokedAt) return dupe;
+
     const course = await this.courses.findOne({ where: { id: enr.courseId } });
     const expiresAt = course?.validityMonths
       ? addMonths(new Date(), course.validityMonths)
-      : null;
+      : addMonths(new Date(), 24); // Default 2 years per DC-3 practice.
+    const dc3Folio = await this.nextDc3Folio();
 
     const cert = await this.repo.save(this.repo.create({
       enrollmentId: enr.id,
       userId: enr.userId,
       courseId: enr.courseId,
       code: generateCode(),
+      dc3Folio,
       expiresAt,
     }));
 
@@ -202,7 +236,7 @@ export class CertificatesService {
       userId: enr.userId,
       courseId: enr.courseId,
       code: generateCode(),
-      dc3Folio: input.dc3Folio ?? null,
+      dc3Folio: input.dc3Folio ?? (await this.nextDc3Folio()),
       expiresAt,
     }));
 

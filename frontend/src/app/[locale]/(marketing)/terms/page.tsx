@@ -1,11 +1,11 @@
-import { ChevronRight } from "lucide-react";
+﻿import { ChevronRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata() {
   const t = await getTranslations("Terms");
   return {
-    title: `${t("breadcrumbCurrent")} · PROCHECK Safety`,
+    title: `${t("breadcrumbCurrent")} Â· PROCHECK Solutions`,
   };
 }
 
@@ -24,7 +24,7 @@ export default async function TermsPage() {
         </nav>
 
         <p className="kicker mb-3">{t("kicker")}</p>
-        <h1 className="font-display text-5xl md:text-6xl font-semibold text-ink-900 leading-[1.05] tracking-tighter">
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-ink-900 leading-[1.08] tracking-tight sm:tracking-tighter [hyphens:none] break-words">
           {t("title")}
         </h1>
         <p className="mt-6 text-sm text-ink-500">{t("lastUpdated")}</p>
@@ -66,10 +66,10 @@ export default async function TermsPage() {
             <p className="text-ink-700 leading-relaxed">
               {t("s5Body2Part1")}
               <a
-                href="mailto:soporte@procheck.com"
+                href="mailto:soporte@procheck.mx"
                 className="text-coral-600 hover:text-coral-700 underline underline-offset-2"
               >
-                soporte@procheck.com
+                soporte@procheck.mx
               </a>
               {t("s5Body2Part2")}
             </p>
@@ -117,10 +117,10 @@ export default async function TermsPage() {
           <p className="text-ink-700 leading-relaxed">
             {t("contactBody1")}
             <a
-              href="mailto:contacto@procheck.com"
+              href="mailto:contacto@procheck.mx"
               className="text-coral-600 hover:text-coral-700 font-medium underline underline-offset-2"
             >
-              contacto@procheck.com
+              contacto@procheck.mx
             </a>
             {t("contactBody2")}
           </p>

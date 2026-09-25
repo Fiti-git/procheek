@@ -15,6 +15,7 @@ import { Role } from '../../common/roles';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { CreateDealDto } from './dto/create-deal.dto';
+import { UpdateDealDto } from './dto/update-deal.dto';
 import { UpdateCommissionDto } from './dto/update-commission.dto';
 import { UpdateVendorProfileDto } from './dto/update-vendor-profile.dto';
 
@@ -124,6 +125,28 @@ export class SalesService {
   }
 
   // ============================================================
+  // Vendor profile helpers
+  // ============================================================
+  /**
+   * Returns the vendor profile for `userId`, creating a default row if none exists.
+   * Vendors provisioned without an explicit profile still need commission
+   * calculation to work; the default is a flat 10% rule with a zero quota.
+   */
+  private async ensureVendorProfile(userId: string): Promise<VendorProfile> {
+    const existing = await this.profiles.findOne({ where: { userId } });
+    if (existing) return existing;
+    const defaults: Partial<VendorProfile> = {
+      userId,
+      quotaMonthly: 0,
+      commissionRule: { type: 'flat', flat_pct: 10 },
+      bio: '',
+      specialties: [],
+      isActive: true,
+    };
+    return this.profiles.save(this.profiles.create(defaults as VendorProfile));
+  }
+
+  // ============================================================
   // Scope helpers
   // ============================================================
   private assertAdmin(actor: RequestUser) {
@@ -219,8 +242,10 @@ export class SalesService {
       if (!dto.vendedorId) throw new BadRequestException('vendedorId required for admin');
       vendedorId = dto.vendedorId;
     }
-    const profile = await this.profiles.findOne({ where: { userId: vendedorId } });
-    if (!profile) throw new NotFoundException('Vendor profile not found');
+    // Auto-create a default vendor profile if the vendedor doesn't have one.
+    // Vendors created without an explicit profile row should still be able to
+    // register deals; they get a sensible default (flat 10% commission, no quota).
+    const profile = await this.ensureVendorProfile(vendedorId);
 
     const now = new Date();
     const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
@@ -261,6 +286,46 @@ export class SalesService {
     return deal;
   }
 
+  async updateDeal(id: string, dto: UpdateDealDto, actor: RequestUser) {
+    const deal = await this.deals.findOne({ where: { id } });
+    if (!deal) throw new NotFoundException('Deal not found');
+    if (actor.role !== Role.PRINCIPAL_ADMIN && deal.vendedorId !== actor.userId) {
+      throw new ForbiddenException('Cannot update this deal');
+    }
+    if (dto.leadId !== undefined) deal.leadId = dto.leadId;
+    if (dto.buyerCompanyId !== undefined) deal.buyerCompanyId = dto.buyerCompanyId;
+    if (dto.buyerName !== undefined) deal.buyerName = dto.buyerName;
+    if (dto.package !== undefined) deal.package = dto.package;
+    if (dto.amount !== undefined) {
+      deal.amount = dto.amount;
+      // Recalculate commission using stored snapshot rule
+      const calc = this.calculateCommission(
+        deal.commissionRuleSnapshot,
+        dto.amount,
+        deal.package,
+      );
+      deal.commissionPct = calc.pct;
+      deal.commissionAmount = calc.amount;
+      const c = await this.commissions.findOne({ where: { dealId: deal.id } });
+      if (c) {
+        c.amount = calc.amount;
+        await this.commissions.save(c);
+      }
+    }
+    return this.deals.save(deal);
+  }
+
+  async deleteDeal(id: string, actor: RequestUser) {
+    const deal = await this.deals.findOne({ where: { id } });
+    if (!deal) throw new NotFoundException('Deal not found');
+    if (actor.role !== Role.PRINCIPAL_ADMIN && deal.vendedorId !== actor.userId) {
+      throw new ForbiddenException('Cannot delete this deal');
+    }
+    await this.commissions.delete({ dealId: id });
+    await this.deals.delete(id);
+    return { id, deleted: true };
+  }
+
   // ============================================================
   // Commissions
   // ============================================================
@@ -295,7 +360,15 @@ export class SalesService {
   // ============================================================
   async getMyVendorProfile(actor: RequestUser) {
     const profile = await this.profiles.findOne({ where: { userId: actor.userId } });
-    if (!profile) throw new NotFoundException('Vendor profile not found');
+    if (!profile) {
+      return {
+        userId: actor.userId,
+        quotaMonthly: 0,
+        commissionRule: null,
+        bio: '',
+        specialties: [] as string[],
+      };
+    }
     return profile;
   }
 
@@ -303,15 +376,13 @@ export class SalesService {
     if (actor.role !== Role.PRINCIPAL_ADMIN && actor.userId !== userId) {
       throw new ForbiddenException('Cannot access this profile');
     }
-    const profile = await this.profiles.findOne({ where: { userId } });
-    if (!profile) throw new NotFoundException('Vendor profile not found');
+    const profile = await this.ensureVendorProfile(userId);
     return profile;
   }
 
   async updateVendorProfile(userId: string, dto: UpdateVendorProfileDto, actor: RequestUser) {
     this.assertAdmin(actor);
-    const profile = await this.profiles.findOne({ where: { userId } });
-    if (!profile) throw new NotFoundException('Vendor profile not found');
+    const profile = await this.ensureVendorProfile(userId);
     Object.assign(profile, {
       ...dto,
       commissionRule: (dto.commissionRule as any) ?? profile.commissionRule,

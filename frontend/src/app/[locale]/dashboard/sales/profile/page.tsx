@@ -6,6 +6,7 @@ import CommissionCalculator, {
   type CommissionRule,
 } from "@/components/CommissionCalculator";
 import { Input, Label } from "@/components/ui/Input";
+import { RoleGate } from "@/components/RoleGate";
 
 type VendorProfile = {
   userId: string;
@@ -15,7 +16,7 @@ type VendorProfile = {
   specialties: string[];
 };
 
-export default function VendorProfilePage() {
+function VendorProfilePageInner() {
   const [profile, setProfile] = useState<VendorProfile | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const user = typeof window !== "undefined" ? getCurrentUser() : null;
@@ -26,7 +27,14 @@ export default function VendorProfilePage() {
         const d = await apiGet<VendorProfile>("/sales/vendor-profile/me");
         setProfile(d);
       } catch (e) {
-        setErr((e as Error).message);
+        const msg = (e as Error).message || "";
+        if (/not found|404/i.test(msg)) {
+          setErr(
+            "Aún no tienes un perfil de vendedor. Solicita al administrador que te asigne el rol de vendedor.",
+          );
+        } else {
+          setErr(msg);
+        }
       }
     })();
   }, []);
@@ -112,5 +120,13 @@ export default function VendorProfilePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VendorProfilePage() {
+  return (
+    <RoleGate allow={["principal_admin","vendedor"]}>
+      <VendorProfilePageInner />
+    </RoleGate>
   );
 }

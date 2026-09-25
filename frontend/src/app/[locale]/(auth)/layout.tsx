@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ShieldCheck } from "lucide-react";
 
 export default function AuthLayout({
@@ -10,13 +11,15 @@ export default function AuthLayout({
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left brand panel */}
       <div className="hidden lg:flex flex-col justify-between bg-ink-900 text-white p-12 relative">
-        <Link href="/" className="relative flex items-baseline gap-1.5">
-          <span className="font-display font-bold text-xl tracking-tight text-white leading-none">
-            PROCHECK
-          </span>
-          <span className="font-display font-normal text-base text-coral-500 leading-none">
-            Safety
-          </span>
+        <Link href="/" className="relative flex items-center">
+          <Image
+            src="/images/logo_hires.png"
+            alt="PROCHECK Solutions"
+            width={1254}
+            height={1254}
+            className="h-16 w-auto brightness-0 invert"
+            priority
+          />
         </Link>
 
         <div className="max-w-md">
@@ -37,7 +40,7 @@ export default function AuthLayout({
                 key={t}
                 className="flex items-center gap-3 text-sm text-ink-100"
               >
-                <ShieldCheck className="h-4 w-4 text-coral-500 shrink-0" />
+                <ShieldCheck className="h-4 w-4 text-[#FBB601] shrink-0" />
                 {t}
               </li>
             ))}
@@ -45,7 +48,7 @@ export default function AuthLayout({
         </div>
 
         <p className="relative text-xs text-ink-300">
-          © 2026 PROCHECK Safety
+          © 2026 PROCHECK Solutions
         </p>
       </div>
 
@@ -53,13 +56,15 @@ export default function AuthLayout({
       <div className="flex items-center justify-center p-6 md:p-10 bg-canvas">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex justify-center mb-8">
-            <Link href="/" className="flex items-baseline gap-1.5">
-              <span className="font-display font-bold text-xl tracking-tight text-ink-900 leading-none">
-                PROCHECK
-              </span>
-              <span className="font-display font-normal text-base text-coral-500 leading-none">
-                Safety
-              </span>
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/images/logo_hires.png"
+                alt="PROCHECK Solutions"
+                width={1254}
+                height={1254}
+                className="h-14 w-auto"
+                priority
+              />
             </Link>
           </div>
           {children}

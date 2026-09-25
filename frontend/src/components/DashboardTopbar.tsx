@@ -61,9 +61,11 @@ export function DashboardTopbar() {
   const [items, setItems] = React.useState<Notif[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [user, setUser] = React.useState<ReturnType<typeof getCurrentUser>>(null);
+  const [mounted, setMounted] = React.useState(false);
   const panelRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
+    setMounted(true);
     setUser(getCurrentUser());
   }, []);
 
@@ -144,6 +146,15 @@ export function DashboardTopbar() {
   const roleLabel = user ? ROLE_LABEL[user.role] || "Empleado" : "Constructora Demo";
 
   const shown = items.slice(0, 8);
+
+  if (!mounted) {
+    return (
+      <header
+        className="sticky top-0 z-30 h-16 border-b border-line bg-canvas/85 backdrop-blur"
+        suppressHydrationWarning
+      />
+    );
+  }
 
   return (
     <header className="sticky top-0 z-30 h-16 border-b border-line bg-canvas/85 backdrop-blur">

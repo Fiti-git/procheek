@@ -14,6 +14,7 @@ import {
   Building2,
   ArrowRight,
 } from "lucide-react";
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { apiGet, apiPost } from "@/lib/api";
 import { IMG } from "@/lib/images";
@@ -204,7 +205,7 @@ function AgendarInner() {
     <section className="py-16 md:py-20 bg-canvas">
       <div className="container-page max-w-5xl">
         <p className="kicker mb-3">{t("kicker")}</p>
-        <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-tight">
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
           {t("title")}
         </h1>
         <p className="mt-4 text-ink-700 leading-relaxed max-w-2xl">
@@ -299,11 +300,14 @@ function AgendarInner() {
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={AVATARS[idx % AVATARS.length]}
                         alt={sp.name}
+                        width={48}
+                        height={48}
+                        sizes="48px"
                         className="w-12 h-12 rounded-full object-cover border border-line"
+                        quality={80}
                       />
                       <div>
                         <div className="font-medium text-ink-900">{sp.name}</div>
@@ -448,7 +452,7 @@ function AgendarInner() {
                   </div>
                 )}
 
-                <div className="md:col-span-2 flex items-center justify-between pt-2">
+                <div className="md:col-span-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
                   <p className="text-xs text-ink-500">{t("consent")}</p>
                   <button
                     type="submit"

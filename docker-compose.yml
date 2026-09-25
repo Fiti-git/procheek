@@ -40,8 +40,9 @@ services:
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       TYPEORM_SYNC: ${TYPEORM_SYNC:-false}
       APP_URL: ${APP_URL:-http://localhost:3000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://procheck.mx,http://localhost:3000}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
-      MAIL_FROM: PROCHEECK <onboarding@resend.dev>
+      MAIL_FROM: ${MAIL_FROM:-PROCHECK <no-reply@procheck.mx>}
       SENTRY_DSN: ${SENTRY_DSN:-}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.1}
     ports:
@@ -83,11 +84,12 @@ services:
       - procheeck_backups:/backups
       - ./scripts/backup.sh:/usr/local/bin/backup.sh:ro
     entrypoint: ["/bin/sh", "-c"]
-    command: >
-      "apk add --no-cache bash coreutils tzdata &&
-       echo \"$$BACKUP_CRON /usr/local/bin/backup.sh\" > /etc/crontabs/root &&
-       /usr/local/bin/backup.sh || true &&
-       crond -f -l 8"
+    command:
+      - "apk add --no-cache bash coreutils tzdata >/dev/null 2>&1;
+         chmod +x /usr/local/bin/backup.sh;
+         printf '%s sh /usr/local/bin/backup.sh >> /var/log/backup.log 2>&1\\n' \"$$BACKUP_CRON\" > /etc/crontabs/root;
+         sh /usr/local/bin/backup.sh || true;
+         exec crond -f -l 8"
 
 volumes:
   procheeck_pgdata:

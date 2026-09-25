@@ -1,6 +1,7 @@
 "use client";
 
 import { use } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -112,7 +113,7 @@ export default function CourseDetailPage({
               <p className="field-mono mb-3">
                 {course.code} · STPS 2011 · {course.hours} horas
               </p>
-              <h1 className="font-display text-3xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-tight">
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
                 {course.title}
               </h1>
               <p className="mt-4 text-base text-ink-700 leading-relaxed max-w-xl">
@@ -123,24 +124,21 @@ export default function CourseDetailPage({
 
               {/* Instructor */}
               <div className="mt-6 flex items-center gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={IMG.avatar3}
-                  alt="Instructor"
-                  className="h-10 w-10 rounded-full object-cover border border-line"
-                />
+                <div className="h-10 w-10 rounded-full bg-coral-50 border border-coral-100 flex items-center justify-center">
+                  <ShieldCheck className="h-5 w-5 text-coral-600" />
+                </div>
                 <div>
                   <div className="text-sm text-ink-900 font-medium">
-                    Impartido por Ing. Fernando Reyes Ortega
+                    Impartido por capacitadores registrados ante la STPS
                   </div>
                   <div className="text-xs font-mono text-ink-500">
-                    STPS · ACE-2025-0142
+                    Cursos alineados a la Norma Oficial Mexicana
                   </div>
                 </div>
               </div>
 
               {/* Rating */}
-              <div className="mt-4 flex items-center gap-2">
+              <div className="mt-4 flex items-center gap-2 hidden">
                 <div className="flex items-center gap-0.5">
                   {[0, 1, 2, 3, 4].map((i) => (
                     <Star
@@ -178,11 +176,14 @@ export default function CourseDetailPage({
             <div className="lg:col-span-5">
               <div className="sticky top-24 bg-white border border-line rounded-xl overflow-hidden shadow-cardHover">
                 <div className="relative aspect-video bg-ink-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={src}
                     alt={course.title}
-                    className="absolute inset-0 h-full w-full object-cover"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    className="object-cover"
+                    quality={90}
+                    priority
                   />
                   <span className="absolute top-3 left-3 inline-flex items-center bg-white text-ink-900 border border-line rounded-md px-2 py-0.5 font-mono text-[11px] font-semibold uppercase">
                     {course.code}
@@ -338,11 +339,14 @@ export default function CourseDetailPage({
                   &ldquo;{t.quote}&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={t.img}
                     alt={t.name}
+                    width={40}
+                    height={40}
+                    sizes="40px"
                     className="h-10 w-10 rounded-full object-cover border border-line"
+                    quality={80}
                   />
                   <div>
                     <div className="text-sm font-medium text-ink-900">
