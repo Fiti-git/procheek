@@ -25,6 +25,7 @@ import { getModulesForCourse, getLearningOutcomes } from "@/lib/course-modules";
 import { useCart } from "@/lib/cart";
 import { useToast } from "@/components/ui/Toast";
 import CourseCard from "@/components/CourseCard";
+import { CourseImage } from "@/components/CourseImage";
 
 export default function CourseDetailPage({
   params,
@@ -176,8 +177,9 @@ export default function CourseDetailPage({
             <div className="lg:col-span-5">
               <div className="sticky top-24 bg-white border border-line rounded-xl overflow-hidden shadow-cardHover">
                 <div className="relative aspect-video bg-ink-100">
-                  <Image
-                    src={src}
+                  <CourseImage
+                    src={course.imageUrl || src}
+                    code={course.code}
                     alt={course.title}
                     fill
                     sizes="(max-width: 1024px) 100vw, 40vw"

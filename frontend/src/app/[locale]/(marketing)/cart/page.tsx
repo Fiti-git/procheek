@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Trash2, ShieldCheck, ArrowRight, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { getCurrentUser } from "@/lib/api";
 import { imageForCourse } from "@/lib/images";
+import { CourseImage } from "@/components/CourseImage";
 
 export default function CartPage() {
   const router = useRouter();
@@ -71,8 +71,9 @@ export default function CartPage() {
                   className="card-enterprise p-4 flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4"
                 >
                   <div className="relative h-16 w-24 shrink-0 rounded-lg overflow-hidden border border-line">
-                    <Image
+                    <CourseImage
                       src={src}
+                      code={i.courseCode}
                       alt={i.courseTitle}
                       fill
                       sizes="96px"

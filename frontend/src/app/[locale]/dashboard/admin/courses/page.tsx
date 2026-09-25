@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Search,
@@ -24,6 +23,7 @@ import {
   type ApiCourse,
 } from "@/lib/courses";
 import { imageForCourse } from "@/lib/images";
+import { CourseImage } from "@/components/CourseImage";
 import { cn } from "@/lib/cn";
 import { useToast } from "@/components/ui/Toast";
 import { RoleGate } from "@/components/RoleGate";
@@ -368,8 +368,9 @@ function AdminCoursesPageInner() {
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
                         <div className="relative h-12 w-16 rounded-md overflow-hidden bg-ink-100 shrink-0 border border-line">
-                          <Image
+                          <CourseImage
                             src={c.imageUrl || imageForCourse(c.code)}
+                            code={c.code}
                             alt={c.title}
                             fill
                             sizes="64px"

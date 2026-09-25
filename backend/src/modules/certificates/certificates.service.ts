@@ -312,7 +312,8 @@ export class CertificatesService {
   }
 
   // Public — used by the certificate-lookup page. Returns a redacted view.
-  async lookup(code: string): Promise<{
+  // Accepts the internal verification code (PC-XXXX-XXXX-XXXX) OR the DC-3 folio.
+  async lookup(query: string): Promise<{
     code: string;
     issuedAt: Date;
     expiresAt: Date | null;
@@ -322,7 +323,7 @@ export class CertificatesService {
     nomReference: string | null;
     dc3Folio: string | null;
   }> {
-    const cert = await this.repo.findOne({ where: { code: code.trim().toUpperCase() } });
+    const cert = await this.findByFolio(query);
     if (!cert) throw new NotFoundException('Certificate not found');
     const [user, course] = await Promise.all([
       this.users.findOne({ where: { id: cert.userId } }),

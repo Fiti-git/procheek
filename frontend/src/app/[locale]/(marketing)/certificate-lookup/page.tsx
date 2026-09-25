@@ -4,7 +4,6 @@ import { useState, FormEvent } from "react";
 import {
   Search,
   Download,
-  Mail,
   ShieldCheck,
   Award,
   AlertTriangle,
@@ -16,12 +15,68 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/Input";
-import { certificates, type Certificate } from "@/lib/certificates";
-import { useToast } from "@/components/ui/Toast";
 
-function fmtDate(iso: string) {
-  const [y, m, d] = iso.split("-");
+type CertStatus = "vigente" | "por-vencer" | "vencido";
+
+type CertView = {
+  folio: string;
+  code: string;
+  titular: string;
+  curso: string;
+  nomReference: string | null;
+  emision: string;
+  vencimiento: string | null;
+  estado: CertStatus;
+};
+
+type ApiLookupResponse = {
+  code: string;
+  issuedAt: string;
+  expiresAt: string | null;
+  revokedAt: string | null;
+  holder: string;
+  course: string;
+  nomReference: string | null;
+  dc3Folio: string | null;
+};
+
+function fmtDate(iso: string | null) {
+  if (!iso) return "—";
+  const [datePart] = iso.split("T");
+  const [y, m, d] = datePart.split("-");
   return `${d}/${m}/${y}`;
+}
+
+function computeStatus(expiresAt: string | null, revokedAt: string | null): CertStatus {
+  if (revokedAt) return "vencido";
+  if (!expiresAt) return "vigente";
+  const now = Date.now();
+  const exp = new Date(expiresAt).getTime();
+  const days = (exp - now) / (1000 * 60 * 60 * 24);
+  if (days < 0) return "vencido";
+  if (days < 30) return "por-vencer";
+  return "vigente";
+}
+
+function adaptCert(api: ApiLookupResponse): CertView {
+  return {
+    folio: api.dc3Folio || api.code,
+    code: api.code,
+    titular: api.holder,
+    curso: api.course,
+    nomReference: api.nomReference,
+    emision: api.issuedAt,
+    vencimiento: api.expiresAt,
+    estado: computeStatus(api.expiresAt, api.revokedAt),
+  };
+}
+
+function apiBase(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== "undefined") {
+    return `${window.location.protocol}//${window.location.host}/api`;
+  }
+  return "";
 }
 
 function nomCodeFromCourse(courseText: string) {
@@ -31,10 +86,9 @@ function nomCodeFromCourse(courseText: string) {
 
 export default function CertificateLookupPage() {
   const t = useTranslations("Lookup");
-  const { toast } = useToast();
   const [query, setQuery] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [result, setResult] = useState<Certificate | null>(null);
+  const [result, setResult] = useState<CertView | null>(null);
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -42,26 +96,31 @@ export default function CertificateLookupPage() {
     const q = query.trim();
     if (!q) return;
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 400));
-    const found = certificates.find(
-      (c) =>
-        c.folio.toLowerCase() === q.toLowerCase() ||
-        (c.curp && c.curp.toLowerCase() === q.toLowerCase()),
-    );
-    setResult(found ?? null);
-    setSubmitted(true);
-    setLoading(false);
+    setResult(null);
+    setSubmitted(false);
+    try {
+      const res = await fetch(
+        `${apiBase()}/certificates/lookup/${encodeURIComponent(q)}`,
+        { cache: "no-store" },
+      );
+      if (res.ok) {
+        const data = (await res.json()) as ApiLookupResponse;
+        setResult(adaptCert(data));
+      } else {
+        setResult(null);
+      }
+    } catch {
+      setResult(null);
+    } finally {
+      setSubmitted(true);
+      setLoading(false);
+    }
   };
 
   const onDownload = () => {
     if (!result) return;
-    const base =
-      process.env.NEXT_PUBLIC_API_URL ||
-      (typeof window !== "undefined"
-        ? `${window.location.protocol}//${window.location.hostname}:5000/api`
-        : "");
     window.open(
-      `${base}/certificates/${encodeURIComponent(result.folio)}/pdf`,
+      `${apiBase()}/certificates/${encodeURIComponent(result.folio)}/pdf`,
       "_blank",
     );
   };
@@ -247,7 +306,7 @@ export default function CertificateLookupPage() {
                   {
                     icon: Hash,
                     label: "Norma",
-                    value: nomCodeFromCourse(displayCert.curso),
+                    value: displayCert.nomReference ?? nomCodeFromCourse(displayCert.curso),
                   },
                   {
                     icon: User,
@@ -268,7 +327,7 @@ export default function CertificateLookupPage() {
                   {
                     icon: Calendar,
                     label: "Vigente hasta",
-                    value: fmtDate(displayCert.vencimiento),
+                    value: displayCert.vencimiento ? fmtDate(displayCert.vencimiento) : "Sin vencimiento",
                   },
                 ].map((field) => (
                   <div key={field.label} className="flex items-start gap-3">
@@ -298,18 +357,6 @@ export default function CertificateLookupPage() {
                   <Download className="h-4 w-4" /> Descargar PDF DC-3
                 </button>
                 <button
-                  onClick={() =>
-                    toast({
-                      title: "Enlace enviado",
-                      description: `Certificado enviado al correo del titular.`,
-                      variant: "success",
-                    })
-                  }
-                  className="inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-white border border-line hover:bg-canvas text-ink-800 font-medium text-sm transition-colors"
-                >
-                  <Mail className="h-4 w-4" /> Enviar por correo
-                </button>
-                <button
                   onClick={onReset}
                   className="ml-auto text-sm font-semibold text-[#D99A00] hover:text-[#FBB601]"
                 >
@@ -328,26 +375,6 @@ export default function CertificateLookupPage() {
             </div>
           )}
 
-          {/* Sample folios helper */}
-          {!submitted && (
-            <div className="mt-10 bg-white border border-line rounded-2xl p-6">
-              <div className="text-xs uppercase tracking-widest text-ink-500 font-medium mb-4">
-                Folios de ejemplo para probar
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {certificates.slice(0, 6).map((c) => (
-                  <button
-                    key={c.folio}
-                    type="button"
-                    onClick={() => setQuery(c.folio)}
-                    className="font-mono text-xs bg-canvas-2 hover:bg-canvas border border-line hover:border-line-strong text-ink-800 rounded-lg px-3 py-1.5 transition-colors"
-                  >
-                    {c.folio}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </section>

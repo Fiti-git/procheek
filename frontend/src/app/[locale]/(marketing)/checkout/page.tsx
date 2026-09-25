@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CreditCard, Building, Store, ShieldCheck, Loader2 } from "lucide-react";
 import { Input, Label } from "@/components/ui/Input";
 import { imageForCourse } from "@/lib/images";
+import { CourseImage } from "@/components/CourseImage";
 import { useCart } from "@/lib/cart";
 import { apiGet, apiPost, getCurrentUser, type CurrentUser } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
@@ -192,8 +192,9 @@ export default function CheckoutPage() {
               {items.map((i) => (
                 <li key={i.courseId} className="flex items-center gap-3">
                   <div className="relative h-11 w-14 rounded-md overflow-hidden shrink-0 border border-ink-700">
-                    <Image
+                    <CourseImage
                       src={i.image || imageForCourse(i.courseCode)}
+                      code={i.courseCode}
                       alt={i.courseTitle}
                       fill
                       sizes="56px"

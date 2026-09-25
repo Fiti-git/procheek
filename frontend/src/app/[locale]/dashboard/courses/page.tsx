@@ -8,6 +8,7 @@ import { Clock, CheckCircle2, PlayCircle } from "lucide-react";
 import { courses, type Course } from "@/lib/courses";
 import { cn } from "@/lib/cn";
 import { imageForCourse } from "@/lib/images";
+import { CourseImage } from "@/components/CourseImage";
 import { apiGet, apiPost } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
 import { RoleGate } from "@/components/RoleGate";
@@ -183,8 +184,9 @@ function MyCoursesPageInner() {
                   className="bg-white border border-line rounded-xl overflow-hidden hover:border-line-strong transition-colors"
                 >
                   <div className="relative aspect-video overflow-hidden bg-ink-100">
-                    <Image
-                      src={imageForCourse(course.code)}
+                    <CourseImage
+                      src={course.imageUrl || imageForCourse(course.code)}
+                      code={course.code}
                       alt={course.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

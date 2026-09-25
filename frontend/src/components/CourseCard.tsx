@@ -7,6 +7,7 @@ import type { Course } from "@/lib/courses";
 import { imageForCourse } from "@/lib/images";
 import { useCart } from "@/lib/cart";
 import { useToast } from "@/components/ui/Toast";
+import { CourseImage } from "@/components/CourseImage";
 
 export function CourseCard({ course }: { course: Course }) {
   const src = imageForCourse(course.code);
@@ -35,8 +36,9 @@ export function CourseCard({ course }: { course: Course }) {
         href={`/courses/${course.code}`}
         className="relative aspect-video overflow-hidden bg-ink-100 photo-duotone-subtle block"
       >
-        <Image
-          src={src}
+        <CourseImage
+          src={course.imageUrl || src}
+          code={course.code}
           alt={course.title}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

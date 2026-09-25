@@ -212,3 +212,16 @@
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Mobile: justify body copy in marketing pages for a polished edge.
+ * Scoped to <main class="marketing-main"> so dashboard tables, forms,
+ * badges, and dense UI copy are untouched. Excludes list items inside
+ * navigation and short chip/callout containers where justification would
+ * look awkward. */
+@media (max-width: 639px) {
+  main.marketing-main p {
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+}

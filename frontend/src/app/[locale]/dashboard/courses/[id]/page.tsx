@@ -1,7 +1,6 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import { courses } from "@/lib/courses";
 import { imageForCourse } from "@/lib/images";
+import { CourseImage } from "@/components/CourseImage";
 import { apiGet, apiPatch } from "@/lib/api";
 import { cn } from "@/lib/cn";
 import { useToast } from "@/components/ui/Toast";
@@ -345,8 +345,9 @@ export default function CoursePlayerPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8">
             <div className="relative aspect-video rounded-xl overflow-hidden bg-ink-900">
-              <Image
-                src={src}
+              <CourseImage
+                src={(course as { imageUrl?: string | null }).imageUrl || src}
+                code={course.code || fallbackCourse.code}
                 alt=""
                 fill
                 sizes="(max-width: 1024px) 100vw, 66vw"
