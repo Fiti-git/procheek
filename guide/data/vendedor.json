@@ -1,0 +1,151 @@
+{
+  "slug": "vendedor",
+  "title": "Panel del vendedor",
+  "roleAudience": [
+    "vendedor"
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "title": "Dashboard de ventas",
+      "descEs": "Como vendedor verás tus KPIs comerciales: leads activos, deals cerrados y comisiones proyectadas.",
+      "image": "screens/vendedor-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 116,
+            "w": 1132,
+            "h": 52
+          },
+          "selector": "h1",
+          "labelEs": "Encabezado",
+          "descEs": "Ubicación actual: panel comercial.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 282,
+            "y": 180,
+            "w": 375,
+            "h": 136
+          },
+          "selector": ".grid > div:has(.font-display)",
+          "labelEs": "KPIs comerciales",
+          "descEs": "Pipeline, cierres del mes y comisiones estimadas.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 283,
+            "y": 556,
+            "w": 1130,
+            "h": 120
+          },
+          "selector": "table, ul, [class*=\"pipeline\"], [class*=\"deal\"]",
+          "labelEs": "Pipeline",
+          "descEs": "Tus deals abiertos por etapa del embudo.",
+          "color": "#FBB601"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Leads (prospectos)",
+      "descEs": "Registra y da seguimiento a nuevos prospectos desde la sección Leads.",
+      "image": "screens/vendedor-02.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 368,
+            "y": 272,
+            "w": 92,
+            "h": 42
+          },
+          "selector": "button:has-text(\"Nuevo\"), button:has-text(\"Crear\"), a:has-text(\"Nuevo\")",
+          "labelEs": "Crear lead",
+          "descEs": "Captura un nuevo prospecto con nombre, empresa y contacto.",
+          "color": "#DC2626"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 283,
+            "y": 368,
+            "w": 1130,
+            "h": 65
+          },
+          "selector": "table tbody tr",
+          "labelEs": "Lead existente",
+          "descEs": "Cada fila muestra estado, fuente y siguiente acción.",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 1206,
+            "y": 6,
+            "w": 52,
+            "h": 52
+          },
+          "selector": "button:has(svg), tr button:has(svg)",
+          "labelEs": "Acciones rápidas",
+          "descEs": "Convertir en deal, editar o descartar.",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Deals (oportunidades)",
+      "descEs": "Los deals son leads convertidos que ya están en el embudo comercial. Cada uno tiene una etapa.",
+      "image": "screens/vendedor-03.png",
+      "annotations": []
+    },
+    {
+      "n": 4,
+      "title": "Comisiones",
+      "descEs": "La vista Comisiones proyecta lo que ganarás cuando se cierren los deals actuales.",
+      "image": "screens/vendedor-04.png",
+      "annotations": [
+        {
+          "letter": "b",
+          "box": {
+            "x": 283,
+            "y": 238,
+            "w": 1130,
+            "h": 120
+          },
+          "selector": "table",
+          "labelEs": "Detalle por deal",
+          "descEs": "Cada fila muestra deal, cliente, monto y % de comisión.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 355,
+            "y": 180,
+            "w": 99,
+            "h": 45
+          },
+          "selector": "select, [role=\"combobox\"], input[type=\"date\"]",
+          "labelEs": "Filtro de periodo",
+          "descEs": "Cambia entre semana, mes o rango personalizado.",
+          "color": "#FBB601"
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "title": "Citas comerciales",
+      "descEs": "Agenda visitas y llamadas con tus prospectos desde la sección Citas.",
+      "image": "screens/vendedor-05.png",
+      "annotations": []
+    }
+  ]
+}

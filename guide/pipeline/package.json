@@ -1,0 +1,20 @@
+{
+  "name": "procheck-guide-pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Auto-generates the PROCHECK client manual from live Playwright captures.",
+  "scripts": {
+    "capture:login": "node capture/login.js",
+    "capture:cursos": "node capture/cursos.js",
+    "capture:certificados": "node capture/certificados.js",
+    "capture:reportes": "node capture/reportes.js",
+    "capture:equipo": "node capture/equipo.js",
+    "capture:admin": "node capture/admin.js",
+    "capture:all": "node capture/login.js && node capture/cursos.js && node capture/certificados.js && node capture/reportes.js && node capture/equipo.js && node capture/admin.js",
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.47.0"
+  }
+}

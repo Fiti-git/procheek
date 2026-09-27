@@ -1,0 +1,111 @@
+{
+  "slug": "cursos",
+  "title": "Cursos y aprendizaje",
+  "roleAudience": "employee",
+  "steps": [
+    {
+      "n": 1,
+      "title": "Mis cursos inscritos",
+      "descEs": "Al abrir Cursos verás primero los cursos en los que estás inscrito. Desde aquí puedes retomar tu avance o revisar tu catálogo asignado.",
+      "image": "screens/cursos-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 278,
+            "w": 1132,
+            "h": 12
+          },
+          "selector": "main [class*=\"grid\" i], main ul, main section:has(a[href*=\"/dashboard/courses/\"])",
+          "labelEs": "Cursos inscritos",
+          "descEs": "Listado de los cursos en los que ya estás participando.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 392,
+            "y": 213,
+            "w": 172,
+            "h": 48
+          },
+          "selector": "button:has-text(\"Cursos disponibles\"), [role=\"tab\"]:has-text(\"disponibles\")",
+          "labelEs": "Cursos disponibles",
+          "descEs": "Cambia a la pestaña del catálogo para inscribirte a nuevos cursos.",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Catálogo de cursos disponibles",
+      "descEs": "En Cursos disponibles verás el catálogo completo de la organización. Cada tarjeta te permite inscribirte con un solo clic.",
+      "image": "screens/cursos-02.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 278,
+            "w": 1132,
+            "h": 3011
+          },
+          "selector": "main [class*=\"grid\" i], main section",
+          "labelEs": "Catálogo disponible",
+          "descEs": "Cursos ofertados por tu organización según tu perfil.",
+          "color": "#059669"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Página del curso",
+      "descEs": "La página del curso muestra el encabezado con metadatos y el temario dividido en módulos.",
+      "image": "screens/cursos-03.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 116,
+            "w": 1132,
+            "h": 52
+          },
+          "selector": "main h1, main header",
+          "labelEs": "Encabezado del curso",
+          "descEs": "Nombre, duración, nivel y descripción general del curso.",
+          "color": "#059669"
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "title": "Contenido del módulo",
+      "descEs": "Al abrir un módulo verás el contenido de estudio (texto o video) y los controles para marcarlo como completado o avanzar al siguiente.",
+      "image": "screens/cursos-04.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 116,
+            "w": 1132,
+            "h": 52
+          },
+          "selector": "main h1, main h2",
+          "labelEs": "Título del módulo",
+          "descEs": "Identifica el módulo que estás estudiando.",
+          "color": "#059669"
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "title": "Evaluación del curso",
+      "descEs": "Al final del temario deberás responder la evaluación. Cada pregunta tiene opciones de respuesta única; envía tus respuestas al terminar.",
+      "image": "screens/cursos-05.png",
+      "annotations": []
+    }
+  ]
+}

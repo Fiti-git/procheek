@@ -1,0 +1,250 @@
+{
+  "slug": "login",
+  "title": "Iniciar sesión",
+  "roleAudience": "todos",
+  "steps": [
+    {
+      "n": 1,
+      "title": "Pantalla de bienvenida",
+      "descEs": "Al abrir procheck.mx/login verás la pantalla de bienvenida. Ingresa tu correo corporativo para continuar.",
+      "image": "screens/login-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 732,
+            "h": 912
+          },
+          "selector": "aside, [class*=\"brand\" i]:has(img), .hidden.lg\\:flex:has(img)",
+          "labelEs": "Panel de bienvenida",
+          "descEs": "Marca visual y valor del producto.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 850,
+            "y": 459,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"email\"], input[placeholder*=\"correo\" i]",
+          "labelEs": "Correo corporativo",
+          "descEs": "Escribe el correo con el que fuiste invitado.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 850,
+            "y": 517,
+            "w": 460,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"]",
+          "labelEs": "Botón Continuar",
+          "descEs": "Envía el correo para avanzar al paso de contraseña.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Correo capturado",
+      "descEs": "Una vez capturado el correo, verifica que sea el correcto y presiona Continuar.",
+      "image": "screens/login-02.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 850,
+            "y": 459,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"email\"]",
+          "labelEs": "Correo listo",
+          "descEs": "Comprueba que el correo mostrado sea el tuyo.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 850,
+            "y": 517,
+            "w": 460,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"]",
+          "labelEs": "Continuar",
+          "descEs": "Avanza al paso de contraseña.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Ingreso de contraseña",
+      "descEs": "PROCHECK te pedirá tu contraseña. Es el mismo campo cifrado usado en toda la plataforma.",
+      "image": "screens/login-03.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 850,
+            "y": 501,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"password\"]",
+          "labelEs": "Contraseña",
+          "descEs": "Ingresa tu contraseña personal.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 850,
+            "y": 559,
+            "w": 460,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"]",
+          "labelEs": "Iniciar sesión",
+          "descEs": "Envía las credenciales para autenticarte.",
+          "color": "#DC2626"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 850,
+            "y": 626,
+            "w": 183,
+            "h": 29
+          },
+          "selector": "a[href*=\"forgot-password\"]",
+          "labelEs": "¿Olvidaste tu contraseña?",
+          "descEs": "Enlace al flujo de recuperación por correo.",
+          "color": "#059669"
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "title": "Contraseña capturada",
+      "descEs": "Antes de enviar, verifica el ícono de mostrar contraseña si necesitas confirmar lo escrito.",
+      "image": "screens/login-04.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 850,
+            "y": 501,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"password\"]",
+          "labelEs": "Contraseña ingresada",
+          "descEs": "El campo cifra automáticamente los caracteres.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 850,
+            "y": 559,
+            "w": 460,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"]",
+          "labelEs": "Iniciar sesión",
+          "descEs": "Enviar credenciales.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "title": "Panel al iniciar sesión",
+      "descEs": "Al autenticarte, PROCHECK te lleva a tu panel principal. La estructura de la izquierda es tu menú permanente.",
+      "image": "screens/login-05.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 268,
+            "h": 1115
+          },
+          "selector": "aside, [class*=\"sidebar\" i]",
+          "labelEs": "Menú lateral",
+          "descEs": "Acceso permanente a cursos, certificados, equipo, reportes y biblioteca.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 250,
+            "y": 0,
+            "w": 1196,
+            "h": 76
+          },
+          "selector": "header",
+          "labelEs": "Barra superior",
+          "descEs": "Búsqueda global, notificaciones y menú de usuario.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 250,
+            "y": 58,
+            "w": 1196,
+            "h": 1051
+          },
+          "selector": "main, main.marketing-main, [class*=\"dashboard-content\"]",
+          "labelEs": "Área de trabajo",
+          "descEs": "El contenido de cada sección se despliega aquí.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "title": "Recuperación de contraseña",
+      "descEs": "Si olvidaste tu contraseña, desde la pantalla de contraseña puedes solicitar un enlace de recuperación por correo.",
+      "image": "screens/login-06.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 850,
+            "y": 453,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"email\"]",
+          "labelEs": "Correo registrado",
+          "descEs": "PROCHECK enviará un enlace único a este correo.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 850,
+            "y": 583,
+            "w": 175,
+            "h": 29
+          },
+          "selector": "a[href*=\"login\"]",
+          "labelEs": "Volver a iniciar sesión",
+          "descEs": "Regresa al login si recuerdas tu contraseña.",
+          "color": "#059669"
+        }
+      ]
+    }
+  ]
+}

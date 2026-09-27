@@ -1,0 +1,176 @@
+{
+  "slug": "admin",
+  "title": "Panel administrativo",
+  "roleAudience": "admin",
+  "steps": [
+    {
+      "n": 1,
+      "title": "Administración de cursos",
+      "descEs": "Desde el panel administrativo puedes dar de alta, editar o eliminar cursos del catálogo institucional.",
+      "image": "screens/admin-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 1247,
+            "y": 90,
+            "w": 167,
+            "h": 59
+          },
+          "selector": "button:has-text(\"Crear curso\"), a:has-text(\"Crear curso\"), button:has-text(\"Nuevo curso\")",
+          "labelEs": "Crear curso",
+          "descEs": "Abre el formulario para dar de alta un curso nuevo.",
+          "color": "#DC2626"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 283,
+            "y": 478,
+            "w": 1130,
+            "h": 85
+          },
+          "selector": "main table tbody tr",
+          "labelEs": "Fila de curso",
+          "descEs": "Muestra código, título, industria y estado del curso.",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 1257,
+            "y": 437,
+            "w": 156,
+            "h": 53
+          },
+          "selector": "main table thead th:last-child, main table tbody tr td:last-child",
+          "labelEs": "Acciones",
+          "descEs": "Editar o eliminar el curso desde el mismo renglón.",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Formulario de nuevo curso",
+      "descEs": "El formulario captura los datos maestros del curso: código, título, precio, industria y descripción.",
+      "image": "screens/admin-02.png",
+      "annotations": []
+    },
+    {
+      "n": 3,
+      "title": "Administración de certificados",
+      "descEs": "La sección de certificados administrativos muestra métricas globales y permite reimprimir o revocar constancias.",
+      "image": "screens/admin-03.png",
+      "annotations": [
+        {
+          "letter": "b",
+          "box": {
+            "x": 283,
+            "y": 327,
+            "w": 1130,
+            "h": 323
+          },
+          "selector": "main table",
+          "labelEs": "Tabla de constancias",
+          "descEs": "Historial completo de DC-3 emitidos por la plataforma.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 1277,
+            "y": 327,
+            "w": 136,
+            "h": 53
+          },
+          "selector": "main table thead th:last-child, main table tbody tr td:last-child",
+          "labelEs": "Acciones",
+          "descEs": "Descargar, reimprimir o revocar una constancia.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "title": "Biblioteca administrativa",
+      "descEs": "La biblioteca administra los documentos oficiales (políticas, guías, formatos) que verán todos los usuarios.",
+      "image": "screens/admin-04.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 1207,
+            "y": 90,
+            "w": 207,
+            "h": 59
+          },
+          "selector": "button:has-text(\"Subir\"), a:has-text(\"Subir\"), button:has-text(\"Nuevo documento\")",
+          "labelEs": "Subir documento",
+          "descEs": "Carga un archivo nuevo (PDF, DOCX, XLSX) a la biblioteca.",
+          "color": "#DC2626"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 283,
+            "y": 320,
+            "w": 1130,
+            "h": 140
+          },
+          "selector": "main table, main [role=\"table\"]",
+          "labelEs": "Tabla de documentos",
+          "descEs": "Listado con nombre, categoría, tamaño y fecha de carga.",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 1225,
+            "y": 320,
+            "w": 188,
+            "h": 56
+          },
+          "selector": "main table tbody tr td:last-child, main table thead th:last-child",
+          "labelEs": "Acciones por documento",
+          "descEs": "Descargar, reemplazar o eliminar el archivo.",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "title": "Inscripción masiva",
+      "descEs": "La herramienta de inscripción masiva permite asignar un curso a varios colaboradores de una sola vez.",
+      "image": "screens/admin-05.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 303,
+            "y": 257,
+            "w": 522,
+            "h": 53
+          },
+          "selector": "main select, main [role=\"combobox\"], main label:has-text(\"Curso\") + *",
+          "labelEs": "Selector de curso",
+          "descEs": "Elige el curso que quieres asignar masivamente.",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 1031,
+            "y": 514,
+            "w": 383,
+            "h": 59
+          },
+          "selector": "button:has-text(\"Inscribir\"), button[type=\"submit\"]:has-text(\"Asignar\"), button:has-text(\"Asignar\")",
+          "labelEs": "Inscribir",
+          "descEs": "Ejecuta la asignación en lote para todos los seleccionados.",
+          "color": "#DC2626"
+        }
+      ]
+    }
+  ]
+}

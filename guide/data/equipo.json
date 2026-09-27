@@ -1,0 +1,102 @@
+{
+  "slug": "equipo",
+  "title": "Gestión de equipo",
+  "roleAudience": "admin",
+  "steps": [
+    {
+      "n": 1,
+      "title": "Panel de equipo",
+      "descEs": "La sección Equipo centraliza el roster de tu organización, con indicadores de cumplimiento y accesos rápidos para invitar colaboradores.",
+      "image": "screens/equipo-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 208,
+            "w": 1132,
+            "h": 114
+          },
+          "selector": "main .grid:has(.font-display), main [class*=\"grid\" i]:first-of-type",
+          "labelEs": "Indicadores del equipo",
+          "descEs": "Miembros activos, invitaciones pendientes y cumplimiento promedio.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 1226,
+            "y": 90,
+            "w": 188,
+            "h": 59
+          },
+          "selector": "button:has-text(\"Invitar\"), a:has-text(\"Invitar\")",
+          "labelEs": "Invitar miembro",
+          "descEs": "Abre el formulario para enviar una invitación por correo.",
+          "color": "#DC2626"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 283,
+            "y": 397,
+            "w": 1130,
+            "h": 967
+          },
+          "selector": "main table, main [role=\"table\"]",
+          "labelEs": "Tabla de miembros",
+          "descEs": "Roster con rol, estatus y accesos rápidos por integrante.",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Formulario de invitación",
+      "descEs": "Al invitar a un miembro, PROCHECK solicita nombre, correo y rol; el sistema envía un correo con un enlace único de alta.",
+      "image": "screens/equipo-02.png",
+      "annotations": []
+    },
+    {
+      "n": 3,
+      "title": "Acciones sobre un miembro",
+      "descEs": "Cada fila del roster muestra un menú de acciones para reenviar invitaciones, editar rol o eliminar al miembro.",
+      "image": "screens/equipo-03.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 283,
+            "y": 646,
+            "w": 1130,
+            "h": 73
+          },
+          "selector": "main table tbody tr",
+          "labelEs": "Fila del miembro",
+          "descEs": "Integrante seleccionado para aplicar la acción.",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 1178,
+            "y": 711,
+            "w": 218,
+            "h": 48
+          },
+          "selector": ":text(\"Reenviar\"), :text(\"Eliminar\"), [role=\"menuitem\"]",
+          "labelEs": "Opciones disponibles",
+          "descEs": "Reenviar invitación, cambiar rol o eliminar al miembro.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "title": "Actividad reciente",
+      "descEs": "Al final del panel encontrarás la bitácora de actividad reciente: altas, invitaciones, cambios de rol y bajas.",
+      "image": "screens/equipo-04.png",
+      "annotations": []
+    }
+  ]
+}

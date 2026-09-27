@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manuales de usuario · PROCHECK Solutions</title>
+  <link rel="icon" href="/icon.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+  :root {
+    --brand-navy: #0F1E3D;
+    --brand-gold: #FBB601;
+    --brand-line: #e5e7eb;
+  }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1f2937; }
+  .cover {
+    background: linear-gradient(135deg, #0F1E3D 0%, #1e293b 100%);
+    color: #fff;
+    padding: 5rem 0;
+  }
+  .cover .kicker { color: var(--brand-gold); letter-spacing: 0.2em; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
+  .cover h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -0.02em; margin: 0.5rem 0 1rem; }
+  .cover .lead { color: rgba(255,255,255,0.75); max-width: 620px; }
+  .navbar-manual { background: rgba(15, 30, 61, 0.98); backdrop-filter: blur(8px); }
+  .navbar-manual .navbar-brand { color: #fff; font-weight: 700; }
+  .navbar-manual .navbar-brand .accent { color: var(--brand-gold); }
+  .back-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem; }
+  .back-link:hover { color: var(--brand-gold); }
+  .sidebar { position: sticky; top: 5rem; max-height: calc(100vh - 6rem); overflow-y: auto; padding: 1.5rem 1rem; border-right: 1px solid var(--brand-line); }
+  .sidebar-nav a { display: flex; padding: 0.55rem 0.75rem; border-radius: 8px; color: #4b5563; text-decoration: none; font-size: 0.9rem; transition: background 120ms, color 120ms; }
+  .sidebar-nav a:hover { background: #f3f4f6; color: var(--brand-navy); }
+  .sidebar-nav a.active { background: rgba(251, 182, 1, 0.12); color: var(--brand-navy); font-weight: 600; }
+  .sidebar-nav i { color: var(--brand-gold); }
+  .section-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(251, 182, 1, 0.12); color: var(--brand-gold); display: inline-flex; align-items: center; justify-content: center; font-size: 1.35rem; }
+  .section-kicker { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.72rem; color: #6b7280; font-weight: 600; }
+  .flow h2 { font-weight: 700; letter-spacing: -0.02em; }
+  .step-index { display: inline-block; background: var(--brand-navy); color: var(--brand-gold); padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+  .figure-wrapper { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--brand-line); background: #f9fafb; box-shadow: 0 10px 40px -20px rgba(15, 30, 61, 0.35); }
+  .figure-wrapper img { width: 100%; display: block; }
+  .figure-wrapper svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .figure-legend { background: #fff; border: 1px solid var(--brand-line); border-radius: 12px; padding: 1rem 1.25rem; }
+  .figure-legend ul { display: flex; flex-direction: column; gap: 0.75rem; }
+  .badge-letter { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; color: #fff; font-family: ui-monospace, Menlo, monospace; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  footer.doc-footer { background: var(--brand-navy); color: rgba(255,255,255,0.7); padding: 3rem 0; margin-top: 4rem; font-size: 0.85rem; }
+  footer.doc-footer a { color: var(--brand-gold); }
+
+    .role-card {
+      display: block;
+      background: #fff;
+      border: 1px solid var(--brand-line);
+      border-radius: 18px;
+      padding: 2rem;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+      height: 100%;
+    }
+    .role-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px -20px rgba(15,30,61,0.25); border-color: var(--brand-gold); color: inherit; }
+    .role-card .role-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.7rem;
+      margin-bottom: 1rem;
+    }
+    .role-card h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+    .role-card .arrow { color: var(--brand-gold); font-weight: 700; margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.4rem; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-manual sticky-top">
+    <div class="container-xl d-flex align-items-center gap-3">
+      <a class="navbar-brand mb-0" href="/userguide.html">PROCHECK <span class="accent">Solutions</span> — Manuales</a>
+      <a class="back-link ms-auto" href="https://procheck.mx"><i class="bi bi-arrow-left"></i> Volver al sitio</a>
+    </div>
+  </nav>
+
+  <header class="cover" id="top">
+    <div class="container-xl">
+      <div class="kicker">Centro de documentación</div>
+      <h1>Manuales de usuario</h1>
+      <p class="lead">Elige el manual que corresponde a tu rol. Cada guía muestra pantalla por pantalla cómo usar PROCHECK, con capturas directas del sistema en vivo.</p>
+    </div>
+  </header>
+
+  <div class="container-xl py-5">
+    <div class="row g-4">
+      
+        <div class="col-md-6 col-lg-6">
+          <a class="role-card" href="/userguide/empleado.html">
+            <span class="role-icon" style="background:#05966918;color:#059669"><i class="bi bi-person-workspace"></i></span>
+            <h2>Manual del Empleado</h2>
+            <p class="text-body-secondary mb-0">Cursos, exámenes y descarga de tu constancia DC-3.</p>
+            <div class="arrow">Abrir manual <i class="bi bi-arrow-right"></i></div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-6">
+          <a class="role-card" href="/userguide/admin-cliente.html">
+            <span class="role-icon" style="background:#2563EB18;color:#2563EB"><i class="bi bi-shield-lock"></i></span>
+            <h2>Manual del Administrador</h2>
+            <p class="text-body-secondary mb-0">Gestión de equipo, reportes, cursos y certificados de tu organización.</p>
+            <div class="arrow">Abrir manual <i class="bi bi-arrow-right"></i></div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-6">
+          <a class="role-card" href="/userguide/capacitador.html">
+            <span class="role-icon" style="background:#FBB60118;color:#FBB601"><i class="bi bi-easel"></i></span>
+            <h2>Manual del Capacitador</h2>
+            <p class="text-body-secondary mb-0">Sesiones, citas y perfil público del instructor.</p>
+            <div class="arrow">Abrir manual <i class="bi bi-arrow-right"></i></div>
+          </a>
+        </div>
+        <div class="col-md-6 col-lg-6">
+          <a class="role-card" href="/userguide/vendedor.html">
+            <span class="role-icon" style="background:#DC262618;color:#DC2626"><i class="bi bi-briefcase"></i></span>
+            <h2>Manual del Vendedor</h2>
+            <p class="text-body-secondary mb-0">Leads, deals, comisiones y citas comerciales.</p>
+            <div class="arrow">Abrir manual <i class="bi bi-arrow-right"></i></div>
+          </a>
+        </div>
+    </div>
+  </div>
+
+  <footer class="doc-footer">
+    <div class="container-xl">
+      Manuales generados automáticamente el 27 de septiembre de 2026 desde capturas en vivo de <a href="https://procheck.mx">procheck.mx</a>.
+    </div>
+  </footer>
+</body>
+</html>

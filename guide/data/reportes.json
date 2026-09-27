@@ -1,0 +1,108 @@
+{
+  "slug": "reportes",
+  "title": "Reportes y KPIs",
+  "roleAudience": "admin",
+  "steps": [
+    {
+      "n": 1,
+      "title": "Dashboard de reportes",
+      "descEs": "La sección Reportes concentra los indicadores operativos: usuarios activos, cursos vigentes, certificados emitidos y ventas por mes.",
+      "image": "screens/reportes-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 208,
+            "w": 1132,
+            "h": 118
+          },
+          "selector": "main .grid:has(.font-display), main [class*=\"grid\" i]:first-of-type",
+          "labelEs": "Total de usuarios",
+          "descEs": "Cuenta a todos los colaboradores dados de alta.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 566,
+            "y": 208,
+            "w": 280,
+            "h": 118
+          },
+          "selector": "main [class*=\"grid\" i] > div:nth-child(2), main .grid > div:nth-child(2)",
+          "labelEs": "Cursos activos",
+          "descEs": "Número de cursos publicados y disponibles.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 850,
+            "y": 208,
+            "w": 280,
+            "h": 118
+          },
+          "selector": "main [class*=\"grid\" i] > div:nth-child(3), main .grid > div:nth-child(3)",
+          "labelEs": "Certificados emitidos",
+          "descEs": "DC-3 generados por la plataforma en el periodo.",
+          "color": "#FBB601"
+        },
+        {
+          "letter": "d",
+          "box": {
+            "x": 331,
+            "y": 359,
+            "w": 197,
+            "h": 40
+          },
+          "selector": "section:has-text(\"Ventas\"), [class*=\"card\" i]:has-text(\"Ventas\"), main :text(\"Ventas por mes\")",
+          "labelEs": "Ventas por mes",
+          "descEs": "Gráfica con la evolución de ingresos mensuales.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Gráfica de ventas por mes",
+      "descEs": "La gráfica de ventas por mes muestra la tendencia de ingresos, permitiendo comparar meses y detectar estacionalidad.",
+      "image": "screens/reportes-02.png",
+      "annotations": [
+        {
+          "letter": "b",
+          "box": {
+            "x": 1090,
+            "y": 103,
+            "w": 28,
+            "h": 28
+          },
+          "selector": "section:has-text(\"Ventas\") svg, [class*=\"card\" i]:has-text(\"Ventas\") svg, main svg[role=\"img\"], main svg",
+          "labelEs": "Serie de datos",
+          "descEs": "Barras o líneas con los ingresos de cada mes.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 372,
+            "y": 724,
+            "w": 58,
+            "h": 30
+          },
+          "selector": "section:has-text(\"Ventas\") svg text, [class*=\"card\" i]:has-text(\"Ventas\") svg text, main svg text",
+          "labelEs": "Ejes y etiquetas",
+          "descEs": "Etiquetas de meses y valores para leer la gráfica.",
+          "color": "#FBB601"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Tablas de detalle",
+      "descEs": "Al pie del reporte encontrarás tablas con el desglose por curso, usuario o certificado según el filtro aplicado.",
+      "image": "screens/reportes-03.png",
+      "annotations": []
+    }
+  ]
+}

@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manual del Vendedor · PROCHECK Solutions</title>
+  <link rel="icon" href="/icon.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+  :root {
+    --brand-navy: #0F1E3D;
+    --brand-gold: #FBB601;
+    --brand-line: #e5e7eb;
+  }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1f2937; }
+  .cover {
+    background: linear-gradient(135deg, #0F1E3D 0%, #1e293b 100%);
+    color: #fff;
+    padding: 5rem 0;
+  }
+  .cover .kicker { color: var(--brand-gold); letter-spacing: 0.2em; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
+  .cover h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -0.02em; margin: 0.5rem 0 1rem; }
+  .cover .lead { color: rgba(255,255,255,0.75); max-width: 620px; }
+  .navbar-manual { background: rgba(15, 30, 61, 0.98); backdrop-filter: blur(8px); }
+  .navbar-manual .navbar-brand { color: #fff; font-weight: 700; }
+  .navbar-manual .navbar-brand .accent { color: var(--brand-gold); }
+  .back-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem; }
+  .back-link:hover { color: var(--brand-gold); }
+  .sidebar { position: sticky; top: 5rem; max-height: calc(100vh - 6rem); overflow-y: auto; padding: 1.5rem 1rem; border-right: 1px solid var(--brand-line); }
+  .sidebar-nav a { display: flex; padding: 0.55rem 0.75rem; border-radius: 8px; color: #4b5563; text-decoration: none; font-size: 0.9rem; transition: background 120ms, color 120ms; }
+  .sidebar-nav a:hover { background: #f3f4f6; color: var(--brand-navy); }
+  .sidebar-nav a.active { background: rgba(251, 182, 1, 0.12); color: var(--brand-navy); font-weight: 600; }
+  .sidebar-nav i { color: var(--brand-gold); }
+  .section-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(251, 182, 1, 0.12); color: var(--brand-gold); display: inline-flex; align-items: center; justify-content: center; font-size: 1.35rem; }
+  .section-kicker { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.72rem; color: #6b7280; font-weight: 600; }
+  .flow h2 { font-weight: 700; letter-spacing: -0.02em; }
+  .step-index { display: inline-block; background: var(--brand-navy); color: var(--brand-gold); padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+  .figure-wrapper { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--brand-line); background: #f9fafb; box-shadow: 0 10px 40px -20px rgba(15, 30, 61, 0.35); }
+  .figure-wrapper img { width: 100%; display: block; }
+  .figure-wrapper svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .figure-legend { background: #fff; border: 1px solid var(--brand-line); border-radius: 12px; padding: 1rem 1.25rem; }
+  .figure-legend ul { display: flex; flex-direction: column; gap: 0.75rem; }
+  .badge-letter { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; color: #fff; font-family: ui-monospace, Menlo, monospace; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+  footer.doc-footer { background: var(--brand-navy); color: rgba(255,255,255,0.7); padding: 3rem 0; margin-top: 4rem; font-size: 0.85rem; }
+  footer.doc-footer a { color: var(--brand-gold); }
+</style>
+</head>
+<body>
+  <nav class="navbar navbar-manual sticky-top">
+    <div class="container-xl d-flex align-items-center gap-3">
+      <a class="navbar-brand mb-0" href="/userguide.html">PROCHECK <span class="accent">Solutions</span> — Manuales</a>
+      <a class="back-link ms-auto" href="/userguide.html"><i class="bi bi-arrow-left"></i> Todos los manuales</a>
+    </div>
+  </nav>
+
+  <header class="cover" id="top">
+    <div class="container-xl">
+      <div class="d-flex align-items-center gap-3 mb-2">
+        <span class="section-icon" style="background:#DC262622;color:#DC2626"><i class="bi bi-briefcase"></i></span>
+        <div class="kicker">Manual del Vendedor</div>
+      </div>
+      <h1>Leads, deals, comisiones y citas comerciales.</h1>
+      <p class="lead">Sigue este manual paso a paso. Cada captura viene directo del sitio en vivo <a href="https://procheck.mx" style="color:var(--brand-gold)">procheck.mx</a>. Actualizado 27 de septiembre de 2026.</p>
+    </div>
+  </header>
+
+  <div class="container-xl">
+    <div class="row">
+      <aside class="col-lg-3 d-none d-lg-block">
+        <div class="sidebar">
+          <div class="section-kicker mb-3">Contenido</div>
+          
+    <ul class="list-unstyled sidebar-nav">
+      
+        <li>
+          <a href="#login" class="d-flex align-items-center gap-2">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>Iniciar sesión</span>
+          </a>
+        </li>
+        <li>
+          <a href="#vendedor" class="d-flex align-items-center gap-2">
+            <i class="bi bi-briefcase"></i>
+            <span>Panel del vendedor</span>
+          </a>
+        </li>
+    </ul>
+  
+        </div>
+      </aside>
+      <main class="col-lg-9">
+        
+    <section class="flow py-5" id="login">
+      <header class="mb-4">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <span class="section-icon"><i class="bi bi-box-arrow-in-right"></i></span>
+          <div>
+            <div class="section-kicker">Sección</div>
+            <h2 class="mb-0">Iniciar sesión</h2>
+          </div>
+        </div>
+      </header>
+      
+    <article class="step mb-5" id="login-step-1">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 1</span>
+        <h3 class="mb-0 fs-4">Pantalla de bienvenida</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Al abrir procheck.mx/login verás la pantalla de bienvenida. Ingresa tu correo corporativo para continuar.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/login-01.png" alt="Pantalla de bienvenida" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="0" y="0" width="732" height="912"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="20" y="40" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">a)</text>
+  
+    <rect x="850" y="459" width="460" height="54"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="870" y="499" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">b)</text>
+  
+    <rect x="850" y="517" width="460" height="59"
+          fill="none" stroke="#DC2626" stroke-width="5" rx="10"/>
+    <text x="870" y="557" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#DC2626">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">a</span>
+            <div>
+              <strong>Panel de bienvenida</strong><div class="text-body-secondary small">Marca visual y valor del producto.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">b</span>
+            <div>
+              <strong>Correo corporativo</strong><div class="text-body-secondary small">Escribe el correo con el que fuiste invitado.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#DC2626">c</span>
+            <div>
+              <strong>Botón Continuar</strong><div class="text-body-secondary small">Envía el correo para avanzar al paso de contraseña.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="login-step-2">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 2</span>
+        <h3 class="mb-0 fs-4">Correo capturado</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Una vez capturado el correo, verifica que sea el correcto y presiona Continuar.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/login-02.png" alt="Correo capturado" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="850" y="459" width="460" height="54"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="870" y="499" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">a)</text>
+  
+    <rect x="850" y="517" width="460" height="59"
+          fill="none" stroke="#DC2626" stroke-width="5" rx="10"/>
+    <text x="870" y="557" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#DC2626">b)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">a</span>
+            <div>
+              <strong>Correo listo</strong><div class="text-body-secondary small">Comprueba que el correo mostrado sea el tuyo.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#DC2626">b</span>
+            <div>
+              <strong>Continuar</strong><div class="text-body-secondary small">Avanza al paso de contraseña.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="login-step-3">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 3</span>
+        <h3 class="mb-0 fs-4">Ingreso de contraseña</h3>
+      </header>
+      <p class="text-body-secondary mb-3">PROCHECK te pedirá tu contraseña. Es el mismo campo cifrado usado en toda la plataforma.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/login-03.png" alt="Ingreso de contraseña" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="850" y="501" width="460" height="54"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="870" y="541" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">a)</text>
+  
+    <rect x="850" y="559" width="460" height="59"
+          fill="none" stroke="#DC2626" stroke-width="5" rx="10"/>
+    <text x="870" y="599" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#DC2626">b)</text>
+  
+    <rect x="850" y="626" width="183" height="29"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="870" y="666" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">a</span>
+            <div>
+              <strong>Contraseña</strong><div class="text-body-secondary small">Ingresa tu contraseña personal.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#DC2626">b</span>
+            <div>
+              <strong>Iniciar sesión</strong><div class="text-body-secondary small">Envía las credenciales para autenticarte.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">c</span>
+            <div>
+              <strong>¿Olvidaste tu contraseña?</strong><div class="text-body-secondary small">Enlace al flujo de recuperación por correo.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="login-step-4">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 4</span>
+        <h3 class="mb-0 fs-4">Contraseña capturada</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Antes de enviar, verifica el ícono de mostrar contraseña si necesitas confirmar lo escrito.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/login-04.png" alt="Contraseña capturada" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="850" y="501" width="460" height="54"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="870" y="541" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">a)</text>
+  
+    <rect x="850" y="559" width="460" height="59"
+          fill="none" stroke="#DC2626" stroke-width="5" rx="10"/>
+    <text x="870" y="599" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#DC2626">b)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">a</span>
+            <div>
+              <strong>Contraseña ingresada</strong><div class="text-body-secondary small">El campo cifra automáticamente los caracteres.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#DC2626">b</span>
+            <div>
+              <strong>Iniciar sesión</strong><div class="text-body-secondary small">Enviar credenciales.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="login-step-5">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 5</span>
+        <h3 class="mb-0 fs-4">Panel al iniciar sesión</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Al autenticarte, PROCHECK te lleva a tu panel principal. La estructura de la izquierda es tu menú permanente.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/login-05.png" alt="Panel al iniciar sesión" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="0" y="0" width="268" height="1115"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="20" y="40" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">a)</text>
+  
+    <rect x="250" y="0" width="1196" height="76"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="270" y="40" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">b)</text>
+  
+    <rect x="250" y="58" width="1196" height="1051"
+          fill="none" stroke="#DC2626" stroke-width="5" rx="10"/>
+    <text x="270" y="98" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#DC2626">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">a</span>
+            <div>
+              <strong>Menú lateral</strong><div class="text-body-secondary small">Acceso permanente a cursos, certificados, equipo, reportes y biblioteca.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">b</span>
+            <div>
+              <strong>Barra superior</strong><div class="text-body-secondary small">Búsqueda global, notificaciones y menú de usuario.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#DC2626">c</span>
+            <div>
+              <strong>Área de trabajo</strong><div class="text-body-secondary small">El contenido de cada sección se despliega aquí.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="login-step-6">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 6</span>
+        <h3 class="mb-0 fs-4">Recuperación de contraseña</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Si olvidaste tu contraseña, desde la pantalla de contraseña puedes solicitar un enlace de recuperación por correo.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/login-06.png" alt="Recuperación de contraseña" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="850" y="453" width="460" height="54"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="870" y="493" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">a)</text>
+  
+    <rect x="850" y="583" width="175" height="29"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="870" y="623" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">a</span>
+            <div>
+              <strong>Correo registrado</strong><div class="text-body-secondary small">PROCHECK enviará un enlace único a este correo.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">c</span>
+            <div>
+              <strong>Volver a iniciar sesión</strong><div class="text-body-secondary small">Regresa al login si recuerdas tu contraseña.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    </section>
+  
+    <section class="flow py-5" id="vendedor">
+      <header class="mb-4">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <span class="section-icon"><i class="bi bi-briefcase"></i></span>
+          <div>
+            <div class="section-kicker">Sección</div>
+            <h2 class="mb-0">Panel del vendedor</h2>
+          </div>
+        </div>
+      </header>
+      
+    <article class="step mb-5" id="vendedor-step-1">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 1</span>
+        <h3 class="mb-0 fs-4">Dashboard de ventas</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Como vendedor verás tus KPIs comerciales: leads activos, deals cerrados y comisiones proyectadas.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/vendedor-01.png" alt="Dashboard de ventas" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="282" y="116" width="1132" height="52"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="302" y="156" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">a)</text>
+  
+    <rect x="282" y="180" width="375" height="136"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="302" y="220" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">b)</text>
+  
+    <rect x="283" y="556" width="1130" height="120"
+          fill="none" stroke="#FBB601" stroke-width="5" rx="10"/>
+    <text x="303" y="596" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#FBB601">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">a</span>
+            <div>
+              <strong>Encabezado</strong><div class="text-body-secondary small">Ubicación actual: panel comercial.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">b</span>
+            <div>
+              <strong>KPIs comerciales</strong><div class="text-body-secondary small">Pipeline, cierres del mes y comisiones estimadas.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#FBB601">c</span>
+            <div>
+              <strong>Pipeline</strong><div class="text-body-secondary small">Tus deals abiertos por etapa del embudo.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="vendedor-step-2">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 2</span>
+        <h3 class="mb-0 fs-4">Leads (prospectos)</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Registra y da seguimiento a nuevos prospectos desde la sección Leads.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/vendedor-02.png" alt="Leads (prospectos)" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="368" y="272" width="92" height="42"
+          fill="none" stroke="#DC2626" stroke-width="5" rx="10"/>
+    <text x="388" y="312" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#DC2626">a)</text>
+  
+    <rect x="283" y="368" width="1130" height="65"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="303" y="408" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">b)</text>
+  
+    <rect x="1206" y="6" width="52" height="52"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="1226" y="46" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#DC2626">a</span>
+            <div>
+              <strong>Crear lead</strong><div class="text-body-secondary small">Captura un nuevo prospecto con nombre, empresa y contacto.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">b</span>
+            <div>
+              <strong>Lead existente</strong><div class="text-body-secondary small">Cada fila muestra estado, fuente y siguiente acción.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">c</span>
+            <div>
+              <strong>Acciones rápidas</strong><div class="text-body-secondary small">Convertir en deal, editar o descartar.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="vendedor-step-3">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 3</span>
+        <h3 class="mb-0 fs-4">Deals (oportunidades)</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Los deals son leads convertidos que ya están en el embudo comercial. Cada uno tiene una etapa.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/vendedor-03.png" alt="Deals (oportunidades)" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+        </svg>
+      </div>
+      
+    </article>
+  
+    <article class="step mb-5" id="vendedor-step-4">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 4</span>
+        <h3 class="mb-0 fs-4">Comisiones</h3>
+      </header>
+      <p class="text-body-secondary mb-3">La vista Comisiones proyecta lo que ganarás cuando se cierren los deals actuales.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/vendedor-04.png" alt="Comisiones" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="283" y="238" width="1130" height="120"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="303" y="278" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">b)</text>
+  
+    <rect x="355" y="180" width="99" height="45"
+          fill="none" stroke="#FBB601" stroke-width="5" rx="10"/>
+    <text x="375" y="220" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#FBB601">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">b</span>
+            <div>
+              <strong>Detalle por deal</strong><div class="text-body-secondary small">Cada fila muestra deal, cliente, monto y % de comisión.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#FBB601">c</span>
+            <div>
+              <strong>Filtro de periodo</strong><div class="text-body-secondary small">Cambia entre semana, mes o rango personalizado.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="vendedor-step-5">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 5</span>
+        <h3 class="mb-0 fs-4">Citas comerciales</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Agenda visitas y llamadas con tus prospectos desde la sección Citas.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/vendedor-05.png" alt="Citas comerciales" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+        </svg>
+      </div>
+      
+    </article>
+  
+    </section>
+  
+      </main>
+    </div>
+  </div>
+
+  <footer class="doc-footer">
+    <div class="container-xl">
+      Generado automáticamente desde capturas en vivo de <a href="https://procheck.mx">procheck.mx</a>.
+      · <a href="/userguide.html">Volver al índice de manuales</a>
+    </div>
+  </footer>
+
+  <script>
+  (function() {
+    const links = document.querySelectorAll('.sidebar-nav a');
+    const sections = Array.from(links).map((l) => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const id = e.target.id;
+        links.forEach((l) => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach((s) => obs.observe(s));
+  })();
+</script>
+</body>
+</html>

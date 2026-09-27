@@ -1,0 +1,195 @@
+{
+  "slug": "certificados",
+  "title": "Certificados DC-3",
+  "roleAudience": "employee",
+  "steps": [
+    {
+      "n": 1,
+      "title": "Mis certificados",
+      "descEs": "La sección de certificados concentra todos los DC-3 emitidos a tu nombre, con indicadores rápidos de vigencia y una tabla detallada.",
+      "image": "screens/certificados-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 208,
+            "w": 1132,
+            "h": 114
+          },
+          "selector": "main .grid:has(.font-display), main [class*=\"grid\" i]:has([class*=\"kpi\" i]), main [class*=\"grid\" i]:first-of-type",
+          "labelEs": "Indicadores de vigencia",
+          "descEs": "Totales de constancias vigentes, por vencer y vencidas.",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 283,
+            "y": 533,
+            "w": 1130,
+            "h": 95
+          },
+          "selector": "main table tbody tr",
+          "labelEs": "Fila de certificado",
+          "descEs": "Cada renglón representa una constancia con sus acciones.",
+          "color": "#FBB601"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Detalle de la constancia",
+      "descEs": "Desde el ícono de ojo puedes abrir el detalle completo de una constancia y descargar el PDF oficial DC-3.",
+      "image": "screens/certificados-02.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 399,
+            "y": 248,
+            "w": 209,
+            "h": 40
+          },
+          "selector": "[role=\"dialog\"] h2, [role=\"dialog\"] h3, .modal-title, [class*=\"modal\" i] h2",
+          "labelEs": "Título del detalle",
+          "descEs": "Confirma el nombre del curso emitido.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 722,
+            "y": 317,
+            "w": 319,
+            "h": 28
+          },
+          "selector": "[role=\"dialog\"] :text(\"Folio\"), [role=\"dialog\"] :text-matches(\"PC-\", \"i\")",
+          "labelEs": "Folio DC-3",
+          "descEs": "Identificador único de la constancia emitida.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 858,
+            "y": 593,
+            "w": 183,
+            "h": 59
+          },
+          "selector": "[role=\"dialog\"] button:has-text(\"Descargar\"), [role=\"dialog\"] a:has-text(\"PDF\"), [role=\"dialog\"] button:has-text(\"PDF\")",
+          "labelEs": "Descargar PDF",
+          "descEs": "Obtén el documento oficial firmado para tu expediente.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Verificación pública de constancias",
+      "descEs": "PROCHECK expone un buscador público para que cualquier persona pueda validar una constancia con el folio impreso.",
+      "image": "screens/certificados-03.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 343,
+            "y": 414,
+            "w": 604,
+            "h": 68
+          },
+          "selector": "input[type=\"text\"], input[placeholder*=\"folio\" i], input[name*=\"folio\" i]",
+          "labelEs": "Campo de folio",
+          "descEs": "Escribe el folio impreso en la constancia.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 343,
+            "y": 482,
+            "w": 754,
+            "h": 28
+          },
+          "selector": "form :text-matches(\"PC-\", \"i\"), form small, form p, main :text(\"formato\")",
+          "labelEs": "Formato esperado",
+          "descEs": "Ayuda al usuario con el patrón del folio (PC-XXXX-XXXX-XXXX).",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 943,
+            "y": 414,
+            "w": 154,
+            "h": 68
+          },
+          "selector": "button[type=\"submit\"], button:has-text(\"Buscar\"), button:has-text(\"Verificar\")",
+          "labelEs": "Buscar",
+          "descEs": "Ejecuta la verificación pública contra el registro oficial.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "title": "Resultado de verificación",
+      "descEs": "Al enviar un folio válido, la plataforma devuelve el estatus de la constancia, el titular, el folio y un enlace de descarga.",
+      "image": "screens/certificados-04.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 387,
+            "y": 704,
+            "w": 600,
+            "h": 32
+          },
+          "selector": "main [class*=\"badge\" i], main [class*=\"status\" i], main :text(\"Vigente\"), main :text(\"Vencido\")",
+          "labelEs": "Estatus de la constancia",
+          "descEs": "Indica si la constancia está vigente o ya venció.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 330,
+            "y": 252,
+            "w": 780,
+            "h": 72
+          },
+          "selector": "main h1, main h2, main :text(\"Titular\"), main [class*=\"name\" i]",
+          "labelEs": "Titular",
+          "descEs": "Nombre completo del trabajador certificado.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 482,
+            "y": 851,
+            "w": 155,
+            "h": 30
+          },
+          "selector": "main :text(\"PC-\"), main [class*=\"folio\" i]",
+          "labelEs": "Folio verificado",
+          "descEs": "Confirma el folio consultado contra el registro oficial.",
+          "color": "#FBB601"
+        },
+        {
+          "letter": "d",
+          "box": {
+            "x": 363,
+            "y": 1153,
+            "w": 208,
+            "h": 52
+          },
+          "selector": "main a:has-text(\"PDF\"), main button:has-text(\"Descargar\"), main a:has-text(\"Descargar\")",
+          "labelEs": "Descargar PDF",
+          "descEs": "Descarga la copia oficial del DC-3 verificado.",
+          "color": "#DC2626"
+        }
+      ]
+    }
+  ]
+}

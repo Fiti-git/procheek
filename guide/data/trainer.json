@@ -1,0 +1,158 @@
+{
+  "slug": "trainer",
+  "title": "Panel del capacitador",
+  "roleAudience": [
+    "trainer"
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "title": "Dashboard del capacitador",
+      "descEs": "Al iniciar sesión como capacitador verás tus sesiones próximas, citas pendientes y KPIs personales.",
+      "image": "screens/trainer-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 116,
+            "w": 1132,
+            "h": 52
+          },
+          "selector": "h1",
+          "labelEs": "Encabezado",
+          "descEs": "Tu ubicación actual: panel del capacitador.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 282,
+            "y": 180,
+            "w": 280,
+            "h": 114
+          },
+          "selector": ".grid > div:has(.font-display)",
+          "labelEs": "KPIs personales",
+          "descEs": "Sesiones activas, citas hoy y calificación promedio.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 283,
+            "y": 396,
+            "w": 1130,
+            "h": 120
+          },
+          "selector": "table, ul li, [class*=\"session\"]",
+          "labelEs": "Próximas actividades",
+          "descEs": "Lista de sesiones y citas cercanas.",
+          "color": "#FBB601"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Sesiones programadas",
+      "descEs": "La sección Sesiones muestra el listado completo de cursos que tienes asignados como instructor.",
+      "image": "screens/trainer-02.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 1243,
+            "y": 110,
+            "w": 171,
+            "h": 59
+          },
+          "selector": "button:has-text(\"Crear\"), button:has-text(\"Nueva sesión\"), a:has-text(\"Crear\")",
+          "labelEs": "Crear sesión",
+          "descEs": "Programa una nueva sesión presencial o en línea.",
+          "color": "#DC2626"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 283,
+            "y": 222,
+            "w": 1130,
+            "h": 65
+          },
+          "selector": "table tbody tr, [class*=\"card\"]:has(h3)",
+          "labelEs": "Sesión existente",
+          "descEs": "Muestra curso, fecha, sede y cupo.",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 6,
+            "y": 164,
+            "w": 243,
+            "h": 48
+          },
+          "selector": "button:has(svg), a[href*=\"sessions\"]:has(svg)",
+          "labelEs": "Acciones",
+          "descEs": "Editar, cancelar o pasar lista.",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Citas del día",
+      "descEs": "Las citas concentran las reuniones 1:1 y visitas agendadas por tus alumnos.",
+      "image": "screens/trainer-03.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 116,
+            "w": 1132,
+            "h": 52
+          },
+          "selector": "h1, h2",
+          "labelEs": "Título Citas",
+          "descEs": "Lista de próximas reuniones o visitas.",
+          "color": "#059669"
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "title": "Perfil del capacitador",
+      "descEs": "Actualiza tu bio, foto y datos de contacto para que los alumnos te ubiquen fácil.",
+      "image": "screens/trainer-04.png",
+      "annotations": [
+        {
+          "letter": "b",
+          "box": {
+            "x": 307,
+            "y": 418,
+            "w": 730,
+            "h": 114
+          },
+          "selector": "textarea, [contenteditable=\"true\"]",
+          "labelEs": "Biografía",
+          "descEs": "Descripción larga visible en tu ficha pública.",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 862,
+            "y": 673,
+            "w": 175,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"], button:has-text(\"Guardar\")",
+          "labelEs": "Guardar cambios",
+          "descEs": "Persiste el perfil en la plataforma.",
+          "color": "#DC2626"
+        }
+      ]
+    }
+  ]
+}
