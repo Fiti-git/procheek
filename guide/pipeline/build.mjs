@@ -18,12 +18,18 @@ const OUT_SCREENS = path.join(OUT_ROOT, 'screens');
 const OUT_LANDING = path.join(PUBLIC_DIR, 'userguide.html');
 
 // Explicit order — matches the client's mental model.
-const FLOW_ORDER = ['login', 'cursos', 'certificados', 'equipo', 'reportes', 'admin', 'trainer', 'vendedor'];
+const FLOW_ORDER = ['invitacion', 'login', 'recuperar', 'cursos', 'compra', 'certificados', 'verificar', 'biblioteca', 'cuenta', 'equipo', 'reportes', 'admin', 'trainer', 'vendedor'];
 
 const SECTION_ICONS = {
+  invitacion: 'bi-envelope-open',
   login: 'bi-box-arrow-in-right',
+  recuperar: 'bi-key',
   cursos: 'bi-mortarboard',
+  compra: 'bi-cart-check',
   certificados: 'bi-patch-check',
+  verificar: 'bi-search',
+  biblioteca: 'bi-book',
+  cuenta: 'bi-person-gear',
   equipo: 'bi-people',
   reportes: 'bi-graph-up',
   admin: 'bi-shield-lock',
@@ -37,38 +43,38 @@ const ROLES = [
   {
     slug: 'empleado',
     title: 'Manual del Empleado',
-    tagline: 'Cursos, exámenes y descarga de tu constancia DC-3.',
+    tagline: 'Comprar cursos, aceptar invitaciones, tomar cursos y descargar tu constancia DC-3.',
     icon: 'bi-person-workspace',
     color: '#059669',
     includeAudiences: ['employee'],
-    flows: ['login', 'cursos', 'certificados'],
+    flows: ['invitacion', 'login', 'recuperar', 'compra', 'cursos', 'certificados', 'verificar', 'biblioteca', 'cuenta'],
   },
   {
     slug: 'admin-cliente',
     title: 'Manual del Administrador',
-    tagline: 'Gestión de equipo, reportes, cursos y certificados de tu organización.',
+    tagline: 'Gestión de equipo, reportes, cursos, certificados y datos fiscales de tu organización.',
     icon: 'bi-shield-lock',
     color: '#2563EB',
     includeAudiences: ['clientAdmin'],
-    flows: ['login', 'equipo', 'reportes', 'admin', 'certificados'],
+    flows: ['login', 'recuperar', 'equipo', 'reportes', 'admin', 'compra', 'certificados', 'verificar', 'biblioteca', 'cuenta'],
   },
   {
     slug: 'capacitador',
     title: 'Manual del Capacitador',
-    tagline: 'Sesiones, citas y perfil público del instructor.',
+    tagline: 'Sesiones, citas, perfil público y gestión de tu cuenta.',
     icon: 'bi-easel',
     color: '#FBB601',
     includeAudiences: ['trainer'],
-    flows: ['login', 'trainer'],
+    flows: ['login', 'recuperar', 'trainer', 'cuenta'],
   },
   {
     slug: 'vendedor',
     title: 'Manual del Vendedor',
-    tagline: 'Leads, deals, comisiones y citas comerciales.',
+    tagline: 'Leads, deals, comisiones, citas comerciales y gestión de cuenta.',
     icon: 'bi-briefcase',
     color: '#DC2626',
     includeAudiences: ['vendedor'],
-    flows: ['login', 'vendedor'],
+    flows: ['login', 'recuperar', 'vendedor', 'cuenta'],
   },
 ];
 

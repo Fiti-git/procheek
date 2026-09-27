@@ -1,0 +1,78 @@
+{
+  "slug": "biblioteca",
+  "title": "Biblioteca de documentos",
+  "roleAudience": [
+    "employee",
+    "clientAdmin"
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "title": "Panel de biblioteca",
+      "descEs": "La biblioteca reúne reglamentos, procedimientos y materiales publicados por tu organización o por PROCHECK.",
+      "image": "screens/biblioteca-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 282,
+            "y": 116,
+            "w": 1132,
+            "h": 52
+          },
+          "selector": "h1",
+          "labelEs": "Encabezado",
+          "descEs": "Tu ubicación: sección Biblioteca.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 274,
+            "y": 6,
+            "w": 460,
+            "h": 52
+          },
+          "selector": "input[placeholder*=\"Buscar\" i], input[type=\"search\"]",
+          "labelEs": "Búsqueda",
+          "descEs": "Filtra por nombre, categoría o etiqueta.",
+          "color": "#FBB601"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 282,
+            "y": 208,
+            "w": 1132,
+            "h": 84
+          },
+          "selector": "article, [class*=\"card\"], table tbody tr",
+          "labelEs": "Documento",
+          "descEs": "Cada tarjeta muestra el documento con opciones de descarga.",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Descarga o compra de material",
+      "descEs": "Los documentos públicos son gratuitos; los premium requieren compra puntual.",
+      "image": "screens/biblioteca-02.png",
+      "annotations": [
+        {
+          "letter": "c",
+          "box": {
+            "x": 1061,
+            "y": 10,
+            "w": 132,
+            "h": 43
+          },
+          "selector": "[class*=\"tag\"], [class*=\"badge\"]",
+          "labelEs": "Categoría",
+          "descEs": "Etiqueta del tipo de documento (reglamento, formato, guía).",
+          "color": "#2563EB"
+        }
+      ]
+    }
+  ]
+}

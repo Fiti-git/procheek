@@ -1,0 +1,114 @@
+{
+  "slug": "recuperar",
+  "title": "Recuperar contraseña",
+  "roleAudience": [
+    "employee",
+    "clientAdmin",
+    "trainer",
+    "vendedor"
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "title": "Solicitar enlace de recuperación",
+      "descEs": "Si olvidaste tu contraseña, desde /forgot-password puedes solicitar un enlace por correo.",
+      "image": "screens/recuperar-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 42,
+            "y": 304,
+            "w": 460,
+            "h": 156
+          },
+          "selector": "h1, h2",
+          "labelEs": "Título del formulario",
+          "descEs": "Sección de recuperación de contraseña.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 850,
+            "y": 453,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"email\"]",
+          "labelEs": "Correo registrado",
+          "descEs": "PROCHECK enviará un enlace único a este correo (válido 1 hora).",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Confirmación de envío",
+      "descEs": "Al enviar, PROCHECK confirma que el correo salió. Revisa tu bandeja de entrada (y spam).",
+      "image": "screens/recuperar-02.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 42,
+            "y": 304,
+            "w": 460,
+            "h": 156
+          },
+          "selector": "h1, h2",
+          "labelEs": "Mensaje de éxito",
+          "descEs": "Confirma que el correo fue enviado.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 42,
+            "y": 464,
+            "w": 460,
+            "h": 64
+          },
+          "selector": "p, .alert",
+          "labelEs": "Instrucciones",
+          "descEs": "Explica los siguientes pasos: revisar bandeja y hacer clic en el enlace.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 850,
+            "y": 583,
+            "w": 175,
+            "h": 29
+          },
+          "selector": "a[href*=\"login\"]",
+          "labelEs": "Volver al login",
+          "descEs": "Regresa a la pantalla de inicio.",
+          "color": "#FBB601"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Nueva contraseña",
+      "descEs": "Al hacer clic en el enlace del correo llegarás a esta pantalla. Define una contraseña nueva.",
+      "image": "screens/recuperar-03.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 850,
+            "y": 412,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"password\"]",
+          "labelEs": "Contraseña nueva",
+          "descEs": "Mínimo 8 caracteres con mayúscula, número y símbolo.",
+          "color": "#2563EB"
+        }
+      ]
+    }
+  ]
+}

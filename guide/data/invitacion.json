@@ -1,0 +1,127 @@
+{
+  "slug": "invitacion",
+  "title": "Aceptar una invitación",
+  "roleAudience": [
+    "employee",
+    "clientAdmin",
+    "trainer",
+    "vendedor"
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "title": "Correo de invitación",
+      "descEs": "El administrador te envió una invitación por correo. Contiene tu correo de acceso y una contraseña temporal generada por PROCHECK. Sigue el enlace del correo o entra directamente a procheck.mx/login.",
+      "image": "screens/invitacion-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 732,
+            "h": 912
+          },
+          "selector": "aside, [class*=\"brand\" i]:has(img), .hidden.lg\\:flex:has(img)",
+          "labelEs": "Panel de bienvenida",
+          "descEs": "Confirma que llegaste al sitio oficial procheck.mx.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 850,
+            "y": 459,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"email\"]",
+          "labelEs": "Correo del invitado",
+          "descEs": "Usa el correo al que llegó la invitación (mismo del cuerpo del correo).",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 850,
+            "y": 517,
+            "w": 460,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"]",
+          "labelEs": "Continuar",
+          "descEs": "Avanza al paso de contraseña.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Contraseña temporal",
+      "descEs": "Ingresa la contraseña temporal exactamente como aparece en el correo (respeta mayúsculas y símbolos).",
+      "image": "screens/invitacion-02.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 850,
+            "y": 501,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"password\"]",
+          "labelEs": "Contraseña temporal",
+          "descEs": "Copiala del correo. Tras el primer acceso te pedirá cambiarla.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 850,
+            "y": 559,
+            "w": 460,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"]",
+          "labelEs": "Iniciar sesión",
+          "descEs": "Valida las credenciales y entra por primera vez.",
+          "color": "#DC2626"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 850,
+            "y": 626,
+            "w": 183,
+            "h": 29
+          },
+          "selector": "a[href*=\"forgot\"]",
+          "labelEs": "¿No la encuentras?",
+          "descEs": "Si perdiste el correo puedes solicitar recuperación aquí.",
+          "color": "#FBB601"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Cambio inicial de contraseña",
+      "descEs": "En el primer acceso PROCHECK te pedirá definir una contraseña personal. La temporal ya no será válida después de este paso.",
+      "image": "screens/invitacion-03.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 850,
+            "y": 412,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"password\"]",
+          "labelEs": "Nueva contraseña",
+          "descEs": "Mínimo 8 caracteres con mayúscula, número y símbolo.",
+          "color": "#2563EB"
+        }
+      ]
+    }
+  ]
+}

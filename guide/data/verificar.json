@@ -1,0 +1,153 @@
+{
+  "slug": "verificar",
+  "title": "Verificar un certificado DC-3",
+  "roleAudience": [
+    "employee",
+    "clientAdmin",
+    "trainer",
+    "vendedor"
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "title": "Pantalla pública de verificación",
+      "descEs": "La verificación pública está disponible sin login en procheck.mx/certificate-lookup.",
+      "image": "screens/verificar-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 330,
+            "y": 252,
+            "w": 780,
+            "h": 72
+          },
+          "selector": "h1",
+          "labelEs": "Verificación oficial",
+          "descEs": "Pantalla pública para validar cualquier DC-3 emitido por PROCHECK.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 343,
+            "y": 414,
+            "w": 604,
+            "h": 68
+          },
+          "selector": "input[type=\"text\"], input[placeholder*=\"Folio\" i]",
+          "labelEs": "Folio o CURP",
+          "descEs": "Acepta el folio DC-3 (PCH-YYYY-XXXXXX) o el código de verificación (PC-XXXX-XXXX-XXXX).",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 943,
+            "y": 414,
+            "w": 154,
+            "h": 68
+          },
+          "selector": "button[type=\"submit\"], button:has-text(\"Buscar\")",
+          "labelEs": "Buscar",
+          "descEs": "Consulta el registro oficial en tiempo real.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Resultado vigente",
+      "descEs": "Si el certificado es válido, PROCHECK muestra los datos del titular, curso, folio y vigencia.",
+      "image": "screens/verificar-02.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 987,
+            "y": 708,
+            "w": 98,
+            "h": 42
+          },
+          "selector": "[class*=\"badge\"]:has-text(\"Vencido\"), [class*=\"badge\"]:has-text(\"Vigente\"), .rounded-full:has-text(\"VENCIDO\"), .rounded-full:has-text(\"VIGENTE\")",
+          "labelEs": "Estado",
+          "descEs": "Vigente, por vencer o vencido — calculado en tiempo real.",
+          "color": "#DC2626"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 447,
+            "y": 810,
+            "w": 630,
+            "h": 48
+          },
+          "selector": "h2",
+          "labelEs": "Titular",
+          "descEs": "Nombre completo de la persona certificada.",
+          "color": "#059669"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 363,
+            "y": 1153,
+            "w": 208,
+            "h": 52
+          },
+          "selector": "button:has-text(\"Descargar\"), a:has-text(\"Descargar\")",
+          "labelEs": "Descargar PDF DC-3",
+          "descEs": "Descarga el PDF oficial con formato STPS válido para inspección.",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Certificado no encontrado",
+      "descEs": "Si el folio no existe o está mal escrito, verás un mensaje claro sin exponer datos.",
+      "image": "screens/verificar-03.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 387,
+            "y": 820,
+            "w": 666,
+            "h": 44
+          },
+          "selector": "h2, .alert, [class*=\"danger\"], [class*=\"error\"]",
+          "labelEs": "No encontrado",
+          "descEs": "Mensaje claro cuando el folio no está registrado en PROCHECK.",
+          "color": "#DC2626"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 343,
+            "y": 482,
+            "w": 754,
+            "h": 28
+          },
+          "selector": ".font-mono, code",
+          "labelEs": "Consulta realizada",
+          "descEs": "Muestra exactamente lo que buscaste para verificar la escritura.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 657,
+            "y": 934,
+            "w": 126,
+            "h": 32
+          },
+          "selector": "button:has-text(\"Nueva\"), a:has-text(\"Nueva\")",
+          "labelEs": "Nueva búsqueda",
+          "descEs": "Reintenta con otro folio o CURP.",
+          "color": "#059669"
+        }
+      ]
+    }
+  ]
+}

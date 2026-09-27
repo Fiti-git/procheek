@@ -60,7 +60,7 @@
         <span class="section-icon" style="background:#FBB60122;color:#FBB601"><i class="bi bi-easel"></i></span>
         <div class="kicker">Manual del Capacitador</div>
       </div>
-      <h1>Sesiones, citas y perfil público del instructor.</h1>
+      <h1>Sesiones, citas, perfil público y gestión de tu cuenta.</h1>
       <p class="lead">Sigue este manual paso a paso. Cada captura viene directo del sitio en vivo <a href="https://procheck.mx" style="color:var(--brand-gold)">procheck.mx</a>. Actualizado 27 de septiembre de 2026.</p>
     </div>
   </header>
@@ -80,9 +80,21 @@
           </a>
         </li>
         <li>
+          <a href="#recuperar" class="d-flex align-items-center gap-2">
+            <i class="bi bi-key"></i>
+            <span>Recuperar contraseña</span>
+          </a>
+        </li>
+        <li>
           <a href="#trainer" class="d-flex align-items-center gap-2">
             <i class="bi bi-easel"></i>
             <span>Panel del capacitador</span>
+          </a>
+        </li>
+        <li>
+          <a href="#cuenta" class="d-flex align-items-center gap-2">
+            <i class="bi bi-person-gear"></i>
+            <span>Mi cuenta</span>
           </a>
         </li>
     </ul>
@@ -395,6 +407,148 @@
   
     </section>
   
+    <section class="flow py-5" id="recuperar">
+      <header class="mb-4">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <span class="section-icon"><i class="bi bi-key"></i></span>
+          <div>
+            <div class="section-kicker">Sección</div>
+            <h2 class="mb-0">Recuperar contraseña</h2>
+          </div>
+        </div>
+      </header>
+      
+    <article class="step mb-5" id="recuperar-step-1">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 1</span>
+        <h3 class="mb-0 fs-4">Solicitar enlace de recuperación</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Si olvidaste tu contraseña, desde /forgot-password puedes solicitar un enlace por correo.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/recuperar-01.png" alt="Solicitar enlace de recuperación" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="42" y="304" width="460" height="156"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="62" y="344" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">a)</text>
+  
+    <rect x="850" y="453" width="460" height="54"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="870" y="493" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">b)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">a</span>
+            <div>
+              <strong>Título del formulario</strong><div class="text-body-secondary small">Sección de recuperación de contraseña.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">b</span>
+            <div>
+              <strong>Correo registrado</strong><div class="text-body-secondary small">PROCHECK enviará un enlace único a este correo (válido 1 hora).</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="recuperar-step-2">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 2</span>
+        <h3 class="mb-0 fs-4">Confirmación de envío</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Al enviar, PROCHECK confirma que el correo salió. Revisa tu bandeja de entrada (y spam).</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/recuperar-02.png" alt="Confirmación de envío" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="42" y="304" width="460" height="156"
+          fill="none" stroke="#059669" stroke-width="5" rx="10"/>
+    <text x="62" y="344" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#059669">a)</text>
+  
+    <rect x="42" y="464" width="460" height="64"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="62" y="504" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">b)</text>
+  
+    <rect x="850" y="583" width="175" height="29"
+          fill="none" stroke="#FBB601" stroke-width="5" rx="10"/>
+    <text x="870" y="623" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#FBB601">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#059669">a</span>
+            <div>
+              <strong>Mensaje de éxito</strong><div class="text-body-secondary small">Confirma que el correo fue enviado.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">b</span>
+            <div>
+              <strong>Instrucciones</strong><div class="text-body-secondary small">Explica los siguientes pasos: revisar bandeja y hacer clic en el enlace.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#FBB601">c</span>
+            <div>
+              <strong>Volver al login</strong><div class="text-body-secondary small">Regresa a la pantalla de inicio.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="recuperar-step-3">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 3</span>
+        <h3 class="mb-0 fs-4">Nueva contraseña</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Al hacer clic en el enlace del correo llegarás a esta pantalla. Define una contraseña nueva.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/recuperar-03.png" alt="Nueva contraseña" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="850" y="412" width="460" height="54"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="870" y="452" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">a)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">a</span>
+            <div>
+              <strong>Contraseña nueva</strong><div class="text-body-secondary small">Mínimo 8 caracteres con mayúscula, número y símbolo.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    </section>
+  
     <section class="flow py-5" id="trainer">
       <header class="mb-4">
         <div class="d-flex align-items-center gap-3 mb-2">
@@ -582,6 +736,137 @@
             <span class="badge-letter" style="background:#DC2626">c</span>
             <div>
               <strong>Guardar cambios</strong><div class="text-body-secondary small">Persiste el perfil en la plataforma.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    </section>
+  
+    <section class="flow py-5" id="cuenta">
+      <header class="mb-4">
+        <div class="d-flex align-items-center gap-3 mb-2">
+          <span class="section-icon"><i class="bi bi-person-gear"></i></span>
+          <div>
+            <div class="section-kicker">Sección</div>
+            <h2 class="mb-0">Mi cuenta</h2>
+          </div>
+        </div>
+      </header>
+      
+    <article class="step mb-5" id="cuenta-step-1">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 1</span>
+        <h3 class="mb-0 fs-4">Datos personales</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Desde Mi cuenta actualizas tu nombre, correo, foto y datos de contacto.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/cuenta-01.png" alt="Datos personales" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="419" y="414" width="427" height="54"
+          fill="none" stroke="#2563EB" stroke-width="5" rx="10"/>
+    <text x="439" y="454" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#2563EB">b)</text>
+  
+    <rect x="1127" y="969" width="175" height="59"
+          fill="none" stroke="#DC2626" stroke-width="5" rx="10"/>
+    <text x="1147" y="1009" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#DC2626">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#2563EB">b</span>
+            <div>
+              <strong>Correo</strong><div class="text-body-secondary small">Correo de acceso y notificaciones.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#DC2626">c</span>
+            <div>
+              <strong>Guardar cambios</strong><div class="text-body-secondary small">Persiste tus datos personales.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="cuenta-step-2">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 2</span>
+        <h3 class="mb-0 fs-4">Datos fiscales (RFC)</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Si comprarás cursos con factura, registra aquí tu RFC y régimen fiscal.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/cuenta-02.png" alt="Datos fiscales (RFC)" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="850" y="498" width="427" height="54"
+          fill="none" stroke="#FBB601" stroke-width="5" rx="10"/>
+    <text x="870" y="538" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#FBB601">b)</text>
+  
+    <rect x="1127" y="969" width="175" height="59"
+          fill="none" stroke="#DC2626" stroke-width="5" rx="10"/>
+    <text x="1147" y="1009" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#DC2626">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#FBB601">b</span>
+            <div>
+              <strong>Régimen fiscal</strong><div class="text-body-secondary small">Selecciona el régimen que aparece en tu constancia SAT.</div>
+            </div>
+          </li>
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#DC2626">c</span>
+            <div>
+              <strong>Guardar</strong><div class="text-body-secondary small">Confirma los datos fiscales.</div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  
+    </article>
+  
+    <article class="step mb-5" id="cuenta-step-3">
+      <header class="d-flex align-items-baseline gap-3 mb-3">
+        <span class="step-index">Paso 3</span>
+        <h3 class="mb-0 fs-4">Cambiar contraseña</h3>
+      </header>
+      <p class="text-body-secondary mb-3">Puedes cambiar tu contraseña en cualquier momento desde tu cuenta sin necesidad de correo.</p>
+      <div class="figure-wrapper mb-3">
+        <img src="screens/cuenta-03.png" alt="Cambiar contraseña" loading="lazy">
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+          
+    <rect x="1127" y="969" width="175" height="59"
+          fill="none" stroke="#DC2626" stroke-width="5" rx="10"/>
+    <text x="1147" y="1009" font-family="ui-monospace, Menlo, monospace"
+          font-weight="700" font-size="30" fill="#DC2626">c)</text>
+  
+        </svg>
+      </div>
+      
+    <div class="figure-legend">
+      <ul class="list-unstyled mb-0">
+        
+          <li class="d-flex gap-2 align-items-start">
+            <span class="badge-letter" style="background:#DC2626">c</span>
+            <div>
+              <strong>Actualizar contraseña</strong><div class="text-body-secondary small">Aplica el cambio inmediatamente.</div>
             </div>
           </li>
       </ul>

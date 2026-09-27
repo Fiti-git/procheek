@@ -1,0 +1,101 @@
+{
+  "slug": "cuenta",
+  "title": "Mi cuenta",
+  "roleAudience": [
+    "employee",
+    "clientAdmin",
+    "trainer",
+    "vendedor"
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "title": "Datos personales",
+      "descEs": "Desde Mi cuenta actualizas tu nombre, correo, foto y datos de contacto.",
+      "image": "screens/cuenta-01.png",
+      "annotations": [
+        {
+          "letter": "b",
+          "box": {
+            "x": 419,
+            "y": 414,
+            "w": 427,
+            "h": 54
+          },
+          "selector": "input[type=\"email\"]",
+          "labelEs": "Correo",
+          "descEs": "Correo de acceso y notificaciones.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 1127,
+            "y": 969,
+            "w": 175,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"], button:has-text(\"Guardar\")",
+          "labelEs": "Guardar cambios",
+          "descEs": "Persiste tus datos personales.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Datos fiscales (RFC)",
+      "descEs": "Si comprarás cursos con factura, registra aquí tu RFC y régimen fiscal.",
+      "image": "screens/cuenta-02.png",
+      "annotations": [
+        {
+          "letter": "b",
+          "box": {
+            "x": 850,
+            "y": 498,
+            "w": 427,
+            "h": 54
+          },
+          "selector": "select, [role=\"combobox\"]",
+          "labelEs": "Régimen fiscal",
+          "descEs": "Selecciona el régimen que aparece en tu constancia SAT.",
+          "color": "#FBB601"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 1127,
+            "y": 969,
+            "w": 175,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"], button:has-text(\"Guardar\")",
+          "labelEs": "Guardar",
+          "descEs": "Confirma los datos fiscales.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Cambiar contraseña",
+      "descEs": "Puedes cambiar tu contraseña en cualquier momento desde tu cuenta sin necesidad de correo.",
+      "image": "screens/cuenta-03.png",
+      "annotations": [
+        {
+          "letter": "c",
+          "box": {
+            "x": 1127,
+            "y": 969,
+            "w": 175,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"], button:has-text(\"Actualizar\"), button:has-text(\"Cambiar\")",
+          "labelEs": "Actualizar contraseña",
+          "descEs": "Aplica el cambio inmediatamente.",
+          "color": "#DC2626"
+        }
+      ]
+    }
+  ]
+}

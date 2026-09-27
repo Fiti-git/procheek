@@ -1,0 +1,195 @@
+{
+  "slug": "compra",
+  "title": "Comprar un curso",
+  "roleAudience": [
+    "employee",
+    "clientAdmin",
+    "trainer",
+    "vendedor"
+  ],
+  "steps": [
+    {
+      "n": 1,
+      "title": "Catálogo público de cursos",
+      "descEs": "Cualquier persona puede ver el catálogo desde procheck.mx/courses sin iniciar sesión.",
+      "image": "screens/compra-01.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 138,
+            "y": 198,
+            "w": 780,
+            "h": 60
+          },
+          "selector": "h1",
+          "labelEs": "Catálogo oficial",
+          "descEs": "24 cursos NOM-STPS listos para inscribirse.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 458,
+            "y": 728,
+            "w": 273,
+            "h": 497
+          },
+          "selector": "article, [class*=\"card\"]:has(img)",
+          "labelEs": "Tarjeta de curso",
+          "descEs": "Muestra código, duración, precio y descripción.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 479,
+            "y": 1145,
+            "w": 231,
+            "h": 59
+          },
+          "selector": "a:has-text(\"Añadir al carrito\"), button:has-text(\"Añadir al carrito\"), a:has-text(\"Ver curso\")",
+          "labelEs": "Añadir al carrito",
+          "descEs": "Un clic agrega el curso al carrito público.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "Detalle del curso",
+      "descEs": "Al hacer clic en un curso ves el temario completo, la duración y el precio con IVA incluido.",
+      "image": "screens/compra-02.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 138,
+            "y": 215,
+            "w": 667,
+            "h": 156
+          },
+          "selector": "h1",
+          "labelEs": "Título y precio",
+          "descEs": "Nombre completo del curso y costo en pesos mexicanos.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 858,
+            "y": 523,
+            "w": 419,
+            "h": 59
+          },
+          "selector": "button:has-text(\"Añadir\"), button:has-text(\"Comprar\"), a:has-text(\"Añadir\")",
+          "labelEs": "Añadir al carrito",
+          "descEs": "Agrega este curso al carrito y muestra el ícono con el conteo.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "Carrito",
+      "descEs": "El carrito muestra los cursos seleccionados con subtotal, IVA y total. Puedes ajustar cantidades.",
+      "image": "screens/compra-03.png",
+      "annotations": [
+        {
+          "letter": "b",
+          "box": {
+            "x": 927,
+            "y": 292,
+            "w": 375,
+            "h": 378
+          },
+          "selector": "aside, [class*=\"summary\"], [class*=\"Resumen\"]",
+          "labelEs": "Resumen del pedido",
+          "descEs": "Subtotal, IVA (16%) y total a pagar.",
+          "color": "#2563EB"
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "title": "Pantalla de checkout",
+      "descEs": "Captura tus datos fiscales (opcional) y avanza al procesador de pagos.",
+      "image": "screens/compra-04.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 850,
+            "y": 459,
+            "w": 460,
+            "h": 54
+          },
+          "selector": "input[type=\"email\"]",
+          "labelEs": "Correo del comprador",
+          "descEs": "Recibirás confirmación y accesos en este correo.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 850,
+            "y": 517,
+            "w": 460,
+            "h": 59
+          },
+          "selector": "button[type=\"submit\"], button:has-text(\"Pagar\"), button:has-text(\"Continuar\")",
+          "labelEs": "Continuar al pago",
+          "descEs": "Va al procesador de pagos seguro.",
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "title": "Confirmación de compra",
+      "descEs": "Al concretar el pago verás la confirmación con el ID del pedido. Un correo llegará con los accesos.",
+      "image": "screens/compra-05.png",
+      "annotations": [
+        {
+          "letter": "a",
+          "box": {
+            "x": 426,
+            "y": 304,
+            "w": 588,
+            "h": 60
+          },
+          "selector": "h1",
+          "labelEs": "Pedido confirmado",
+          "descEs": "Mensaje de éxito con el estatus final.",
+          "color": "#059669"
+        },
+        {
+          "letter": "b",
+          "box": {
+            "x": 447,
+            "y": 488,
+            "w": 546,
+            "h": 32
+          },
+          "selector": "[class*=\"mono\"], .font-mono, code",
+          "labelEs": "ID de pedido",
+          "descEs": "Referencia única del pago. Consérvala para soporte.",
+          "color": "#2563EB"
+        },
+        {
+          "letter": "c",
+          "box": {
+            "x": 415,
+            "y": 32,
+            "w": 60,
+            "h": 32
+          },
+          "selector": "a:has-text(\"Iniciar\"), a:has-text(\"Cursos\"), a[href*=\"dashboard\"], a[href*=\"login\"]",
+          "labelEs": "Ir al panel",
+          "descEs": "Accede a tu curso desde tu cuenta.",
+          "color": "#DC2626"
+        }
+      ]
+    }
+  ]
+}
