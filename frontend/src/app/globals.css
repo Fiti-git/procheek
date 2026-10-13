@@ -188,12 +188,23 @@
      washed-out black-and-white feel. We now render full color on every
      catalog + course player + marketing hero. */
 
-  /* Course + hero images get a mild saturation + contrast boost so the
-     brand-aligned AI-generated construction photography feels vivid
-     against the navy UI chrome. Kept subtle so skin tones stay natural. */
+  /* All brand photography gets a strong saturation + contrast + warm
+     boost so the AI-generated images pop against the navy UI chrome.
+     Applied via .img-vivid on marketing heroes AND via auto-targeting
+     every <img> under .image-rich sections. */
   .img-vivid > img,
   .img-vivid img {
-    filter: saturate(1.12) contrast(1.04);
+    filter: saturate(1.25) contrast(1.08) brightness(1.03);
+  }
+
+  /* Automatic vivid boost on every image whose URL points to our
+     industry or course art. Next.js rewrites src to /_next/image?url=...
+     and URL-encodes the path, so we match on the encoded or raw form. */
+  main img[src*="industries"],
+  main img[src*="courses"],
+  main img[srcset*="industries"],
+  main img[srcset*="courses"] {
+    filter: saturate(1.2) contrast(1.06) brightness(1.02);
   }
 }
 
