@@ -11,7 +11,6 @@ import {
   Award,
   Download,
 } from "lucide-react";
-import { courses } from "@/lib/courses";
 import { imageForCourse } from "@/lib/images";
 import { CourseImage } from "@/components/CourseImage";
 import { apiGet, apiPatch } from "@/lib/api";
@@ -112,12 +111,6 @@ export default function CoursePlayerPage({
   const [certificate, setCertificate] = useState<ApiCertificate | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Fallback static course (used if API call fails or params id is a code)
-  const fallbackCourse =
-    courses.find((c) => c.id === id) ||
-    courses.find((c) => c.code.toLowerCase() === id.toLowerCase()) ||
-    courses[0];
-
   useEffect(() => {
     if (typeof window !== "undefined") {
       const token = window.localStorage.getItem("procheck_token");
@@ -141,8 +134,7 @@ export default function CoursePlayerPage({
           }
         }
         if (!course) {
-          // Use fallback so page still renders
-          course = { id: fallbackCourse.id, code: fallbackCourse.code, title: fallbackCourse.title };
+          throw new Error("Curso no encontrado");
         }
         if (cancelled) return;
         setApiCourse(course);
@@ -200,9 +192,9 @@ export default function CoursePlayerPage({
       }
     })();
     return () => { cancelled = true; };
-  }, [id, router, fallbackCourse.id, fallbackCourse.code, fallbackCourse.title]);
+  }, [id, router]);
 
-  const course = apiCourse || { id: fallbackCourse.id, code: fallbackCourse.code, title: fallbackCourse.title };
+  const course = apiCourse;
   const total = modules.length;
   const progressPct = total ? Math.round((done.size / total) * 100) : 0;
   const currentModule = modules.find((m) => m.position === current) || modules[0];
@@ -213,7 +205,7 @@ export default function CoursePlayerPage({
   const isExamModule = currentModule?.position === examPosition;
 
   const syncProgress = async (pct: number) => {
-    if (!enrollmentId) return;
+    if (!enrollmentId || !course) return;
     setSyncing(true);
     try {
       await apiPatch(`/enrollments/${enrollmentId}/progress`, { progressPct: pct });
@@ -239,7 +231,7 @@ export default function CoursePlayerPage({
   };
 
   const markComplete = () => {
-    if (!currentModule) return;
+    if (!currentModule || !course) return;
     const next = new Set(done);
     next.add(currentModule.position);
     setDone(next);
@@ -251,22 +243,22 @@ export default function CoursePlayerPage({
     if (nextPos && nextPos < examPosition) setCurrent(nextPos);
   };
 
-  const src = imageForCourse(course.code || fallbackCourse.code);
-
   if (!ready) {
     return <div className="min-h-[50vh] flex items-center justify-center text-ink-500">Cargando curso...</div>;
   }
-  if (error && modules.length === 0) {
+  if (error || !course) {
     return (
       <div className="max-w-2xl mx-auto py-16 text-center">
         <h1 className="font-display text-2xl font-semibold text-ink-900">No se pudo cargar el curso</h1>
-        <p className="mt-2 text-sm text-ink-700">{error}</p>
+        <p className="mt-2 text-sm text-ink-700">{error || "Curso no encontrado."}</p>
         <Link href="/dashboard/courses" className="btn-primary mt-6 inline-flex">
           Volver a mis cursos
         </Link>
       </div>
     );
   }
+
+  const src = imageForCourse(course.code || "");
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -347,7 +339,7 @@ export default function CoursePlayerPage({
             <div className="relative aspect-video rounded-xl overflow-hidden bg-ink-900">
               <CourseImage
                 src={(course as { imageUrl?: string | null }).imageUrl || src}
-                code={course.code || fallbackCourse.code}
+                code={course.code || ""}
                 alt=""
                 fill
                 sizes="(max-width: 1024px) 100vw, 66vw"

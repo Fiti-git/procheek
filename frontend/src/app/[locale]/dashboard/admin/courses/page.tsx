@@ -18,10 +18,11 @@ import {
   type Course,
   industries,
   type Industry,
+  fetchAllCoursesAdmin,
   fetchCourses,
   normalizeCourse,
   type ApiCourse,
-} from "@/lib/courses";
+} from "@/lib/course-types";
 import { imageForCourse } from "@/lib/images";
 import { CourseImage } from "@/components/CourseImage";
 import { cn } from "@/lib/cn";
@@ -51,7 +52,15 @@ function AdminCoursesPageInner() {
     setLoading(true);
     setFetchError(null);
     try {
-      const data = await fetchCourses();
+      // Admin table shows every course including unpublished/inactive. Fall
+      // back to the public endpoint if the admin-only route 403s (e.g. in a
+      // dev session impersonating a non-admin).
+      let data: Course[];
+      try {
+        data = await fetchAllCoursesAdmin();
+      } catch {
+        data = await fetchCourses();
+      }
       setItems(data);
     } catch (err) {
       setFetchError((err as Error).message || "No se pudo cargar el catálogo");

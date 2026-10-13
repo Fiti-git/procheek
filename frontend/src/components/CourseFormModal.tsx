@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { industries, type Industry, type Course } from "@/lib/courses";
+import { industries, type Industry, type Course } from "@/lib/course-types";
 import { cn } from "@/lib/cn";
 
 export type CourseFormValues = {

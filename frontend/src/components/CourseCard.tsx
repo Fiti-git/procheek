@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Play, Check } from "lucide-react";
-import type { Course } from "@/lib/courses";
+import type { Course } from "@/lib/course-types";
 import { imageForCourse } from "@/lib/images";
 import { useCart } from "@/lib/cart";
 import { useToast } from "@/components/ui/Toast";

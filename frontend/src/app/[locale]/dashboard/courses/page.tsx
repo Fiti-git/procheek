@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Clock, CheckCircle2, PlayCircle } from "lucide-react";
-import { courses, type Course } from "@/lib/courses";
+import { Clock, CheckCircle2, PlayCircle, Loader2 } from "lucide-react";
+import { fetchCourses, type Course } from "@/lib/course-types";
 import { cn } from "@/lib/cn";
 import { imageForCourse } from "@/lib/images";
 import { CourseImage } from "@/components/CourseImage";
@@ -39,7 +39,9 @@ function readLocalProgress(courseId: string): number {
 function MyCoursesPageInner() {
   const [tab, setTab] = useState<"mis" | "disponibles">("mis");
   const [enrollments, setEnrollments] = useState<EnrollmentRow[]>([]);
+  const [catalog, setCatalog] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [enrolledCourseIds, setEnrolledCourseIds] = useState<Set<string>>(
     new Set(),
   );
@@ -49,25 +51,33 @@ function MyCoursesPageInner() {
   useEffect(() => {
     let cancelled = false;
     async function load() {
+      setLoading(true);
+      setLoadError(null);
       try {
-        const res = await apiGet<EnrollmentRow[] | { data: EnrollmentRow[] }>(
-          "/enrollments/me",
-        );
-        const list = Array.isArray(res)
-          ? res
-          : Array.isArray((res as { data?: EnrollmentRow[] }).data)
-          ? (res as { data: EnrollmentRow[] }).data
-          : [];
+        // Fetch enrollments + catalog in parallel so the "disponibles" tab
+        // has real data regardless of which tab the user lands on first.
+        const [enrRes, catalogRes] = await Promise.all([
+          apiGet<EnrollmentRow[] | { data: EnrollmentRow[] }>("/enrollments/me")
+            .catch(() => [] as EnrollmentRow[]),
+          fetchCourses().catch(() => [] as Course[]),
+        ]);
         if (cancelled) return;
+        const list = Array.isArray(enrRes)
+          ? enrRes
+          : Array.isArray((enrRes as { data?: EnrollmentRow[] }).data)
+          ? (enrRes as { data: EnrollmentRow[] }).data
+          : [];
         setEnrollments(list);
         setEnrolledCourseIds(
           new Set(list.map((e) => e.courseId || "").filter(Boolean)),
         );
-      } catch {
-        // graceful fallback
+        setCatalog(catalogRes.filter((c) => c.isActive !== false));
+      } catch (err) {
         if (!cancelled) {
+          setLoadError((err as Error).message || "No pudimos cargar los cursos.");
           setEnrollments([]);
           setEnrolledCourseIds(new Set());
+          setCatalog([]);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -103,15 +113,13 @@ function MyCoursesPageInner() {
     enrollments.length > 0
       ? enrollments.map((e) => {
           const course =
-            courses.find((c) => c.id === e.courseId) ||
-            courses.find((c) => c.code === e.courseCode);
+            catalog.find((c) => c.id === e.courseId) ||
+            catalog.find((c) => c.code === e.courseCode);
           return { enrollment: e, course };
         })
       : [];
 
-  const available = courses.filter(
-    (c) => !enrolledCourseIds.has(c.id),
-  );
+  const available = catalog.filter((c) => !enrolledCourseIds.has(c.id));
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -149,7 +157,14 @@ function MyCoursesPageInner() {
 
       {tab === "mis" ? (
         loading ? (
-          <div className="text-sm text-ink-500">Cargando tus cursos...</div>
+          <div className="bg-white border border-line rounded-xl p-10 text-center">
+            <Loader2 className="mx-auto h-5 w-5 animate-spin text-ink-400 mb-2" />
+            <p className="text-sm text-ink-500">Cargando tus cursos…</p>
+          </div>
+        ) : loadError ? (
+          <div className="bg-white border border-danger rounded-xl p-10 text-center text-sm text-danger">
+            {loadError}
+          </div>
         ) : mineList.length === 0 ? (
           <div className="bg-white border border-line rounded-xl p-10 text-center">
             <p className="kicker mb-2">Sin inscripciones</p>
@@ -234,6 +249,25 @@ function MyCoursesPageInner() {
             })}
           </div>
         )
+      ) : loading ? (
+        <div className="bg-white border border-line rounded-xl p-10 text-center">
+          <Loader2 className="mx-auto h-5 w-5 animate-spin text-ink-400 mb-2" />
+          <p className="text-sm text-ink-500">Cargando catálogo…</p>
+        </div>
+      ) : loadError ? (
+        <div className="bg-white border border-danger rounded-xl p-10 text-center text-sm text-danger">
+          {loadError}
+        </div>
+      ) : available.length === 0 ? (
+        <div className="bg-white border border-line rounded-xl p-10 text-center">
+          <p className="kicker mb-2">Sin cursos disponibles</p>
+          <h3 className="font-display text-xl font-semibold text-ink-900 tracking-tight">
+            Ya estás inscrito en todo el catálogo.
+          </h3>
+          <p className="mt-2 text-sm text-ink-700">
+            Vuelve pronto para nuevos cursos NOM.
+          </p>
+        </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {available.map((c) => (

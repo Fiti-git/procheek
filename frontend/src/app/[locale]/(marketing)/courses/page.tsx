@@ -1,8 +1,15 @@
-import { ShieldAlert } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { ShieldAlert, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import CourseCard from "@/components/CourseCard";
 import CourseFilters from "@/components/CourseFilters";
-import { courses, type Industry } from "@/lib/courses";
+import {
+  fetchCourses,
+  type Course,
+  type Industry,
+} from "@/lib/course-types";
 
 const industryOrder: Industry[] = [
   "construccion",
@@ -12,18 +19,47 @@ const industryOrder: Industry[] = [
   "general",
 ];
 
-export default async function CoursesPage() {
-  const t = await getTranslations("Courses");
+export default function CoursesPage() {
+  const t = useTranslations("Courses");
+  const [items, setItems] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const rows = await fetchCourses();
+        // Public catalog: only published/active courses.
+        const visible = rows.filter((c) => c.isActive !== false);
+        if (!cancelled) setItems(visible);
+      } catch (err) {
+        if (!cancelled) {
+          setError(
+            (err as Error).message ||
+              "No pudimos cargar el catálogo. Intenta de nuevo.",
+          );
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const grouped = industryOrder
     .map((industry) => {
-      const items = courses
+      const subset = items
         .filter((c) => c.industry === industry)
         .sort((a, b) => {
           if (a.tier === b.tier) return a.code.localeCompare(b.code);
           return a.tier === "basico" ? -1 : 1;
         });
-      return { industry, items };
+      return { industry, items: subset };
     })
     .filter((g) => g.items.length > 0);
 
@@ -65,7 +101,7 @@ export default async function CoursesPage() {
                 STPS · NOM
               </span>
               <span className="text-xs text-white/60">
-                DC-3 · {t("showing", { count: courses.length })}
+                DC-3 · {t("showing", { count: items.length })}
               </span>
             </div>
           </div>
@@ -73,7 +109,6 @@ export default async function CoursesPage() {
       </section>
 
       <div className="container-page py-12 md:py-16">
-
         <div className="mb-6 flex flex-wrap gap-2">
           {[
             { key: "todos", label: t("tabAll"), active: true },
@@ -94,11 +129,11 @@ export default async function CoursesPage() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          <CourseFilters />
+          <CourseFilters industries={Array.from(new Set(items.map((c) => c.industry)))} />
           <div className="flex-1">
             <div className="mb-4 flex items-center justify-between text-sm">
               <span className="text-ink-500">
-                {t("showing", { count: courses.length })}
+                {t("showing", { count: items.length })}
               </span>
               <select className="h-10 rounded-lg border border-line bg-white px-3 text-sm text-ink-800 focus:outline-none focus:border-ink">
                 <option>{t("sortRelevance")}</option>
@@ -108,7 +143,22 @@ export default async function CoursesPage() {
               </select>
             </div>
 
-            {grouped.length === 0 ? (
+            {loading ? (
+              <div className="bg-white border border-line rounded-xl p-12 text-center">
+                <Loader2 className="mx-auto h-6 w-6 animate-spin text-ink-400 mb-3" />
+                <p className="text-sm text-ink-500">Cargando catálogo…</p>
+              </div>
+            ) : error ? (
+              <div className="bg-white border border-danger rounded-xl p-10 text-center">
+                <div className="mx-auto h-12 w-12 rounded-full border border-danger flex items-center justify-center text-danger mb-4">
+                  <ShieldAlert className="h-5 w-5" />
+                </div>
+                <h3 className="font-display text-xl font-semibold text-ink-900 tracking-tight">
+                  No pudimos cargar el catálogo.
+                </h3>
+                <p className="mt-2 text-sm text-ink-700">{error}</p>
+              </div>
+            ) : grouped.length === 0 ? (
               <div className="bg-white border border-line rounded-xl p-12 text-center">
                 <div className="mx-auto h-12 w-12 rounded-full border border-line flex items-center justify-center text-ink-400 mb-4">
                   <ShieldAlert className="h-5 w-5" />
@@ -121,7 +171,7 @@ export default async function CoursesPage() {
               </div>
             ) : (
               <div className="space-y-12">
-                {grouped.map(({ industry, items }) => (
+                {grouped.map(({ industry, items: subset }) => (
                   <section key={industry}>
                     <div className="mb-5 pb-4 border-b border-line">
                       <h2 className="font-display text-2xl md:text-3xl font-semibold text-ink-900 tracking-tight leading-tight">
@@ -129,11 +179,11 @@ export default async function CoursesPage() {
                       </h2>
                       <p className="mt-1 text-sm text-ink-500">
                         {industryDesc(industry)} ·{" "}
-                        {t("coursesCount", { count: items.length })}
+                        {t("coursesCount", { count: subset.length })}
                       </p>
                     </div>
                     <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                      {items.map((c) => (
+                      {subset.map((c) => (
                         <CourseCard key={c.id} course={c} />
                       ))}
                     </div>

@@ -2,16 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
-import { industries } from "@/lib/courses";
-
-const categories = [
-  { code: "NOM-009", label: "NOM-009 Trabajos en altura" },
-  { code: "NOM-017", label: "NOM-017 EPP" },
-  { code: "NOM-002", label: "NOM-002 Incendios" },
-  { code: "NOM-019", label: "NOM-019 Comisiones" },
-  { code: "NOM-036", label: "NOM-036 Ergonomía" },
-  { code: "OTROS", label: "Otros" },
-];
+import { industries as allIndustries, type Industry } from "@/lib/course-types";
 
 const durationBuckets = [
   { key: "lt2", label: "Menos de 2 h" },
@@ -20,8 +11,15 @@ const durationBuckets = [
   { key: "gt8", label: "Más de 8 h" },
 ];
 
-export function CourseFilters() {
+export function CourseFilters({ industries }: { industries?: Industry[] }) {
   const [price, setPrice] = useState(1000);
+
+  // When the parent passes the industries present in the current catalog,
+  // filter the full list to only those keys so empty sections disappear.
+  const visibleIndustries =
+    industries && industries.length > 0
+      ? allIndustries.filter((i) => industries.includes(i.key))
+      : allIndustries;
 
   return (
     <aside className="w-full lg:w-72 shrink-0 bg-white border border-line rounded-xl p-6 space-y-7 h-fit sticky top-20">
@@ -33,17 +31,20 @@ export function CourseFilters() {
 
       <div>
         <h4 className="text-xs uppercase tracking-widest text-ink-500 font-medium mb-3">
-          Categoría
+          Nivel
         </h4>
         <ul className="space-y-1.5">
-          {categories.map((c) => (
-            <li key={c.code}>
+          {[
+            { key: "basico", label: "Básico" },
+            { key: "complementario", label: "Complementario" },
+          ].map((t) => (
+            <li key={t.key}>
               <label className="flex items-center gap-2.5 text-sm text-ink-700 hover:text-ink-900 py-1 cursor-pointer">
                 <input
                   type="checkbox"
                   className="h-4 w-4 rounded border-line accent-ink"
                 />
-                {c.label}
+                {t.label}
               </label>
             </li>
           ))}
@@ -94,7 +95,7 @@ export function CourseFilters() {
           Industria
         </h4>
         <ul className="space-y-1.5">
-          {industries.map((i) => (
+          {visibleIndustries.map((i) => (
             <li key={i.key}>
               <label className="flex items-center gap-2.5 text-sm text-ink-700 hover:text-ink-900 py-1 cursor-pointer">
                 <input
