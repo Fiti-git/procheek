@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Play, Check } from "lucide-react";
 import type { Course } from "@/lib/course-types";
 import { imageForCourse } from "@/lib/images";
@@ -73,29 +72,6 @@ export function CourseCard({ course }: { course: Course }) {
             {course.description}
           </p>
         )}
-
-        {/* Preview strip: 3 module thumbnails */}
-        <div className="flex items-center gap-1.5 mt-1 mb-4">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="h-8 w-8 rounded-md overflow-hidden border border-line bg-coral-50 relative"
-            >
-              <Image
-                src={src}
-                alt=""
-                fill
-                sizes="32px"
-                quality={80}
-                className="object-cover opacity-80"
-                style={{ filter: `hue-rotate(${i * 12}deg) saturate(0.9)` }}
-              />
-            </div>
-          ))}
-          <span className="ml-1 text-[11px] font-medium text-ink-500">
-            3 módulos
-          </span>
-        </div>
 
         <div className="mt-auto pt-4">
           <div className="mb-3">
