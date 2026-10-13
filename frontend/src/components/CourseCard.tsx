@@ -33,7 +33,7 @@ export function CourseCard({ course }: { course: Course }) {
     <article data-testid="course-card" className="card-enterprise group flex flex-col overflow-hidden">
       <Link
         href={`/courses/${course.code}`}
-        className="relative aspect-video overflow-hidden bg-ink-100 photo-duotone-subtle block"
+        className="relative aspect-video overflow-hidden bg-ink-100 block img-vivid"
       >
         <CourseImage
           src={course.imageUrl || src}

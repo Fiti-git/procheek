@@ -105,7 +105,7 @@ function CoursePlayerMock({
 
       <div className="grid md:grid-cols-3 gap-0">
         <div className="md:col-span-2 p-4">
-          <div className="relative aspect-video rounded-lg overflow-hidden photo-duotone">
+          <div className="relative aspect-video rounded-lg overflow-hidden">
             <Image
               src={IMG.course_altura}
               alt={playerAlt}

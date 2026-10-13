@@ -276,7 +276,7 @@ function MyCoursesPageInner() {
             >
               <Link
                 href={`/courses/${c.code}`}
-                className="relative aspect-video overflow-hidden bg-ink-100 block"
+                className="relative aspect-video overflow-hidden bg-ink-100 block img-vivid"
               >
                 <CourseImage
                   src={c.imageUrl || imageForCourse(c.code)}
