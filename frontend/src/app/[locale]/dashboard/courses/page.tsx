@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Clock, CheckCircle2, PlayCircle, Loader2 } from "lucide-react";
@@ -279,8 +278,9 @@ function MyCoursesPageInner() {
                 href={`/courses/${c.code}`}
                 className="relative aspect-video overflow-hidden bg-ink-100 block"
               >
-                <Image
-                  src={imageForCourse(c.code)}
+                <CourseImage
+                  src={c.imageUrl || imageForCourse(c.code)}
+                  code={c.code}
                   alt={c.title}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
