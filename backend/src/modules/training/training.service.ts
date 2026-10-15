@@ -260,8 +260,13 @@ export class TrainingService {
     if (actor.role !== Role.PRINCIPAL_ADMIN && actor.userId !== userId) {
       throw new ForbiddenException('Cannot update this profile');
     }
-    const p = await this.trainers.findOne({ where: { userId } });
-    if (!p) throw new NotFoundException('Trainer profile not found');
+    let p = await this.trainers.findOne({ where: { userId } });
+    if (!p) {
+      // First-save upsert: a user with the capacitador role may call this
+      // before an entity row exists (getMyTrainerProfile returns a stub for
+      // the UI). Create the row with their input so the save succeeds.
+      p = this.trainers.create({ userId });
+    }
     Object.assign(p, dto);
     return this.trainers.save(p);
   }
