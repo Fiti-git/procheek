@@ -21,6 +21,7 @@ export type Course = {
   description?: string;
   imageUrl?: string;
   isActive?: boolean;
+  isPublished?: boolean;
   slug?: string;
 };
 
@@ -37,6 +38,7 @@ export type ApiCourse = {
   tier: string | null;
   imageUrl: string | null;
   isActive: boolean;
+  isPublished?: boolean;
   slug?: string;
   titleEs?: string | null;
   descriptionEs?: string | null;
@@ -65,6 +67,7 @@ export function normalizeCourse(row: ApiCourse): Course {
     industry,
     tier,
     isActive: row.isActive,
+    isPublished: row.isPublished,
     slug: row.slug,
   };
 }

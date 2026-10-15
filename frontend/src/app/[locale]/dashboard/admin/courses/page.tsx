@@ -149,6 +149,27 @@ function AdminCoursesPageInner() {
     }
   };
 
+  const handleTogglePublished = async (c: Course) => {
+    const next = !(c as { isPublished?: boolean }).isPublished;
+    try {
+      const updated = await apiPatch<ApiCourse>(`/courses/${c.id}`, {
+        isPublished: next,
+      });
+      setItems((prev) => prev.map((x) => (x.id === c.id ? normalizeCourse(updated) : x)));
+      toast({
+        title: next ? "Curso publicado" : "Curso despublicado",
+        description: `${c.code} ${next ? "visible en el catálogo público." : "oculto del catálogo."}`,
+        variant: "success",
+      });
+    } catch (err) {
+      toast({
+        title: "Error al actualizar",
+        description: (err as Error).message || "Intenta de nuevo.",
+        variant: "error",
+      });
+    }
+  };
+
   const handleDelete = async (c: Course) => {
     if (!window.confirm(`¿Eliminar el curso ${c.code}? Esta acción es reversible desde base de datos.`)) {
       return;
@@ -439,6 +460,17 @@ function AdminCoursesPageInner() {
                           className="p-2 rounded-lg text-ink-700 hover:bg-canvas-2 hover:text-coral-500 transition-colors"
                         >
                           <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleTogglePublished(c)}
+                          title={(c as { isPublished?: boolean }).isPublished ? "Despublicar" : "Publicar"}
+                          className={
+                            (c as { isPublished?: boolean }).isPublished
+                              ? "px-2.5 h-8 inline-flex items-center gap-1 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors"
+                              : "px-2.5 h-8 inline-flex items-center gap-1 rounded-lg text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition-colors"
+                          }
+                        >
+                          {(c as { isPublished?: boolean }).isPublished ? "Publicado" : "Publicar"}
                         </button>
                         <button
                           onClick={() =>
