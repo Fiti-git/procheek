@@ -10,11 +10,13 @@ import { UsersModule } from '../users/users.module';
 import { PasswordReset } from './password-reset.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { TokenBlocklist } from './token-blocklist.entity';
+import { User } from '../users/user.entity';
+import { Company } from '../companies/company.entity';
 
 @Module({
   imports: [
     UsersModule,
-    TypeOrmModule.forFeature([PasswordReset, RefreshToken, TokenBlocklist]),
+    TypeOrmModule.forFeature([PasswordReset, RefreshToken, TokenBlocklist, User, Company]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

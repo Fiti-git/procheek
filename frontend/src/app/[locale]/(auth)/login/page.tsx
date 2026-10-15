@@ -158,8 +158,21 @@ function LoginInner() {
 
       <p className="text-sm text-ink-700 mt-6">
         ¿Nuevo aquí?{" "}
+        <Link
+          href={
+            returnTo
+              ? `/register?returnTo=${encodeURIComponent(returnTo)}`
+              : "/register"
+          }
+          className="link-inline"
+        >
+          Crear cuenta
+        </Link>
+      </p>
+      <p className="text-xs text-ink-500 mt-3">
+        ¿Prefieres hablar con alguien?{" "}
         <Link href="/agendar?type=demo" className="link-inline">
-          Agenda una demo con nuestro equipo
+          Agenda una demo
         </Link>
       </p>
     </div>

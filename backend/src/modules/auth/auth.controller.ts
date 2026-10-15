@@ -37,6 +37,23 @@ class LogoutDto {
   refreshToken?: string;
 }
 
+class RegisterPublicDto {
+  @IsEmail()
+  email!: string;
+
+  @IsString() @MinLength(8)
+  password!: string;
+
+  @IsString() @MinLength(1)
+  firstName!: string;
+
+  @IsString() @MinLength(1)
+  lastName!: string;
+
+  @IsOptional() @IsString()
+  companyName?: string;
+}
+
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -46,6 +63,14 @@ export class AuthController {
   @Post('login')
   login(@Body() dto: LoginDto, @Req() req: any) {
     return this.auth.login(dto.email, dto.password, {
+      userAgent: req.headers?.['user-agent'],
+      ip: req.ip,
+    });
+  }
+
+  @Post('register-public')
+  registerPublic(@Body() dto: RegisterPublicDto, @Req() req: any) {
+    return this.auth.registerPublic(dto, {
       userAgent: req.headers?.['user-agent'],
       ip: req.ip,
     });

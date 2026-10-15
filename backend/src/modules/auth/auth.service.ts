@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,6 +11,8 @@ import { PasswordReset } from './password-reset.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { TokenBlocklist } from './token-blocklist.entity';
 import { MailService } from '../mail/mail.service';
+import { User } from '../users/user.entity';
+import { Company } from '../companies/company.entity';
 
 export interface JwtPayload {
   sub: string;
@@ -32,7 +34,90 @@ export class AuthService {
     @InjectRepository(PasswordReset) private readonly resets: Repository<PasswordReset>,
     @InjectRepository(RefreshToken) private readonly refresh: Repository<RefreshToken>,
     @InjectRepository(TokenBlocklist) private readonly blocklist: Repository<TokenBlocklist>,
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(Company) private readonly companyRepo: Repository<Company>,
   ) {}
+
+  /**
+   * Public self-service signup for individual buyers (e.g. a contractor
+   * discovering PROCHECK on the marketing site). Creates a CLIENT user and,
+   * when a company name is provided, a one-person CLIENT company so the
+   * buyer can later invite teammates. Returns the same { accessToken,
+   * refreshToken, user } shape as /auth/login so the caller can transition
+   * straight into checkout.
+   */
+  async registerPublic(dto: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    companyName?: string;
+  }, meta: { userAgent?: string; ip?: string } = {}) {
+    const email = dto.email.toLowerCase().trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new BadRequestException('Correo inválido');
+    }
+    if (!dto.password || dto.password.length < 8) {
+      throw new BadRequestException('La contraseña debe tener al menos 8 caracteres');
+    }
+    if (!dto.firstName?.trim() || !dto.lastName?.trim()) {
+      throw new BadRequestException('Nombre y apellido son obligatorios');
+    }
+
+    const existing = await this.userRepo.findOne({ where: { email } });
+    if (existing) throw new ConflictException('Ese correo ya está registrado');
+
+    let companyId: string | null = null;
+    const companyName = dto.companyName?.trim();
+    if (companyName) {
+      const company = await this.companyRepo.save(
+        this.companyRepo.create({
+          legalName: companyName,
+          type: 'client',
+          contactEmail: email,
+          status: 'active',
+          isActive: true,
+        }),
+      );
+      companyId = company.id;
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const user = await this.userRepo.save(
+      this.userRepo.create({
+        email,
+        passwordHash,
+        firstName: dto.firstName.trim(),
+        lastName: dto.lastName.trim(),
+        role: Role.CLIENT,
+        companyId,
+        locale: 'es',
+        isActive: true,
+        mustChangePassword: false,
+      }),
+    );
+
+    await this.users.touchLastLogin(user.id);
+
+    const { token: accessToken } = this.signAccessToken({ id: user.id, email: user.email, role: user.role });
+    const { token: refreshToken } = await this.issueRefreshToken(user.id, meta);
+
+    return {
+      accessToken,
+      refreshToken,
+      tokenType: 'Bearer',
+      expiresIn: ACCESS_TOKEN_TTL_SECONDS,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        locale: user.locale,
+        mustChangePassword: user.mustChangePassword,
+      },
+    };
+  }
 
   private hashToken(token: string) {
     return createHash('sha256').update(token).digest('hex');

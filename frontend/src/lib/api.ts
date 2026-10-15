@@ -131,6 +131,38 @@ export async function login(
   return { token, user };
 }
 
+export async function registerPublic(input: {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  companyName?: string;
+}): Promise<{ token: string; user: CurrentUser }> {
+  const res = await fetch(`${API_URL}/auth/register-public`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  const raw = (await handle(res)) as {
+    accessToken?: string;
+    token?: string;
+    user: CurrentUser & { firstName?: string; lastName?: string };
+  };
+  const token = raw.accessToken || raw.token || "";
+  const user: CurrentUser = {
+    ...raw.user,
+    name:
+      raw.user.name ||
+      [raw.user.firstName, raw.user.lastName].filter(Boolean).join(" ") ||
+      raw.user.email,
+  };
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem("procheck_token", token);
+    window.localStorage.setItem("procheck_user", JSON.stringify(user));
+  }
+  return { token, user };
+}
+
 export function logout() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem("procheck_token");

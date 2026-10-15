@@ -16,7 +16,10 @@ export default function CartPage() {
   const onCheckout = () => {
     const user = getCurrentUser();
     if (!user) {
-      router.push("/login?returnTo=/checkout");
+      // New buyers coming from the marketing funnel almost always need to
+      // create an account — send them straight to signup, with a visible
+      // "ya tengo cuenta" link back to /login for returning customers.
+      router.push("/register?returnTo=/checkout");
       return;
     }
     router.push("/checkout");
