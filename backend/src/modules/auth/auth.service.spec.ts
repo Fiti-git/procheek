@@ -32,8 +32,10 @@ function make() {
   const resets = repo();
   const refresh = repo();
   const blocklist = repo();
-  const svc = new AuthService(jwt, usersSvc, config, mail, resets, refresh, blocklist);
-  return { svc, jwt, usersSvc, config, mail, resets, refresh, blocklist };
+  const userRepo = repo();
+  const companyRepo = repo();
+  const svc = new AuthService(jwt, usersSvc, config, mail, resets, refresh, blocklist, userRepo, companyRepo);
+  return { svc, jwt, usersSvc, config, mail, resets, refresh, blocklist, userRepo, companyRepo };
 }
 
 describe('AuthService', () => {
