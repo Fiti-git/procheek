@@ -509,7 +509,7 @@ function CertificatesPageInner() {
       >
         <p className="text-sm text-ink-700">
           {recertOpen
-            ? `Para renovar tu certificación de ${recertOpen.curso}, inicia una nueva inscripción desde el catálogo de cursos.`
+            ? `Iniciar una nueva inscripción al curso ${recertOpen.curso}. Al confirmar se abrirá una nueva atribución que puedes completar en cualquier momento; tu DC-3 actual seguirá vigente hasta su fecha de vencimiento.`
             : ""}
         </p>
         <div className="mt-5 flex items-center justify-end gap-2">
@@ -518,7 +518,7 @@ function CertificatesPageInner() {
             onClick={() => setRecertOpen(null)}
             className="btn-secondary"
           >
-            Cerrar
+            Cancelar
           </button>
           <button
             type="button"
@@ -526,7 +526,7 @@ function CertificatesPageInner() {
             disabled={recerting}
             className="btn-primary disabled:opacity-50"
           >
-            Ir al catálogo
+            {recerting ? "Iniciando..." : "Iniciar recertificación"}
           </button>
         </div>
       </Modal>
