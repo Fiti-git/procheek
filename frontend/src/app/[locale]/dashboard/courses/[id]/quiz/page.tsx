@@ -69,7 +69,9 @@ export default function QuizPage({
     let cancelled = false;
     (async () => {
       try {
-        // Resolve course by id (uuid) or code.
+        // Resolve course by id (uuid), course code, or enrollment UUID.
+        // The player page emits links keyed by enrollmentId so the quiz
+        // link inherits that id — resolve it via /enrollments/me.
         let c: ApiCourse | null = null;
         try {
           c = await apiGet<ApiCourse>(`/courses/${id}`);
@@ -77,7 +79,15 @@ export default function QuizPage({
           try {
             c = await apiGet<ApiCourse>(`/courses/code/${id}`);
           } catch {
-            c = null;
+            try {
+              const enrs = await apiGet<Array<{ id: string; courseId?: string }>>(`/enrollments/me`);
+              const match = Array.isArray(enrs) ? enrs.find((e) => e.id === id) : null;
+              if (match?.courseId) {
+                c = await apiGet<ApiCourse>(`/courses/${match.courseId}`);
+              }
+            } catch {
+              c = null;
+            }
           }
         }
         if (!c) throw new Error("Curso no encontrado");

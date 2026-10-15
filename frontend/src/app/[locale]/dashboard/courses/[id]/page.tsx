@@ -122,7 +122,12 @@ export default function CoursePlayerPage({
     let cancelled = false;
     (async () => {
       try {
-        // Try to fetch by id first, then by code
+        // The URL `id` can be:
+        //   - a course UUID (direct link),
+        //   - a course code like "NOM-002" (deep link),
+        //   - or an enrollment UUID (the dashboard emits this for enrolled
+        //     users). Try each in that order; fall back to resolving via
+        //     /enrollments/me if it looks like a UUID.
         let course: ApiCourse | null = null;
         try {
           course = await apiGet<ApiCourse>(`/courses/${id}`);
@@ -130,7 +135,16 @@ export default function CoursePlayerPage({
           try {
             course = await apiGet<ApiCourse>(`/courses/code/${id}`);
           } catch {
-            course = null;
+            // Last-chance fallback: id might be an enrollmentId.
+            try {
+              const enrs = await apiGet<ApiEnrollment[]>(`/enrollments/me`);
+              const match = Array.isArray(enrs) ? enrs.find((e) => e.id === id) : null;
+              if (match?.courseId) {
+                course = await apiGet<ApiCourse>(`/courses/${match.courseId}`);
+              }
+            } catch {
+              course = null;
+            }
           }
         }
         if (!course) {
