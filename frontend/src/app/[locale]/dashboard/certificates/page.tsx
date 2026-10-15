@@ -12,6 +12,7 @@ import {
   Mail,
   RefreshCw,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Input, Label } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { useToast } from "@/components/ui/Toast";
@@ -25,6 +26,7 @@ type ApiCertificate = {
   id: string;
   userId: string;
   courseId: string;
+  enrollmentId?: string;
   code: string;
   dc3Folio: string | null;
   issuedAt: string;
@@ -42,6 +44,7 @@ type CertRow = {
   vencimiento: string | null;
   revokedAt: string | null;
   estado: StatusKey;
+  enrollmentId?: string;
 };
 
 const statusClass: Record<StatusKey, string> = {
@@ -100,6 +103,7 @@ function downloadCert(folio: string) {
 
 function CertificatesPageInner() {
   const { toast } = useToast();
+  const router = useRouter();
   const [mounted, setMounted] = React.useState(false);
   const [rows, setRows] = React.useState<CertRow[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -153,6 +157,7 @@ function CertificatesPageInner() {
           vencimiento: c.expiresAt,
           revokedAt: c.revokedAt,
           estado: computeStatus(c.expiresAt, c.revokedAt),
+          enrollmentId: c.enrollmentId,
         }));
         if (!cancelled) setRows(view);
       } catch (err) {
@@ -218,18 +223,25 @@ function CertificatesPageInner() {
 
   const handleRecertify = async () => {
     if (!recertOpen) return;
-    setRecerting(true);
-    try {
-      // The row stores the course title; we need the id for enrollment.
-      // Look it up from the original API payload cached on the row via id.
-      // Since we discarded courseId in the view, hit /courses again by title fallback.
-      // Simpler: don't allow recert here without id — inform user.
+    if (!recertOpen.enrollmentId) {
       toast({
-        title: "Recertificación",
-        description: "Inicia la recertificación desde la página del curso.",
-        variant: "info",
+        title: "Recertificación no disponible",
+        description: "Esta constancia es anterior al cambio de inscripciones y no se puede recertificar automáticamente.",
+        variant: "error",
       });
       setRecertOpen(null);
+      return;
+    }
+    setRecerting(true);
+    try {
+      await apiPost(`/enrollments/${recertOpen.enrollmentId}/recertify`, {});
+      toast({
+        title: "Recertificación iniciada",
+        description: "Tu nueva inscripción está activa. Completa los módulos y el examen para generar un nuevo DC-3.",
+        variant: "success",
+      });
+      setRecertOpen(null);
+      router.push("/dashboard/courses");
     } catch (err) {
       toast({
         title: "No pudimos iniciar la recertificación",
