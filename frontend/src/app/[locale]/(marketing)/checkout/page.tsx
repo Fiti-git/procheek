@@ -78,16 +78,26 @@ export default function CheckoutPage() {
         return { courseId: resolved, qty: i.qty };
       });
 
-      const result = await apiPost<{ id: string }>("/payments/checkout", {
+      const result = await apiPost<{
+        payment?: { id: string };
+        invoice?: { id: string; number: string };
+        enrollmentIds?: string[];
+      }>("/payments/checkout", {
         items: payload,
       });
 
-      if (!result?.id) {
+      const paymentId = result?.payment?.id;
+      if (!paymentId) {
         throw new Error("Respuesta inválida del servidor.");
       }
 
       clear();
-      router.push(`/checkout/success?paymentId=${encodeURIComponent(result.id)}`);
+      router.push(
+        `/checkout/success?paymentId=${encodeURIComponent(paymentId)}` +
+          (result?.invoice?.number
+            ? `&invoice=${encodeURIComponent(result.invoice.number)}`
+            : ""),
+      );
     } catch (e) {
       const msg = (e as Error).message || "No pudimos procesar tu pedido.";
       setError(msg);
@@ -113,6 +123,14 @@ export default function CheckoutPage() {
   return (
     <div className="bg-canvas min-h-screen">
       <div className="container-page py-12 md:py-16">
+        <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-xs text-amber-900 flex items-start gap-2">
+          <ShieldCheck className="h-4 w-4 mt-0.5 shrink-0 text-amber-700" />
+          <span>
+            <strong>Modo de demostración.</strong> No se procesan cargos reales.
+            La pasarela de pago en vivo (Stripe / Mercado Pago) se conectará
+            antes del lanzamiento comercial.
+          </span>
+        </div>
         <div className="mb-8">
           <p className="kicker mb-3">Checkout</p>
           <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-ink-900 tracking-tight leading-[1.08] [hyphens:none] break-words">
@@ -181,6 +199,45 @@ export default function CheckoutPage() {
               <p className="mt-4 text-xs text-ink-500">
                 Nos pondremos en contacto para confirmar el pago según el método seleccionado.
               </p>
+
+              {(method === "visa" || method === "master" || method === "amex") && (
+                <div className="mt-5 border-t border-line pt-5 grid sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2">
+                    <Label>Número de tarjeta</Label>
+                    <Input
+                      inputMode="numeric"
+                      autoComplete="cc-number"
+                      placeholder="4242 4242 4242 4242"
+                      defaultValue="4242 4242 4242 4242"
+                    />
+                  </div>
+                  <div>
+                    <Label>Vence</Label>
+                    <Input
+                      placeholder="12 / 28"
+                      defaultValue="12 / 28"
+                      autoComplete="cc-exp"
+                    />
+                  </div>
+                  <div>
+                    <Label>CVV</Label>
+                    <Input
+                      placeholder="123"
+                      defaultValue="123"
+                      autoComplete="cc-csc"
+                      inputMode="numeric"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <Label>Nombre del titular</Label>
+                    <Input
+                      placeholder="Como aparece en la tarjeta"
+                      defaultValue={user.name || ""}
+                      autoComplete="cc-name"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
