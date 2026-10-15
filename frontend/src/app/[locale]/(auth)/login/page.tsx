@@ -29,6 +29,7 @@ function LoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("returnTo");
+  const changed = searchParams.get("changed") === "1";
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,6 +54,14 @@ function LoginInner() {
     setBusy(true);
     try {
       const { user } = await login(email.trim(), password);
+      // First-time-login flow: a freshly-invited user has a temp password
+      // and must change it before they can use the app.
+      if ((user as { mustChangePassword?: boolean }).mustChangePassword) {
+        const after =
+          returnTo && returnTo.startsWith("/") ? returnTo : redirectFor(user.role);
+        router.push(`/change-password?first=1&returnTo=${encodeURIComponent(after)}`);
+        return;
+      }
       if (returnTo && returnTo.startsWith("/")) {
         router.push(returnTo);
       } else {
@@ -82,6 +91,12 @@ function LoginInner() {
           ? "Ingresa tu correo para acceder a tu cuenta."
           : "Ingresa tu contraseña para continuar."}
       </p>
+
+      {changed && (
+        <div className="mt-6 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+          Contraseña actualizada. Inicia sesión con tu nueva contraseña.
+        </div>
+      )}
 
       {step === 1 && (
         <form className="mt-8 space-y-4" onSubmit={onSubmitEmail}>
