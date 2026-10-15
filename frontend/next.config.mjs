@@ -22,6 +22,9 @@ export default withNextIntl({
       { source: '/ayuda', destination: '/help', permanent: true },
       { source: '/privacidad', destination: '/privacy', permanent: true },
       { source: '/terminos', destination: '/terms', permanent: true },
+      // UAT demo gallery served from public/uat/. Without this, visitors
+      // typing /uat (no trailing slash) hit the Next 404.
+      { source: '/uat', destination: '/uat/index.html', permanent: false },
     ];
   },
 });
