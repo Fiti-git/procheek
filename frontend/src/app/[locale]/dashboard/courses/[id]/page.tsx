@@ -351,22 +351,36 @@ export default function CoursePlayerPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8">
             <div className="relative aspect-video rounded-xl overflow-hidden bg-ink-900">
-              <CourseImage
-                src={(course as { imageUrl?: string | null }).imageUrl || src}
-                code={course.code || ""}
-                alt=""
-                fill
-                sizes="(max-width: 1024px) 100vw, 66vw"
-                className="object-cover"
-                quality={90}
-                priority
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <button className="h-16 w-16 rounded-full bg-white/90 border border-white shadow-cardHover flex items-center justify-center">
-                  <Play className="h-6 w-6 text-coral-600 fill-coral-600 ml-1" />
-                </button>
-              </div>
-              <div className="absolute bottom-3 left-3 font-mono text-xs text-white/90 bg-black/40 px-2 py-1 rounded">
+              {currentModule?.contentType === "video" && currentModule?.contentUrl ? (
+                <video
+                  key={currentModule.id}
+                  src={currentModule.contentUrl}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  poster={(course as { imageUrl?: string | null }).imageUrl || src}
+                  className="absolute inset-0 w-full h-full object-contain bg-ink-900"
+                />
+              ) : (
+                <>
+                  <CourseImage
+                    src={(course as { imageUrl?: string | null }).imageUrl || src}
+                    code={course.code || ""}
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 66vw"
+                    className="object-cover"
+                    quality={90}
+                    priority
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="h-16 w-16 rounded-full bg-white/90 border border-white shadow-cardHover flex items-center justify-center">
+                      <Play className="h-6 w-6 text-coral-600 fill-coral-600 ml-1" />
+                    </div>
+                  </div>
+                </>
+              )}
+              <div className="absolute bottom-3 left-3 font-mono text-xs text-white/90 bg-black/40 px-2 py-1 rounded pointer-events-none">
                 Módulo {current} · {fmtDuration(currentModule?.durationMin ?? null)}
               </div>
             </div>
